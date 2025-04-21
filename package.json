@@ -1,5 +1,5 @@
 {
-  "name": "my-turborepo",
+  "name": "SyncSpace",
   "private": true,
   "scripts": {
     "build": "turbo run build",
