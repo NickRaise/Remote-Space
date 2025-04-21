@@ -7,7 +7,9 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "jest"
+    "build": "npx tsc -b",
+    "jest": "jest",
+    "test": "npm run build && npm run jest"
   },
   "keywords": [],
   "author": "",

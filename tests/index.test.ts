@@ -3,7 +3,7 @@ const axios = require("axios");
 const BACKEND_URL = "localhost:3000";
 
 describe("Authentication", () => {
-  test("User can only sign in only once", async () => {
+  test("User can only signup only once", async () => {
     const username = "user" + Math.random();
     const password = "12345678899";
     const response = await axios.post(`${BACKEND_URL}/api/v1/user/signup`, {
