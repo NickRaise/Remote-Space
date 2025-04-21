@@ -2,11 +2,11 @@ import { Router } from "express";
 
 const router = Router()
 
-router.get("/signup", (req, res) => {
+router.post("/signup", (req, res) => {
     console.log("Signup route activated")
 })
 
-router.get("/signin", (req, res) => {
+router.post("/signin", (req, res) => {
     console.log("Signin route activated")
 })
 

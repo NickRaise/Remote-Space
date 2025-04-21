@@ -1,5 +1,5 @@
 {
-  "name": "SyncSpace",
+  "name": "remote-space",
   "private": true,
   "scripts": {
     "build": "turbo run build",
