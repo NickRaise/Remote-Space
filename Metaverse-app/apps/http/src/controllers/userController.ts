@@ -9,11 +9,12 @@ export const SignUpUser = async (
   res: Response
 ) => {
   try {
-    await CreateUser(userData);
+    const user = await CreateUser(userData);
 
     res.status(200).json({
       success: true,
       message: "User created successfully",
+      userId: user.id,
     });
   } catch (err) {
     if (err instanceof PrismaClientKnownRequestError && err.code === "P2001") {

@@ -1,8 +1,9 @@
 import z from "zod";
 import { SignUpSchema } from "../types";
 import Prisma from "@repo/db/client";
+import { IUser } from "../types/modelsTypes";
 
-export const CreateUser = async (userData: z.infer<typeof SignUpSchema>) => {
+export const CreateUser = async (userData: z.infer<typeof SignUpSchema>): Promise<IUser> => {
   try {
     const user = await Prisma.user.create({
       data: {
@@ -11,6 +12,7 @@ export const CreateUser = async (userData: z.infer<typeof SignUpSchema>) => {
         role: userData.type === "admin" ? "Admin" : "User",
       },
     });
+    return user
   } catch (err) {
     throw err;
   }
