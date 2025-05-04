@@ -2,18 +2,27 @@ import z from "zod";
 import { SignUpSchema } from "../types";
 import Prisma from "@repo/db/client";
 import { IUser } from "../types/modelsTypes";
+import bcrypt from "bcrypt";
 
-export const CreateUser = async (userData: z.infer<typeof SignUpSchema>): Promise<IUser> => {
+export const CreateUser = async (
+  userData: z.infer<typeof SignUpSchema>
+): Promise<IUser> => {
+  const hashedPassword = await hashPassword(userData.password);
+
   try {
     const user = await Prisma.user.create({
       data: {
         username: userData.username,
-        password: userData.password,
+        password: hashedPassword,
         role: userData.type === "admin" ? "Admin" : "User",
       },
     });
-    return user
+    return user;
   } catch (err) {
     throw err;
   }
+};
+
+export const hashPassword = async (password: string): Promise<string> => {
+  return bcrypt.hash(password, 10);
 };

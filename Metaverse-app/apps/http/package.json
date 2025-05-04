@@ -11,11 +11,13 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@repo/db": "*",
+    "bcrypt": "^5.1.1",
     "express": "^5.1.0",
-    "typescript": "^5.8.3",
-    "@repo/db": "*"
+    "typescript": "^5.8.3"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/express": "^5.0.1"
   }
 }
