@@ -1,6 +1,5 @@
 import express from "express"
 import { V1Router } from "./routes/v1"
-import PrismaClient from "@repo/db/client"
 
 const app = express()
 app.use(express.json())

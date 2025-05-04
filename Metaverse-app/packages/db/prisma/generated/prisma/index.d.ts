@@ -1759,7 +1759,7 @@ export namespace Prisma {
     password?: boolean
     avatarId?: boolean
     role?: boolean
-    avatar?: boolean | AvatarDefaultArgs<ExtArgs>
+    avatar?: boolean | User$avatarArgs<ExtArgs>
     space?: boolean | User$spaceArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
@@ -1770,7 +1770,7 @@ export namespace Prisma {
     password?: boolean
     avatarId?: boolean
     role?: boolean
-    avatar?: boolean | AvatarDefaultArgs<ExtArgs>
+    avatar?: boolean | User$avatarArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1779,7 +1779,7 @@ export namespace Prisma {
     password?: boolean
     avatarId?: boolean
     role?: boolean
-    avatar?: boolean | AvatarDefaultArgs<ExtArgs>
+    avatar?: boolean | User$avatarArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
@@ -1792,21 +1792,21 @@ export namespace Prisma {
 
   export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "password" | "avatarId" | "role", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    avatar?: boolean | AvatarDefaultArgs<ExtArgs>
+    avatar?: boolean | User$avatarArgs<ExtArgs>
     space?: boolean | User$spaceArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    avatar?: boolean | AvatarDefaultArgs<ExtArgs>
+    avatar?: boolean | User$avatarArgs<ExtArgs>
   }
   export type UserIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    avatar?: boolean | AvatarDefaultArgs<ExtArgs>
+    avatar?: boolean | User$avatarArgs<ExtArgs>
   }
 
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
     objects: {
-      avatar: Prisma.$AvatarPayload<ExtArgs>
+      avatar: Prisma.$AvatarPayload<ExtArgs> | null
       space: Prisma.$SpacePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -2209,7 +2209,7 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    avatar<T extends AvatarDefaultArgs<ExtArgs> = {}>(args?: Subset<T, AvatarDefaultArgs<ExtArgs>>): Prisma__AvatarClient<$Result.GetResult<Prisma.$AvatarPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    avatar<T extends User$avatarArgs<ExtArgs> = {}>(args?: Subset<T, User$avatarArgs<ExtArgs>>): Prisma__AvatarClient<$Result.GetResult<Prisma.$AvatarPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     space<T extends User$spaceArgs<ExtArgs> = {}>(args?: Subset<T, User$spaceArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SpacePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2638,6 +2638,25 @@ export namespace Prisma {
      * Limit how many Users to delete.
      */
     limit?: number
+  }
+
+  /**
+   * User.avatar
+   */
+  export type User$avatarArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Avatar
+     */
+    select?: AvatarSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Avatar
+     */
+    omit?: AvatarOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AvatarInclude<ExtArgs> | null
+    where?: AvatarWhereInput
   }
 
   /**
@@ -9477,7 +9496,7 @@ export namespace Prisma {
     password?: StringFilter<"User"> | string
     avatarId?: StringFilter<"User"> | string
     role?: EnumRoleFilter<"User"> | $Enums.Role
-    avatar?: XOR<AvatarScalarRelationFilter, AvatarWhereInput>
+    avatar?: XOR<AvatarNullableScalarRelationFilter, AvatarWhereInput> | null
     space?: SpaceListRelationFilter
   }
 
@@ -9494,15 +9513,15 @@ export namespace Prisma {
   export type UserWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     username?: string
-    password?: string
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
+    password?: StringFilter<"User"> | string
     avatarId?: StringFilter<"User"> | string
     role?: EnumRoleFilter<"User"> | $Enums.Role
-    avatar?: XOR<AvatarScalarRelationFilter, AvatarWhereInput>
+    avatar?: XOR<AvatarNullableScalarRelationFilter, AvatarWhereInput> | null
     space?: SpaceListRelationFilter
-  }, "id" | "id" | "username" | "password">
+  }, "id" | "id" | "username">
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
@@ -9868,7 +9887,7 @@ export namespace Prisma {
     username: string
     password: string
     role: $Enums.Role
-    avatar: AvatarCreateNestedOneWithoutUsersInput
+    avatar?: AvatarCreateNestedOneWithoutUsersInput
     space?: SpaceCreateNestedManyWithoutCreatorInput
   }
 
@@ -9886,7 +9905,7 @@ export namespace Prisma {
     username?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    avatar?: AvatarUpdateOneRequiredWithoutUsersNestedInput
+    avatar?: AvatarUpdateOneWithoutUsersNestedInput
     space?: SpaceUpdateManyWithoutCreatorNestedInput
   }
 
@@ -10274,9 +10293,9 @@ export namespace Prisma {
     not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
   }
 
-  export type AvatarScalarRelationFilter = {
-    is?: AvatarWhereInput
-    isNot?: AvatarWhereInput
+  export type AvatarNullableScalarRelationFilter = {
+    is?: AvatarWhereInput | null
+    isNot?: AvatarWhereInput | null
   }
 
   export type SpaceListRelationFilter = {
@@ -10696,10 +10715,12 @@ export namespace Prisma {
     set?: $Enums.Role
   }
 
-  export type AvatarUpdateOneRequiredWithoutUsersNestedInput = {
+  export type AvatarUpdateOneWithoutUsersNestedInput = {
     create?: XOR<AvatarCreateWithoutUsersInput, AvatarUncheckedCreateWithoutUsersInput>
     connectOrCreate?: AvatarCreateOrConnectWithoutUsersInput
     upsert?: AvatarUpsertWithoutUsersInput
+    disconnect?: AvatarWhereInput | boolean
+    delete?: AvatarWhereInput | boolean
     connect?: AvatarWhereUniqueInput
     update?: XOR<XOR<AvatarUpdateToOneWithWhereWithoutUsersInput, AvatarUpdateWithoutUsersInput>, AvatarUncheckedUpdateWithoutUsersInput>
   }
@@ -11288,7 +11309,7 @@ export namespace Prisma {
     username: string
     password: string
     role: $Enums.Role
-    avatar: AvatarCreateNestedOneWithoutUsersInput
+    avatar?: AvatarCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutSpaceInput = {
@@ -11344,7 +11365,7 @@ export namespace Prisma {
     username?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    avatar?: AvatarUpdateOneRequiredWithoutUsersNestedInput
+    avatar?: AvatarUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSpaceInput = {
