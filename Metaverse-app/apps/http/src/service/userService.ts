@@ -2,7 +2,7 @@ import z from "zod";
 import { SignUpSchema } from "../types";
 import Prisma from "@repo/db/client";
 import { IUser } from "../types/modelsTypes";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 export const CreateUser = async (
   userData: z.infer<typeof SignUpSchema>
