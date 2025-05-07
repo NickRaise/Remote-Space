@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
-import { SignUpSchema } from "../../types";
-import { SignUpUser } from "../../controllers/userController";
+import { SignInSchema, SignUpSchema } from "../../types";
+import { SignInUser, SignUpUser } from "../../controllers/userController";
 
 const router = Router();
 
@@ -14,8 +14,14 @@ router.post("/signup", async (req: Request, res: Response) => {
   await SignUpUser(parsedData.data, res);
 });
 
-router.post("/signin", (req, res) => {
-  console.log("Signin route activated");
+router.post("/signin", async (req, res) => {
+  const parsedData = SignInSchema.safeParse(req.body);
+  if (!parsedData.success) {
+    res.status(400).json({ success: false, message: "Validation failed" });
+    return;
+  }
+
+  await SignInUser(parsedData.data, res);
 });
 
 export const AuthRouter = router;

@@ -23,6 +23,27 @@ export const CreateUser = async (
   }
 };
 
+export const findUser = async (username: string): Promise<IUser | null> => {
+  try {
+    const user = await Prisma.user.findUnique({
+      where: {
+        username,
+      },
+    });
+
+    return user;
+  } catch (err) {
+    throw err;
+  }
+};
+
 export const hashPassword = async (password: string): Promise<string> => {
   return bcrypt.hash(password, 10);
+};
+
+export const isPasswordCorrect = async (
+  password: string,
+  hash: string
+): Promise<Boolean> => {
+  return await bcrypt.compare(password, hash);
 };
