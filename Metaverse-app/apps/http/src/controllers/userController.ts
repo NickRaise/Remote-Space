@@ -26,7 +26,6 @@ export const SignUpUser = async (
     });
   } catch (err) {
     if (err instanceof PrismaClientKnownRequestError && err.code === "P2002") {
-      console.log("Reached here, correct condition \n\n\n\n\n");
       return res.status(400).json({
         success: false,
         message: "User already exists",
