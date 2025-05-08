@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
 import { SignInSchema, SignUpSchema } from "../../types";
-import { SignInUser, SignUpUser } from "../../controllers/userController";
+import { SignInUser, SignUpUser } from "../../controllers/authController";
 
 const router = Router();
 

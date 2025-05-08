@@ -5,7 +5,7 @@ import {
   CreateUser,
   findUser,
   isPasswordCorrect,
-} from "../service/userService";
+} from "../service/authService";
 import { PrismaClientKnownRequestError } from "../../../../packages/db/prisma/generated/prisma/runtime/library";
 import jwt from "jsonwebtoken";
 require("dotenv").config();
