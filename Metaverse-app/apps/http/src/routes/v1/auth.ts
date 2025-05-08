@@ -1,7 +1,7 @@
 import { Request, Response, Router } from "express";
 import { SignInSchema, SignUpSchema } from "../../types";
 import { SignInUser, SignUpUser } from "../../controllers/authController";
-import { ValidateZodSchema } from "../../service/common";
+import { ValidateZodSchema } from "../../middleware/common";
 
 const router = Router();
 
