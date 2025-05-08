@@ -1,1 +1,0 @@
-{"version":3,"file":"modelsTypes.d.ts","sourceRoot":"","sources":["../../src/types/modelsTypes.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,IAAI,EAAE,MAAM,gBAAgB,CAAC;AAEtC,MAAM,WAAW,KAAK;IACpB,QAAQ,EAAE,MAAM,CAAC;IACjB,QAAQ,EAAE,MAAM,CAAC;IACjB,EAAE,EAAE,MAAM,CAAC;IACX,QAAQ,EAAE,MAAM,GAAG,IAAI,CAAC;IACxB,IAAI,EAAE,IAAI,CAAC;CACZ"}

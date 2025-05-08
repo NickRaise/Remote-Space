@@ -1,27 +1,24 @@
 import { Request, Response, Router } from "express";
 import { SignInSchema, SignUpSchema } from "../../types";
 import { SignInUser, SignUpUser } from "../../controllers/authController";
+import { ValidateZodSchema } from "../../service/common";
 
 const router = Router();
 
-router.post("/signup", async (req: Request, res: Response) => {
-  const parsedData = SignUpSchema.safeParse(req.body);
-  if (!parsedData.success) {
-    res.status(400).json({ success: false, message: "Validation failed" });
-    return;
+router.post(
+  "/signup",
+  ValidateZodSchema(SignUpSchema),
+  async (req: Request, res: Response) => {
+    await SignUpUser(req.body, res);
   }
+);
 
-  await SignUpUser(parsedData.data, res);
-});
-
-router.post("/signin", async (req, res) => {
-  const parsedData = SignInSchema.safeParse(req.body);
-  if (!parsedData.success) {
-    res.status(400).json({ success: false, message: "Validation failed" });
-    return;
+router.post(
+  "/signin",
+  ValidateZodSchema(SignInSchema),
+  async (req: Request, res: Response) => {
+    await SignInUser(req.body, res);
   }
-
-  await SignInUser(parsedData.data, res);
-});
+);
 
 export const AuthRouter = router;
