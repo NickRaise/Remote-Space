@@ -56,6 +56,7 @@ export const SignInUser = async (
 
     if (!isValid) {
       res.status(403).json({ success: false, message: "Invalid password" });
+      return
     }
 
     const token = jwt.sign(
