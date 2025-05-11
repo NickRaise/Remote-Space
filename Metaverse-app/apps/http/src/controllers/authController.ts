@@ -7,7 +7,7 @@ import {
   isPasswordCorrect,
 } from "../service/authService";
 import jwt from "jsonwebtoken";
-import { PrismaClientKnownRequestError } from "@repo/db/prismaTypes";
+import { PrismaClientKnownRequestError } from "../../../../packages/db/prisma/generated/prisma/runtime/library";
 require("dotenv").config();
 
 const JWT_SECRET = process.env.JWT_SECRET!;

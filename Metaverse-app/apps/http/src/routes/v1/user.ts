@@ -2,7 +2,10 @@ import { Request, Response, Router } from "express";
 import { ValidateZodSchema } from "../../middleware/common";
 import { UpdateMetadataSchema } from "../../types";
 import { userMiddleware } from "../../middleware/authMiddleware";
-import { UpdateUserMetadata } from "../../controllers/userController";
+import {
+  GetMetaDataByIds,
+  UpdateUserMetadata,
+} from "../../controllers/userController";
 
 const router = Router();
 
@@ -15,8 +18,11 @@ router.post(
   }
 );
 
-router.get("/metadata/bulk", (req: Request, res: Response) => {
-  res.send("Bulk metadata route");
+router.get("/metadata/bulk", async (req: Request, res: Response) => {
+  const ids = req.query.ids;
+  const userIds = typeof ids === "string" ? JSON.parse(ids) : [];
+
+  await GetMetaDataByIds(userIds, res);
 });
 
 export const UserRouter = router;
