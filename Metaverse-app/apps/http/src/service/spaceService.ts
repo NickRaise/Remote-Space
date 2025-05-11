@@ -1,0 +1,62 @@
+import Prisma from "@repo/db/client";
+import z from "zod";
+import { CreateSpaceSchema } from "../types";
+import {
+  MapElements,
+  Space,
+} from "../../../../packages/db/prisma/generated/prisma";
+
+interface IMapWithElements {
+  mapElements: MapElements[];
+}
+
+export const CreateSpaceWithoutMapId = async (
+  spaceData: z.infer<typeof CreateSpaceSchema>,
+  userId: string
+): Promise<Space> => {
+  const space = await Prisma.space.create({
+    data: {
+      name: spaceData.name,
+      width: parseInt(spaceData.dimensions.split("x")[0] ?? "100"),
+      height: parseInt(spaceData.dimensions.split("x")[1] ?? "100"),
+      creatorId: userId,
+    },
+  });
+
+  return space;
+};
+
+export const CreateSpaceWithMapId = async (
+  spaceData: z.infer<typeof CreateSpaceSchema>,
+  map: IMapWithElements,
+  userId: string
+): Promise<Space> => {
+  const space = await Prisma.$transaction(async () => {
+    const space = await CreateSpaceWithoutMapId(spaceData, userId);
+    await Prisma.spaceElements.createMany({
+      data: map.mapElements.map((e) => ({
+        spaceId: space.id,
+        elementId: e.elementId,
+        x: e.x,
+        y: e.y,
+      })),
+    });
+    return space;
+  });
+  return space;
+};
+
+export const FindMapById = async (
+  id: string
+): Promise<IMapWithElements | null> => {
+  const map = Prisma.map.findUnique({
+    where: {
+      id,
+    },
+    select: {
+      mapElements: true,
+    },
+  });
+
+  return map;
+};

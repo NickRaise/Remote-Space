@@ -2881,7 +2881,7 @@ export namespace Prisma {
     id: string
     name: string
     width: number
-    height: number | null
+    height: number
     thumbnail: string | null
     creatorId: string
     _count: SpaceCountAggregateOutputType | null
@@ -2969,7 +2969,7 @@ export namespace Prisma {
       id: string
       name: string
       width: number
-      height: number | null
+      height: number
       thumbnail: string | null
       creatorId: string
     }, ExtArgs["result"]["space"]>
@@ -7336,8 +7336,8 @@ export namespace Prisma {
     id: string
     mapId: string
     elementId: string
-    x: number | null
-    y: number | null
+    x: number
+    y: number
     _count: MapElementsCountAggregateOutputType | null
     _avg: MapElementsAvgAggregateOutputType | null
     _sum: MapElementsSumAggregateOutputType | null
@@ -7421,8 +7421,8 @@ export namespace Prisma {
       id: string
       mapId: string
       elementId: string
-      x: number | null
-      y: number | null
+      x: number
+      y: number
     }, ExtArgs["result"]["mapElements"]>
     composites: {}
   }
@@ -9552,7 +9552,7 @@ export namespace Prisma {
     id?: StringFilter<"Space"> | string
     name?: StringFilter<"Space"> | string
     width?: IntFilter<"Space"> | number
-    height?: IntNullableFilter<"Space"> | number | null
+    height?: IntFilter<"Space"> | number
     thumbnail?: StringNullableFilter<"Space"> | string | null
     creatorId?: StringFilter<"Space"> | string
     creator?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -9563,7 +9563,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     width?: SortOrder
-    height?: SortOrderInput | SortOrder
+    height?: SortOrder
     thumbnail?: SortOrderInput | SortOrder
     creatorId?: SortOrder
     creator?: UserOrderByWithRelationInput
@@ -9577,7 +9577,7 @@ export namespace Prisma {
     NOT?: SpaceWhereInput | SpaceWhereInput[]
     name?: StringFilter<"Space"> | string
     width?: IntFilter<"Space"> | number
-    height?: IntNullableFilter<"Space"> | number | null
+    height?: IntFilter<"Space"> | number
     thumbnail?: StringNullableFilter<"Space"> | string | null
     creatorId?: StringFilter<"Space"> | string
     creator?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -9588,7 +9588,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     width?: SortOrder
-    height?: SortOrderInput | SortOrder
+    height?: SortOrder
     thumbnail?: SortOrderInput | SortOrder
     creatorId?: SortOrder
     _count?: SpaceCountOrderByAggregateInput
@@ -9605,7 +9605,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Space"> | string
     name?: StringWithAggregatesFilter<"Space"> | string
     width?: IntWithAggregatesFilter<"Space"> | number
-    height?: IntNullableWithAggregatesFilter<"Space"> | number | null
+    height?: IntWithAggregatesFilter<"Space"> | number
     thumbnail?: StringNullableWithAggregatesFilter<"Space"> | string | null
     creatorId?: StringWithAggregatesFilter<"Space"> | string
   }
@@ -9784,8 +9784,8 @@ export namespace Prisma {
     id?: StringFilter<"MapElements"> | string
     mapId?: StringFilter<"MapElements"> | string
     elementId?: StringFilter<"MapElements"> | string
-    x?: IntNullableFilter<"MapElements"> | number | null
-    y?: IntNullableFilter<"MapElements"> | number | null
+    x?: IntFilter<"MapElements"> | number
+    y?: IntFilter<"MapElements"> | number
     map?: XOR<MapScalarRelationFilter, MapWhereInput>
     element?: XOR<ElementScalarRelationFilter, ElementWhereInput>
   }
@@ -9794,8 +9794,8 @@ export namespace Prisma {
     id?: SortOrder
     mapId?: SortOrder
     elementId?: SortOrder
-    x?: SortOrderInput | SortOrder
-    y?: SortOrderInput | SortOrder
+    x?: SortOrder
+    y?: SortOrder
     map?: MapOrderByWithRelationInput
     element?: ElementOrderByWithRelationInput
   }
@@ -9807,8 +9807,8 @@ export namespace Prisma {
     NOT?: MapElementsWhereInput | MapElementsWhereInput[]
     mapId?: StringFilter<"MapElements"> | string
     elementId?: StringFilter<"MapElements"> | string
-    x?: IntNullableFilter<"MapElements"> | number | null
-    y?: IntNullableFilter<"MapElements"> | number | null
+    x?: IntFilter<"MapElements"> | number
+    y?: IntFilter<"MapElements"> | number
     map?: XOR<MapScalarRelationFilter, MapWhereInput>
     element?: XOR<ElementScalarRelationFilter, ElementWhereInput>
   }, "id" | "id">
@@ -9817,8 +9817,8 @@ export namespace Prisma {
     id?: SortOrder
     mapId?: SortOrder
     elementId?: SortOrder
-    x?: SortOrderInput | SortOrder
-    y?: SortOrderInput | SortOrder
+    x?: SortOrder
+    y?: SortOrder
     _count?: MapElementsCountOrderByAggregateInput
     _avg?: MapElementsAvgOrderByAggregateInput
     _max?: MapElementsMaxOrderByAggregateInput
@@ -9833,8 +9833,8 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"MapElements"> | string
     mapId?: StringWithAggregatesFilter<"MapElements"> | string
     elementId?: StringWithAggregatesFilter<"MapElements"> | string
-    x?: IntNullableWithAggregatesFilter<"MapElements"> | number | null
-    y?: IntNullableWithAggregatesFilter<"MapElements"> | number | null
+    x?: IntWithAggregatesFilter<"MapElements"> | number
+    y?: IntWithAggregatesFilter<"MapElements"> | number
   }
 
   export type AvatarWhereInput = {
@@ -9945,7 +9945,7 @@ export namespace Prisma {
     id?: string
     name: string
     width: number
-    height?: number | null
+    height: number
     thumbnail?: string | null
     creator: UserCreateNestedOneWithoutSpaceInput
     spaceElements?: SpaceElementsCreateNestedManyWithoutSpaceInput
@@ -9955,7 +9955,7 @@ export namespace Prisma {
     id?: string
     name: string
     width: number
-    height?: number | null
+    height: number
     thumbnail?: string | null
     creatorId: string
     spaceElements?: SpaceElementsUncheckedCreateNestedManyWithoutSpaceInput
@@ -9965,7 +9965,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     width?: IntFieldUpdateOperationsInput | number
-    height?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: IntFieldUpdateOperationsInput | number
     thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
     creator?: UserUpdateOneRequiredWithoutSpaceNestedInput
     spaceElements?: SpaceElementsUpdateManyWithoutSpaceNestedInput
@@ -9975,7 +9975,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     width?: IntFieldUpdateOperationsInput | number
-    height?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: IntFieldUpdateOperationsInput | number
     thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
     creatorId?: StringFieldUpdateOperationsInput | string
     spaceElements?: SpaceElementsUncheckedUpdateManyWithoutSpaceNestedInput
@@ -9985,7 +9985,7 @@ export namespace Prisma {
     id?: string
     name: string
     width: number
-    height?: number | null
+    height: number
     thumbnail?: string | null
     creatorId: string
   }
@@ -9994,7 +9994,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     width?: IntFieldUpdateOperationsInput | number
-    height?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: IntFieldUpdateOperationsInput | number
     thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -10002,7 +10002,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     width?: IntFieldUpdateOperationsInput | number
-    height?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: IntFieldUpdateOperationsInput | number
     thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
     creatorId?: StringFieldUpdateOperationsInput | string
   }
@@ -10173,8 +10173,8 @@ export namespace Prisma {
 
   export type MapElementsCreateInput = {
     id?: string
-    x?: number | null
-    y?: number | null
+    x: number
+    y: number
     map: MapCreateNestedOneWithoutMapElementsInput
     element: ElementCreateNestedOneWithoutMapElementsInput
   }
@@ -10183,14 +10183,14 @@ export namespace Prisma {
     id?: string
     mapId: string
     elementId: string
-    x?: number | null
-    y?: number | null
+    x: number
+    y: number
   }
 
   export type MapElementsUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    x?: NullableIntFieldUpdateOperationsInput | number | null
-    y?: NullableIntFieldUpdateOperationsInput | number | null
+    x?: IntFieldUpdateOperationsInput | number
+    y?: IntFieldUpdateOperationsInput | number
     map?: MapUpdateOneRequiredWithoutMapElementsNestedInput
     element?: ElementUpdateOneRequiredWithoutMapElementsNestedInput
   }
@@ -10199,30 +10199,30 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     mapId?: StringFieldUpdateOperationsInput | string
     elementId?: StringFieldUpdateOperationsInput | string
-    x?: NullableIntFieldUpdateOperationsInput | number | null
-    y?: NullableIntFieldUpdateOperationsInput | number | null
+    x?: IntFieldUpdateOperationsInput | number
+    y?: IntFieldUpdateOperationsInput | number
   }
 
   export type MapElementsCreateManyInput = {
     id?: string
     mapId: string
     elementId: string
-    x?: number | null
-    y?: number | null
+    x: number
+    y: number
   }
 
   export type MapElementsUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    x?: NullableIntFieldUpdateOperationsInput | number | null
-    y?: NullableIntFieldUpdateOperationsInput | number | null
+    x?: IntFieldUpdateOperationsInput | number
+    y?: IntFieldUpdateOperationsInput | number
   }
 
   export type MapElementsUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     mapId?: StringFieldUpdateOperationsInput | string
     elementId?: StringFieldUpdateOperationsInput | string
-    x?: NullableIntFieldUpdateOperationsInput | number | null
-    y?: NullableIntFieldUpdateOperationsInput | number | null
+    x?: IntFieldUpdateOperationsInput | number
+    y?: IntFieldUpdateOperationsInput | number
   }
 
   export type AvatarCreateInput = {
@@ -10409,17 +10409,6 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
-  export type IntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
-  }
-
   export type UserScalarRelationFilter = {
     is?: UserWhereInput
     isNot?: UserWhereInput
@@ -10486,22 +10475,6 @@ export namespace Prisma {
     _sum?: NestedIntFilter<$PrismaModel>
     _min?: NestedIntFilter<$PrismaModel>
     _max?: NestedIntFilter<$PrismaModel>
-  }
-
-  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
   export type ElementScalarRelationFilter = {
@@ -10779,14 +10752,6 @@ export namespace Prisma {
 
   export type IntFieldUpdateOperationsInput = {
     set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
-  export type NullableIntFieldUpdateOperationsInput = {
-    set?: number | null
     increment?: number
     decrement?: number
     multiply?: number
@@ -11181,33 +11146,6 @@ export namespace Prisma {
     not?: NestedFloatFilter<$PrismaModel> | number
   }
 
-  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
-  }
-
-  export type NestedFloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
-  }
-
   export type AvatarCreateWithoutUsersInput = {
     id?: string
     imageUrl?: string | null
@@ -11229,7 +11167,7 @@ export namespace Prisma {
     id?: string
     name: string
     width: number
-    height?: number | null
+    height: number
     thumbnail?: string | null
     spaceElements?: SpaceElementsCreateNestedManyWithoutSpaceInput
   }
@@ -11238,7 +11176,7 @@ export namespace Prisma {
     id?: string
     name: string
     width: number
-    height?: number | null
+    height: number
     thumbnail?: string | null
     spaceElements?: SpaceElementsUncheckedCreateNestedManyWithoutSpaceInput
   }
@@ -11299,7 +11237,7 @@ export namespace Prisma {
     id?: StringFilter<"Space"> | string
     name?: StringFilter<"Space"> | string
     width?: IntFilter<"Space"> | number
-    height?: IntNullableFilter<"Space"> | number | null
+    height?: IntFilter<"Space"> | number
     thumbnail?: StringNullableFilter<"Space"> | string | null
     creatorId?: StringFilter<"Space"> | string
   }
@@ -11428,7 +11366,7 @@ export namespace Prisma {
     id?: string
     name: string
     width: number
-    height?: number | null
+    height: number
     thumbnail?: string | null
     creator: UserCreateNestedOneWithoutSpaceInput
   }
@@ -11437,7 +11375,7 @@ export namespace Prisma {
     id?: string
     name: string
     width: number
-    height?: number | null
+    height: number
     thumbnail?: string | null
     creatorId: string
   }
@@ -11489,7 +11427,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     width?: IntFieldUpdateOperationsInput | number
-    height?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: IntFieldUpdateOperationsInput | number
     thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
     creator?: UserUpdateOneRequiredWithoutSpaceNestedInput
   }
@@ -11498,7 +11436,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     width?: IntFieldUpdateOperationsInput | number
-    height?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: IntFieldUpdateOperationsInput | number
     thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
     creatorId?: StringFieldUpdateOperationsInput | string
   }
@@ -11529,16 +11467,16 @@ export namespace Prisma {
 
   export type MapElementsCreateWithoutElementInput = {
     id?: string
-    x?: number | null
-    y?: number | null
+    x: number
+    y: number
     map: MapCreateNestedOneWithoutMapElementsInput
   }
 
   export type MapElementsUncheckedCreateWithoutElementInput = {
     id?: string
     mapId: string
-    x?: number | null
-    y?: number | null
+    x: number
+    y: number
   }
 
   export type MapElementsCreateOrConnectWithoutElementInput = {
@@ -11590,22 +11528,22 @@ export namespace Prisma {
     id?: StringFilter<"MapElements"> | string
     mapId?: StringFilter<"MapElements"> | string
     elementId?: StringFilter<"MapElements"> | string
-    x?: IntNullableFilter<"MapElements"> | number | null
-    y?: IntNullableFilter<"MapElements"> | number | null
+    x?: IntFilter<"MapElements"> | number
+    y?: IntFilter<"MapElements"> | number
   }
 
   export type MapElementsCreateWithoutMapInput = {
     id?: string
-    x?: number | null
-    y?: number | null
+    x: number
+    y: number
     element: ElementCreateNestedOneWithoutMapElementsInput
   }
 
   export type MapElementsUncheckedCreateWithoutMapInput = {
     id?: string
     elementId: string
-    x?: number | null
-    y?: number | null
+    x: number
+    y: number
   }
 
   export type MapElementsCreateOrConnectWithoutMapInput = {
@@ -11783,7 +11721,7 @@ export namespace Prisma {
     id?: string
     name: string
     width: number
-    height?: number | null
+    height: number
     thumbnail?: string | null
   }
 
@@ -11791,7 +11729,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     width?: IntFieldUpdateOperationsInput | number
-    height?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: IntFieldUpdateOperationsInput | number
     thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
     spaceElements?: SpaceElementsUpdateManyWithoutSpaceNestedInput
   }
@@ -11800,7 +11738,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     width?: IntFieldUpdateOperationsInput | number
-    height?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: IntFieldUpdateOperationsInput | number
     thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
     spaceElements?: SpaceElementsUncheckedUpdateManyWithoutSpaceNestedInput
   }
@@ -11809,7 +11747,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     width?: IntFieldUpdateOperationsInput | number
-    height?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: IntFieldUpdateOperationsInput | number
     thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -11851,8 +11789,8 @@ export namespace Prisma {
   export type MapElementsCreateManyElementInput = {
     id?: string
     mapId: string
-    x?: number | null
-    y?: number | null
+    x: number
+    y: number
   }
 
   export type SpaceElementsUpdateWithoutElementInput = {
@@ -11878,51 +11816,51 @@ export namespace Prisma {
 
   export type MapElementsUpdateWithoutElementInput = {
     id?: StringFieldUpdateOperationsInput | string
-    x?: NullableIntFieldUpdateOperationsInput | number | null
-    y?: NullableIntFieldUpdateOperationsInput | number | null
+    x?: IntFieldUpdateOperationsInput | number
+    y?: IntFieldUpdateOperationsInput | number
     map?: MapUpdateOneRequiredWithoutMapElementsNestedInput
   }
 
   export type MapElementsUncheckedUpdateWithoutElementInput = {
     id?: StringFieldUpdateOperationsInput | string
     mapId?: StringFieldUpdateOperationsInput | string
-    x?: NullableIntFieldUpdateOperationsInput | number | null
-    y?: NullableIntFieldUpdateOperationsInput | number | null
+    x?: IntFieldUpdateOperationsInput | number
+    y?: IntFieldUpdateOperationsInput | number
   }
 
   export type MapElementsUncheckedUpdateManyWithoutElementInput = {
     id?: StringFieldUpdateOperationsInput | string
     mapId?: StringFieldUpdateOperationsInput | string
-    x?: NullableIntFieldUpdateOperationsInput | number | null
-    y?: NullableIntFieldUpdateOperationsInput | number | null
+    x?: IntFieldUpdateOperationsInput | number
+    y?: IntFieldUpdateOperationsInput | number
   }
 
   export type MapElementsCreateManyMapInput = {
     id?: string
     elementId: string
-    x?: number | null
-    y?: number | null
+    x: number
+    y: number
   }
 
   export type MapElementsUpdateWithoutMapInput = {
     id?: StringFieldUpdateOperationsInput | string
-    x?: NullableIntFieldUpdateOperationsInput | number | null
-    y?: NullableIntFieldUpdateOperationsInput | number | null
+    x?: IntFieldUpdateOperationsInput | number
+    y?: IntFieldUpdateOperationsInput | number
     element?: ElementUpdateOneRequiredWithoutMapElementsNestedInput
   }
 
   export type MapElementsUncheckedUpdateWithoutMapInput = {
     id?: StringFieldUpdateOperationsInput | string
     elementId?: StringFieldUpdateOperationsInput | string
-    x?: NullableIntFieldUpdateOperationsInput | number | null
-    y?: NullableIntFieldUpdateOperationsInput | number | null
+    x?: IntFieldUpdateOperationsInput | number
+    y?: IntFieldUpdateOperationsInput | number
   }
 
   export type MapElementsUncheckedUpdateManyWithoutMapInput = {
     id?: StringFieldUpdateOperationsInput | string
     elementId?: StringFieldUpdateOperationsInput | string
-    x?: NullableIntFieldUpdateOperationsInput | number | null
-    y?: NullableIntFieldUpdateOperationsInput | number | null
+    x?: IntFieldUpdateOperationsInput | number
+    y?: IntFieldUpdateOperationsInput | number
   }
 
   export type UserCreateManyAvatarInput = {

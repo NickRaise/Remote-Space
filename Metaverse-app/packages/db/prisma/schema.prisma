@@ -68,8 +68,8 @@ model MapElements {
   map       Map     @relation(fields: [mapId], references: [id])
   elementId String
   element   Element @relation(fields: [elementId], references: [id])
-  x         Int?
-  y         Int?
+  x         Int
+  y         Int
 }
 
 model Avatar {
