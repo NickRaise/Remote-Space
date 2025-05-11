@@ -120,7 +120,7 @@ describe("Authentication", () => {
 //     const username = "user" + Math.random();
 //     const password = "12345678899";
 
-//     await axios.post(`${BACKEND_URL}/api/v1/user/signup`, {
+//     await axios.post(`${BACKEND_URL}/api/v1/auth/signup`, {
 //       username,
 //       password,
 //       type: "admin",
