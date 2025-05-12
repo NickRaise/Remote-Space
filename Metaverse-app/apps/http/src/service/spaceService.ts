@@ -96,7 +96,7 @@ export const FindSpaceByIdAndCreator = async (
   spaceId: string,
   userId: string
 ): Promise<Space | null> => {
-  const space = Prisma.space.findUnique({
+  const space = await Prisma.space.findUnique({
     where: {
       id: spaceId,
       creatorId: userId,
@@ -111,6 +111,18 @@ export const AddElementToASpace = async (
 ): Promise<SpaceElements> => {
   const spaceElement = await Prisma.spaceElements.create({
     data: elementData,
+  });
+
+  return spaceElement;
+};
+
+export const DeleteSpaceElementById = async (
+  spaceElementId: string
+): Promise<SpaceElements> => {
+  const spaceElement = await Prisma.spaceElements.delete({
+    where: {
+      id: spaceElementId,
+    },
   });
 
   return spaceElement;

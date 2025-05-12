@@ -35,6 +35,11 @@ export const CreateElementSchema = z.object({
   static: z.boolean(),
 });
 
+export const DeleteElementSchema = z.object({
+  spaceId: z.string(),
+  elementId: z.string()
+})
+
 export const UpdateElementSchema = z.object({
   imageUrk: z.string(),
 });

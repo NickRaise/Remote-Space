@@ -1,8 +1,8 @@
 import { Request, Response, Router } from "express";
 import { userMiddleware } from "../../middleware/authMiddleware";
 import { ValidateZodSchema } from "../../middleware/common";
-import { AddElementSchema, CreateSpaceSchema } from "../../types";
-import { AddElementController, CreateSpaceController, DeleteSpaceController, GetAllSpacesController } from "../../controllers/spaceController";
+import { AddElementSchema, CreateSpaceSchema, DeleteElementSchema } from "../../types";
+import { AddSpaceElementController, CreateSpaceController, DeleteSpaceController, DeleteSpaceElementController, GetAllSpacesController } from "../../controllers/spaceController";
 
 const router = Router()
 
@@ -28,11 +28,12 @@ router.get("/:spaceId", (req, res) => {
 
 router.post("/element",userMiddleware, ValidateZodSchema(AddElementSchema), async (req, res) => {
     const userId = req.userId!
-    await AddElementController(req.body, userId, res)
+    await AddSpaceElementController(req.body, userId, res)
 })
 
-router.delete("/element", (req, res) => {
-
+router.delete("/element", userMiddleware, ValidateZodSchema(DeleteElementSchema), async (req, res) => {
+    const userId = req.userId!
+    await DeleteSpaceElementController(req.body, userId, res)
 })
 
 export const SpaceRouter = router
