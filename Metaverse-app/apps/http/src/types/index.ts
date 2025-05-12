@@ -36,8 +36,7 @@ export const CreateElementSchema = z.object({
 });
 
 export const DeleteElementSchema = z.object({
-  spaceId: z.string(),
-  elementId: z.string()
+  id: z.string(),
 })
 
 export const UpdateElementSchema = z.object({

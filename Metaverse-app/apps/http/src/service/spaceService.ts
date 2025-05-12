@@ -1,10 +1,9 @@
 import Prisma from "@repo/db/client";
 import z from "zod";
-import { AddElementSchema, CreateSpaceSchema } from "../types";
+import { CreateSpaceSchema } from "../types";
 import {
   MapElements,
   Space,
-  SpaceElements,
 } from "../../../../packages/db/prisma/generated/prisma";
 
 interface IMapWithElements {
@@ -106,24 +105,3 @@ export const FindSpaceByIdAndCreator = async (
   return space;
 };
 
-export const AddElementToASpace = async (
-  elementData: z.infer<typeof AddElementSchema>
-): Promise<SpaceElements> => {
-  const spaceElement = await Prisma.spaceElements.create({
-    data: elementData,
-  });
-
-  return spaceElement;
-};
-
-export const DeleteSpaceElementById = async (
-  spaceElementId: string
-): Promise<SpaceElements> => {
-  const spaceElement = await Prisma.spaceElements.delete({
-    where: {
-      id: spaceElementId,
-    },
-  });
-
-  return spaceElement;
-};

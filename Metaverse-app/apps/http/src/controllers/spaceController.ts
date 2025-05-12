@@ -6,17 +6,20 @@ import {
 } from "../types";
 import z from "zod";
 import {
-  AddElementToASpace,
   CreateSpaceWithMapId,
   CreateSpaceWithoutMapId,
   DeleteSpaceById,
-  DeleteSpaceElementById,
   FindMapById,
   FindSpaceById,
   FindSpaceByIdAndCreator,
   GetAllSpacesById,
 } from "../service/spaceService";
 import { Prisma } from "../../../../packages/db/prisma/generated/prisma";
+import {
+  CreateSpaceElement,
+  DeleteSpaceElementById,
+  FindSpaceElementById,
+} from "../service/spaceElementService";
 
 export const CreateSpaceController = async (
   spaceData: z.infer<typeof CreateSpaceSchema>,
@@ -124,7 +127,7 @@ export const AddSpaceElementController = async (
       return;
     }
 
-    await AddElementToASpace(elementData);
+    await CreateSpaceElement(elementData);
 
     res.status(200).json({ message: "Element added" });
   } catch (err) {
@@ -139,19 +142,17 @@ export const AddSpaceElementController = async (
 };
 
 export const DeleteSpaceElementController = async (
-  elementData: z.infer<typeof DeleteElementSchema>,
+  { id }: z.infer<typeof DeleteElementSchema>,
   userId: string,
   res: Response
 ) => {
   try {
-    const space = await FindSpaceByIdAndCreator(elementData.spaceId, userId);
-
-    if (!space) {
-      res.status(400).json({ message: "Space not found" });
-      return;
+    const spaceElement = await FindSpaceElementById(id);
+    if (spaceElement.space.creatorId !== userId) {
+      res.status(403).json({ message: "Unauthorized" });
     }
 
-    await DeleteSpaceElementById(elementData.spaceId);
+    await DeleteSpaceElementById(id);
 
     res.status(200).json({ message: "Element deleted" });
   } catch (err) {
