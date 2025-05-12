@@ -1,6 +1,6 @@
 import Prisma from "@repo/db/client";
 import z from "zod";
-import { AddElementSchema } from "../types";
+import { AddSpaceElementSchema } from "../types";
 import { Space, SpaceElements } from "../../../../packages/db/prisma/generated/prisma";
 
 interface SpaceElementWithSpace extends SpaceElements {
@@ -8,7 +8,7 @@ interface SpaceElementWithSpace extends SpaceElements {
 }
 
 export const CreateSpaceElement = async (
-  elementData: z.infer<typeof AddElementSchema>
+  elementData: z.infer<typeof AddSpaceElementSchema>
 ): Promise<SpaceElements> => {
   const spaceElement = await Prisma.spaceElements.create({
     data: elementData,

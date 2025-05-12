@@ -21,7 +21,7 @@ export const CreateSpaceSchema = z.object({
   mapId: z.string().optional()
 });
 
-export const AddElementSchema = z.object({
+export const AddSpaceElementSchema = z.object({
   elementId: z.string(),
   spaceId: z.string(),
   x: z.number(),
@@ -35,12 +35,12 @@ export const CreateElementSchema = z.object({
   static: z.boolean(),
 });
 
-export const DeleteElementSchema = z.object({
+export const DeleteSpaceElementSchema = z.object({
   id: z.string(),
 })
 
 export const UpdateElementSchema = z.object({
-  imageUrk: z.string(),
+  imageUrl: z.string(),
 });
 
 export const CreateAvatarSchema = z.object({

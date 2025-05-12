@@ -1,8 +1,8 @@
 import { Response } from "express";
 import {
-  AddElementSchema,
+  AddSpaceElementSchema,
   CreateSpaceSchema,
-  DeleteElementSchema,
+  DeleteSpaceElementSchema,
 } from "../types";
 import z from "zod";
 import {
@@ -115,7 +115,7 @@ export const GetAllSpacesController = async (userId: string, res: Response) => {
 };
 
 export const AddSpaceElementController = async (
-  elementData: z.infer<typeof AddElementSchema>,
+  elementData: z.infer<typeof AddSpaceElementSchema>,
   userId: string,
   res: Response
 ) => {
@@ -142,7 +142,7 @@ export const AddSpaceElementController = async (
 };
 
 export const DeleteSpaceElementController = async (
-  { id }: z.infer<typeof DeleteElementSchema>,
+  { id }: z.infer<typeof DeleteSpaceElementSchema>,
   userId: string,
   res: Response
 ) => {
