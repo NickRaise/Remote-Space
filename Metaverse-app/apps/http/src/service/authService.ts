@@ -38,7 +38,7 @@ export const findUser = async (username: string): Promise<IUser | null> => {
 };
 
 export const hashPassword = async (password: string): Promise<string> => {
-  return bcrypt.hash(password, 10);
+  return await bcrypt.hash(password, 10);
 };
 
 export const isPasswordCorrect = async (

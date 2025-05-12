@@ -19,7 +19,7 @@ export const UpdateMetadata = async (userId: string, avatarId: string) => {
 export const GetAvatarByIds = async (
   ids: string[]
 ): Promise<{ id: string; avatar: Avatar | null }[]> => {
-  const metaData = Prisma.user.findMany({
+  const metaData = await Prisma.user.findMany({
     where: {
       id: {
         in: ids,

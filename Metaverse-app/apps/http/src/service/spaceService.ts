@@ -49,7 +49,7 @@ export const CreateSpaceWithMapId = async (
 export const FindMapById = async (
   id: string
 ): Promise<IMapWithElements | null> => {
-  const map = Prisma.map.findUnique({
+  const map = await Prisma.map.findUnique({
     where: {
       id,
     },
@@ -62,7 +62,7 @@ export const FindMapById = async (
 };
 
 export const FindSpaceById = async (spaceId: string): Promise<Space | null> => {
-  const space = Prisma.space.findUnique({
+  const space = await Prisma.space.findUnique({
     where: {
       id: spaceId,
     },
@@ -72,7 +72,7 @@ export const FindSpaceById = async (spaceId: string): Promise<Space | null> => {
 };
 
 export const DeleteSpaceById = async (spaceId: string): Promise<Space> => {
-  const deleteSpace = await  Prisma.space.delete({
+  const deleteSpace = await Prisma.space.delete({
     where: {
       id: spaceId,
     },
