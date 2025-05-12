@@ -7,6 +7,7 @@ import {
   DeleteSpaceById,
   FindMapById,
   FindSpaceById,
+  GetAllSpacesById,
 } from "../service/spaceService";
 import { Prisma } from "../../../../packages/db/prisma/generated/prisma";
 
@@ -75,6 +76,26 @@ export const DeleteSpaceController = async (
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       return res.status(400).json({ message: "Prisma error: " + err.message });
     }
+    return res
+      .status(500)
+      .json({ message: "Internal server error while creating space." });
+  }
+};
+
+export const GetAllSpacesController = async (userId: string, res: Response) => {
+  try {
+    const spaces = await GetAllSpacesById(userId);
+
+    res.status(200).json({
+      spaces: spaces.map((s) => ({
+        id: s.id,
+        name: s.id,
+        thumbnail: s.thumbnail,
+        dimensions: `${s.width}x${s.height}`,
+      })),
+    });
+    return;
+  } catch (err) {
     return res
       .status(500)
       .json({ message: "Internal server error while creating space." });

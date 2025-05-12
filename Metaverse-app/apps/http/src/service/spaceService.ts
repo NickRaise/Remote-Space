@@ -80,3 +80,13 @@ export const DeleteSpaceById = async (spaceId: string): Promise<Space> => {
 
   return deleteSpace;
 };
+
+export const GetAllSpacesById = async (userId: string): Promise<Space[]> => {
+  const spaces = await Prisma.space.findMany({
+    where: {
+      creatorId: userId,
+    },
+  });
+
+  return spaces;
+};
