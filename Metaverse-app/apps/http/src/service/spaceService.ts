@@ -60,3 +60,23 @@ export const FindMapById = async (
 
   return map;
 };
+
+export const FindSpaceById = async (spaceId: string): Promise<Space | null> => {
+  const space = Prisma.space.findUnique({
+    where: {
+      id: spaceId,
+    },
+  });
+
+  return space;
+};
+
+export const DeleteSpaceById = async (spaceId: string): Promise<Space> => {
+  const deleteSpace = await  Prisma.space.delete({
+    where: {
+      id: spaceId,
+    },
+  });
+
+  return deleteSpace;
+};

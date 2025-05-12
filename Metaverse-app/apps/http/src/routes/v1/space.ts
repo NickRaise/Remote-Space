@@ -2,7 +2,7 @@ import { Request, Response, Router } from "express";
 import { userMiddleware } from "../../middleware/authMiddleware";
 import { ValidateZodSchema } from "../../middleware/common";
 import { CreateSpaceSchema } from "../../types";
-import { CreateSpaceController } from "../../controllers/spaceController";
+import { CreateSpaceController, DeleteSpaceController } from "../../controllers/spaceController";
 
 const router = Router()
 
@@ -11,8 +11,10 @@ router.post("/", userMiddleware, ValidateZodSchema(CreateSpaceSchema), async (re
     await CreateSpaceController(req.body, userId, res)
 })
 
-router.delete("/:spaceId", (req, res) => {
-
+router.delete("/:spaceId", userMiddleware, async (req, res) => {
+    const userId = req.userId!
+    const spaceId = req.params.spaceId!
+    await DeleteSpaceController(spaceId, userId, res)
 })
 
 router.get("/all", (req, res) => {
