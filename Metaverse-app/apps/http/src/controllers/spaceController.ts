@@ -13,6 +13,7 @@ import {
   FindSpaceById,
   FindSpaceByIdAndCreator,
   GetAllSpacesById,
+  GetSpaceDataById,
 } from "../service/spaceService";
 import { Prisma } from "../../../../packages/db/prisma/generated/prisma";
 import {
@@ -165,3 +166,37 @@ export const DeleteSpaceElementController = async (
       .json({ message: "Internal server error while creating space." });
   }
 };
+
+export const GetSpacesController = async (spaceId: string, res: Response) => {
+  try {
+    const space = await GetSpaceDataById(spaceId) 
+    if(!space) {
+      res.status(400).json({message: "Space not found"})
+      return
+    }
+
+    res.status(200).json({
+      dimensions: `${space.width}x${space.height}`,
+      spaceElements: space.spaceElements.map((e) => ({
+        id: e.id,
+        element: {
+          id: e.element.id,
+          imageUrl: e.element.imageUrl,
+          height: e.element.height,
+          width: e.element.width,
+          static: e.element.static
+        },
+        x: e.x,
+        y: e.y
+      }))
+    })
+  } catch (err) {
+    console.log("Error deleting space element: ", err);
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      return res.status(400).json({ message: "Prisma error: " + err.message });
+    }
+    return res
+      .status(500)
+      .json({ message: "Internal server error while creating space." });
+  }
+}

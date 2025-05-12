@@ -2,12 +2,18 @@ import Prisma from "@repo/db/client";
 import z from "zod";
 import { CreateSpaceSchema } from "../types";
 import {
+  Element,
   MapElements,
   Space,
+  SpaceElements,
 } from "../../../../packages/db/prisma/generated/prisma";
 
 interface IMapWithElements {
   mapElements: MapElements[];
+}
+
+interface SpaceData extends Space {
+  spaceElements: (SpaceElements & { element: Element })[];
 }
 
 export const CreateSpaceWithoutMapId = async (
@@ -105,3 +111,21 @@ export const FindSpaceByIdAndCreator = async (
   return space;
 };
 
+export const GetSpaceDataById = async (
+  spaceId: string
+): Promise<SpaceData | null> => {
+  const space = await Prisma.space.findUnique({
+    where: {
+      id: spaceId,
+    },
+    include: {
+      spaceElements: {
+        include: {
+          element: true,
+        },
+      },
+    },
+  });
+
+  return space;
+};
