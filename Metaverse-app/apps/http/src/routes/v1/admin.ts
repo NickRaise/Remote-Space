@@ -6,11 +6,11 @@ import { CreateElementController, UpdateElementController } from "../../controll
 
 const router = Router();
 
-router.post("/element", adminMiddleware, ValidateZodSchema(CreateElementSchema), async (req: Request, res: Response) => {
+router.post("/element", ValidateZodSchema(CreateElementSchema), async (req: Request, res: Response) => {
     await CreateElementController(req.body, res)
 })
 
-router.put("/element/:elementId", adminMiddleware, ValidateZodSchema(UpdateElementSchema), async (req: Request, res: Response) => {
+router.put("/element/:elementId", ValidateZodSchema(UpdateElementSchema), async (req: Request, res: Response) => {
     await UpdateElementController(req.body, req.params.elementId!, res)
 })
 
