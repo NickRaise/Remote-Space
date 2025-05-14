@@ -1,8 +1,8 @@
 import { Request, Response, Router } from "express";
 import { adminMiddleware } from "../../middleware/authMiddleware";
 import { ValidateZodSchema } from "../../middleware/common";
-import { CreateElementSchema } from "../../types";
-import { CreateElementController } from "../../controllers/adminController";
+import { CreateElementSchema, UpdateElementSchema } from "../../types";
+import { CreateElementController, UpdateElementController } from "../../controllers/adminController";
 
 const router = Router();
 
@@ -10,8 +10,8 @@ router.post("/element", adminMiddleware, ValidateZodSchema(CreateElementSchema),
     await CreateElementController(req.body, res)
 })
 
-router.put("/element/elementId", (req, res) => {
-
+router.put("/element/:elementId", adminMiddleware, ValidateZodSchema(UpdateElementSchema), async (req: Request, res: Response) => {
+    await UpdateElementController(req.body, req.params.elementId!, res)
 })
 
 router.post("/avatar", (req, res) => {
