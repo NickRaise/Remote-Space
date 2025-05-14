@@ -4,6 +4,7 @@ import { UserRouter } from "./user";
 import { SpaceRouter } from "./space";
 import { AdminRouter } from "./admin";
 import { adminMiddleware } from "../../middleware/authMiddleware";
+import { GetElementsController } from "../../controllers/elementController";
 
 const router = Router();
 
@@ -16,8 +17,8 @@ router.get("/avatars", (req, res) => {
   res.send("avatar route");
 });
 
-router.get("/elements", (req, res) => {
-  
+router.get("/elements", async (req, res) => {
+  await GetElementsController(res)
 });
 
 export const V1Router = router;
