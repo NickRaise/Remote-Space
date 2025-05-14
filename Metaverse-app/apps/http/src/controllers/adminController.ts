@@ -1,7 +1,15 @@
 import z from "zod";
-import { CreateElementSchema, UpdateElementSchema } from "../types";
+import {
+  CreateAvatarSchema,
+  CreateElementSchema,
+  UpdateElementSchema,
+} from "../types";
 import { Response } from "express";
-import { CreateElement, UpdateElement } from "../service/adminService";
+import {
+  CreateAvatar,
+  CreateElement,
+  UpdateElement,
+} from "../service/adminService";
 
 export const CreateElementController = async (
   elementData: z.infer<typeof CreateElementSchema>,
@@ -31,6 +39,20 @@ export const UpdateElementController = async (
     res.status(200).json({ message: "Element updated" });
   } catch (err) {
     console.log("Error updating avatar: ", err);
+    return res.status(500).json({ message: err });
+  }
+};
+
+export const CreateAvatarController = async (
+  avatarData: z.infer<typeof CreateAvatarSchema>,
+  res: Response
+) => {
+  try {
+    const avatar = await CreateAvatar(avatarData);
+
+    res.status(200).json({ message: "Avatar created.", avatarId: avatar.id });
+  } catch (err) {
+    console.log("Error creating avatar: ", err);
     return res.status(500).json({ message: err });
   }
 };

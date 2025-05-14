@@ -1,7 +1,10 @@
 import z from "zod";
 import Prisma from "@repo/db/client";
-import { CreateElementSchema } from "../types";
-import { Element } from "../../../../packages/db/prisma/generated/prisma";
+import { CreateAvatarSchema, CreateElementSchema } from "../types";
+import {
+  Avatar,
+  Element,
+} from "../../../../packages/db/prisma/generated/prisma";
 
 export const CreateElement = async (
   elementData: z.infer<typeof CreateElementSchema>
@@ -27,4 +30,14 @@ export const UpdateElement = async (
   });
 
   return element;
+};
+
+export const CreateAvatar = async (
+  avatarData: z.infer<typeof CreateAvatarSchema>
+): Promise<Avatar> => {
+  const avatar = await Prisma.avatar.create({
+    data: avatarData,
+  });
+
+  return avatar;
 };
