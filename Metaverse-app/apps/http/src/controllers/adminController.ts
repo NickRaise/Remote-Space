@@ -2,12 +2,14 @@ import z from "zod";
 import {
   CreateAvatarSchema,
   CreateElementSchema,
+  CreateMapSchema,
   UpdateElementSchema,
 } from "../types";
 import { Response } from "express";
 import {
   CreateAvatar,
   CreateElement,
+  CreateMap,
   UpdateElement,
 } from "../service/adminService";
 
@@ -56,3 +58,14 @@ export const CreateAvatarController = async (
     return res.status(500).json({ message: err });
   }
 };
+
+export const CreateMapController = async (mapData: z.infer<typeof CreateMapSchema>, res: Response) => {
+  try {
+    const map = await CreateMap(mapData)
+
+    res.status(200).json({ message: "Map created.", id: map.id });
+  } catch(err) {
+    console.log("Error creating map: ", err);
+    return res.status(500).json({ message: err });
+  }
+}

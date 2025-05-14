@@ -1,9 +1,14 @@
 import z from "zod";
 import Prisma from "@repo/db/client";
-import { CreateAvatarSchema, CreateElementSchema } from "../types";
+import {
+  CreateAvatarSchema,
+  CreateElementSchema,
+  CreateMapSchema,
+} from "../types";
 import {
   Avatar,
   Element,
+  Map,
 } from "../../../../packages/db/prisma/generated/prisma";
 
 export const CreateElement = async (
@@ -40,4 +45,26 @@ export const CreateAvatar = async (
   });
 
   return avatar;
+};
+
+export const CreateMap = async (
+  mapData: z.infer<typeof CreateMapSchema>
+): Promise<Map> => {
+  const map = await Prisma.map.create({
+    data: {
+      name: mapData.name,
+      thumbnail: mapData.thumbnail,
+      width: parseInt(mapData.dimensions.split("x")[0] ?? "100"),
+      height: parseInt(mapData.dimensions.split("x")[1] ?? "100"),
+      mapElements: {
+        create: mapData.defaultElements.map((e) => ({
+          elementId: e.elementId,
+          x: e.x,
+          y: e.y,
+        })),
+      },
+    },
+  });
+
+  return map;
 };
