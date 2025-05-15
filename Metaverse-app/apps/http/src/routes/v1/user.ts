@@ -19,9 +19,8 @@ router.post(
 );
 
 router.get("/metadata/bulk", async (req: Request, res: Response) => {
-  const ids = req.query.ids;
-  const userIds = typeof ids === "string" ? JSON.parse(ids) : [];
-
+  const userIdString = (req.query.ids ?? "[]") as string;
+  const userIds = userIdString.slice(1, userIdString.length - 1).split(",");
   await GetMetaDataByIds(userIds, res);
 });
 
