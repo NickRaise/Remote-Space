@@ -8,7 +8,7 @@
   },
   "scripts": {
     "jest": "jest",
-    "test": "npm run jest"
+    "test": "jest --bail"
   },
   "keywords": [],
   "author": "",

@@ -112,83 +112,83 @@ describe("Authentication", () => {
   });
 });
 
-// describe("User metadata endpoints", () => {
-//   let token = "";
-//   let avatarId = "";
+describe("User metadata endpoints", () => {
+  let token = "";
+  let avatarId = "";
 
-//   beforeAll(async () => {
-//     const username = "user" + Math.random();
-//     const password = "12345678899";
+  beforeAll(async () => {
+    const username = "user" + Math.random();
+    const password = "12345678899";
 
-//     await axios.post(`${BACKEND_URL}/api/v1/auth/signup`, {
-//       username,
-//       password,
-//       type: "admin",
-//     });
+    await axios.post(`${BACKEND_URL}/api/v1/auth/signup`, {
+      username,
+      password,
+      type: "admin",
+    });
 
-//     const signinResponse = await axios.post(
-//       `${BACKEND_URL}/api/v1/user/signin`,
-//       {
-//         username,
-//         password,
-//       }
-//     );
+    const signinResponse = await axios.post(
+      `${BACKEND_URL}/api/v1/auth/signin`,
+      {
+        username,
+        password,
+      }
+    );
 
-//     token = signinResponse.data.token;
+    token = signinResponse.data.token;
 
-//     const avatarResponse = await axios.post(
-//       `${BACKEND_URL}/api/v1/admin/avatar`,
-//       {
-//         imageUrl:
-//           "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQm3RFDZM21teuCMFYx_AROjt-AzUwDBROFww&s",
-//         name: "Timmy",
-//       },
-//       {
-//         headers: {
-//           authorization: `Bearer ${token}`,
-//         },
-//       }
-//     );
+    const avatarResponse = await axios.post(
+      `${BACKEND_URL}/api/v1/admin/avatar`,
+      {
+        imageUrl:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQm3RFDZM21teuCMFYx_AROjt-AzUwDBROFww&s",
+        name: "Timmy",
+      },
+      {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
-//     avatarId = avatarResponse.data.avatarId;
-//   });
+    avatarId = avatarResponse.data.avatarId;
+  });
 
-//   test("User can't update their metadata with wrong avatar id", async () => {
-//     const response = await axios.post(
-//       `${BACKEND_URL}/api/v1/user/metadata`,
-//       {
-//         avatarId: "121213245",
-//       },
-//       {
-//         headers: {
-//           authorization: `Bearer ${token}`,
-//         },
-//       }
-//     );
-//     expect(response.status).toBe(400);
-//   });
+  test("User can't update their metadata with wrong avatar id", async () => {
+    const response = await axios.post(
+      `${BACKEND_URL}/api/v1/user/metadata`,
+      {
+        avatarId: "121213245",
+      },
+      {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    expect(response.status).toBe(400);
+  });
 
-//   test("User can update their metadata using avatar id", async () => {
-//     const response = await axios.post(
-//       `${BACKEND_URL}/api/v1/user/metadata`,
-//       {
-//         avatarId,
-//       },
-//       {
-//         headers: {
-//           authorization: `Bearer ${token}`,
-//         },
-//       }
-//     );
-//     expect(response.status).toBe(200);
-//   });
+  test("User can update their metadata using avatar id", async () => {
+    const response = await axios.post(
+      `${BACKEND_URL}/api/v1/user/metadata`,
+      {
+        avatarId,
+      },
+      {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    expect(response.status).toBe(200);
+  });
 
-//   test("User is not able to update their meta data if the auth header is not present", async () => {
-//     const response = await axios.post(`${BACKEND_URL}/api/v1/user/metadata`, {
-//       avatarId,
-//     });
-//     expect(response.status).toBe(403);
-//   });
-// });
+  test("User is not able to update their meta data if the auth header is not present", async () => {
+    const response = await axios.post(`${BACKEND_URL}/api/v1/user/metadata`, {
+      avatarId,
+    });
+    expect(response.status).toBe(401);
+  });
+});
 
 // describe()
