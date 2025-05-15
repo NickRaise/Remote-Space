@@ -11,7 +11,7 @@ export const UpdateUserMetadata = async (
     res.status(200).json({ success: true, message: "Updated successfully" });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    res.status(400).json({ success: false, message: "Cannot find avatar." });
   }
 };
 

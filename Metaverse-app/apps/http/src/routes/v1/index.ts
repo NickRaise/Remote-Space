@@ -5,7 +5,7 @@ import { SpaceRouter } from "./space";
 import { AdminRouter } from "./admin";
 import { adminMiddleware } from "../../middleware/authMiddleware";
 import { GetElementsController } from "../../controllers/elementController";
-import { GetAvatarsController } from "../../controllers/AvatarController";
+import { GetAvatarsController } from "../../controllers/avatarController";
 
 const router = Router();
 
