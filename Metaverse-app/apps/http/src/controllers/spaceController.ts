@@ -101,7 +101,7 @@ export const GetAllSpacesController = async (userId: string, res: Response) => {
     res.status(200).json({
       spaces: spaces.map((s) => ({
         id: s.id,
-        name: s.id,
+        name: s.name,
         thumbnail: s.thumbnail,
         dimensions: `${s.width}x${s.height}`,
       })),

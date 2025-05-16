@@ -1,5 +1,6 @@
 import { Response } from "express";
 import { GetAvatarByIds, UpdateMetadata } from "../service/userService";
+import { PrismaClientKnownRequestError } from "../../../../packages/db/prisma/generated/prisma/runtime/library";
 
 export const UpdateUserMetadata = async (
   userId: string,
@@ -10,8 +11,14 @@ export const UpdateUserMetadata = async (
     await UpdateMetadata(userId, avatarId);
     res.status(200).json({ success: true, message: "Updated successfully" });
   } catch (err) {
+    if (err instanceof PrismaClientKnownRequestError && err.code === "P2002") {
+          return res.status(400).json({
+            success: false,
+            message: "Cannot find avatar.",
+          });
+        }
     console.log(err);
-    res.status(400).json({ success: false, message: "Cannot find avatar." });
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
