@@ -11,7 +11,7 @@ export const UpdateUserMetadata = async (
     await UpdateMetadata(userId, avatarId);
     res.status(200).json({ success: true, message: "Updated successfully" });
   } catch (err) {
-    if (err instanceof PrismaClientKnownRequestError && err.code === "P2002") {
+    if (err instanceof PrismaClientKnownRequestError && err.code === "P2003") {
           return res.status(400).json({
             success: false,
             message: "Cannot find avatar.",
