@@ -9,6 +9,8 @@ import {
 } from "../../../../packages/db/prisma/generated/prisma";
 
 interface IMapWithElements {
+  width: number;
+  height: number;
   mapElements: MapElements[];
 }
 
@@ -37,6 +39,9 @@ export const CreateSpaceWithMapId = async (
   map: IMapWithElements,
   userId: string
 ): Promise<Space> => {
+  // Set the dimensions to be same as map
+  spaceData.dimensions = `${map.width}x${map.height}`;
+
   const space = await Prisma.$transaction(async () => {
     const space = await CreateSpaceWithoutMapId(spaceData, userId);
     await Prisma.spaceElements.createMany({
@@ -61,6 +66,8 @@ export const FindMapById = async (
     },
     select: {
       mapElements: true,
+      height: true,
+      width: true,
     },
   });
 
