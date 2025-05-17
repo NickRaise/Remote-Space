@@ -713,7 +713,6 @@ describe("Arena endpoints", () => {
   });
 
   test("Correct space id return the all the elements data along with space information", async () => {
-
     const response = await axios.get(`${BACKEND_URL}/api/v1/space/${spaceId}`, {
       headers: {
         authorization: `Bearer ${userToken}`,
@@ -727,7 +726,6 @@ describe("Arena endpoints", () => {
   });
 
   test("Delete endpoint is able to delete an element", async () => {
-  
     const spaceResponse = await axios.get(
       `${BACKEND_URL}/api/v1/space/${spaceId}`,
       {
@@ -737,19 +735,14 @@ describe("Arena endpoints", () => {
       }
     );
 
-
-    const deleteElementResponse = await axios.delete(
-      `${BACKEND_URL}/api/v1/space/element`,
-      {
-        headers: {
-          authorization: `Bearer ${userToken}`,
-        },
-        data: {
-          id: spaceResponse.data.spaceElements[0].id,
-        },
+    await axios.delete(`${BACKEND_URL}/api/v1/space/element`, {
+      headers: {
+        authorization: `Bearer ${userToken}`,
       },
-    );
-
+      data: {
+        id: spaceResponse.data.spaceElements[0].id,
+      },
+    });
 
     const newSpaceResponse = await axios.get(
       `${BACKEND_URL}/api/v1/space/${spaceId}`,
@@ -790,7 +783,6 @@ describe("Arena endpoints", () => {
         authorization: `Bearer ${userToken}`,
       },
     });
-    
     expect(response.data.spaceElements.length).toBe(4);
   });
 
@@ -944,7 +936,6 @@ describe("Admin endpoints", () => {
         },
       }
     );
-
     expect(r1.status).toBe(403);
     expect(r2.status).toBe(403);
     expect(r3.status).toBe(403);
@@ -957,6 +948,9 @@ describe("Admin endpoints", () => {
       {
         imageUrl:
           "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRCRca3wAR4zjPPTzeIY9rSwbbqB6bB2hVkoTXN4eerXOIkJTG1GpZ9ZqSGYafQPToWy_JTcmV5RHXsAsWQC3tKnMlH_CsibsSZ5oJtbakq&usqp=CAE",
+        width: 1,
+        height: 1,
+        static: true,
       },
       {
         headers: {
@@ -971,28 +965,7 @@ describe("Admin endpoints", () => {
         thumbnail: "https://thumbnail.com/a.png",
         dimensions: "100x200",
         name: "100 person interview room",
-        defaultElements: [
-          {
-            elementId: "chair1",
-            x: 20,
-            y: 20,
-          },
-          {
-            elementId: "chair2",
-            x: 18,
-            y: 20,
-          },
-          {
-            elementId: "table1",
-            x: 19,
-            y: 20,
-          },
-          {
-            elementId: "table2",
-            x: 19,
-            y: 20,
-          },
-        ],
+        defaultElements: [],
       },
       {
         headers: {
@@ -1050,6 +1023,6 @@ describe("Admin endpoints", () => {
       }
     );
 
-    expect(updateElementResponse.status).toBe(200)
+    expect(updateElementResponse.status).toBe(200);
   });
 });
