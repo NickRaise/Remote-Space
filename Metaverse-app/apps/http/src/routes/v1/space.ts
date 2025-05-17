@@ -11,20 +11,10 @@ router.post("/", userMiddleware, ValidateZodSchema(CreateSpaceSchema), async (re
     await CreateSpaceController(req.body, userId, res)
 })
 
-router.delete("/:spaceId", userMiddleware, async (req, res) => {
-    const userId = req.userId!
-    const spaceId = req.params.spaceId!
-    await DeleteSpaceController(spaceId, userId, res)
-})
 
 router.get("/all", userMiddleware, async (req, res) => {
     const userId = req.userId!
     await GetAllSpacesController(userId, res)
-})
-
-router.get("/:spaceId", async (req, res) => {
-    const spaceId = req.params.spaceId
-    await GetSpacesController(spaceId, res)
 })
 
 router.post("/element",userMiddleware, ValidateZodSchema(AddSpaceElementSchema), async (req, res) => {
@@ -34,7 +24,19 @@ router.post("/element",userMiddleware, ValidateZodSchema(AddSpaceElementSchema),
 
 router.delete("/element", userMiddleware, ValidateZodSchema(DeleteSpaceElementSchema), async (req, res) => {
     const userId = req.userId!
+    console.log("Running this route")
     await DeleteSpaceElementController(req.body, userId, res)
+})
+
+router.delete("/:spaceId", userMiddleware, async (req, res) => {
+    const userId = req.userId!
+    const spaceId = req.params.spaceId!
+    await DeleteSpaceController(spaceId, userId, res)
+})
+
+router.get("/:spaceId", userMiddleware, async (req, res) => {
+    const spaceId = req.params.spaceId!
+    await GetSpacesController(spaceId, res)
 })
 
 export const SpaceRouter = router
