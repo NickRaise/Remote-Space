@@ -682,10 +682,11 @@ describe("Arena endpoints", () => {
 
     mapId = map.data.id;
 
-    const space = await axios(
+    const space = await axios.post(
       `${BACKEND_URL}/api/v1/space`,
       {
         name: "Test",
+        dimensions: "100x200",
         mapId,
       },
       {
@@ -703,7 +704,7 @@ describe("Arena endpoints", () => {
       `${BACKEND_URL}/api/v1/space/randomSpaceId`,
       {
         headers: {
-          authorization: `Bearer ${userId}`,
+          authorization: `Bearer ${userToken}`,
         },
       }
     );
@@ -712,58 +713,60 @@ describe("Arena endpoints", () => {
   });
 
   test("Correct space id return the all the elements data along with space information", async () => {
+
     const response = await axios.get(`${BACKEND_URL}/api/v1/space/${spaceId}`, {
       headers: {
-        authorization: `Bearer ${userId}`,
+        authorization: `Bearer ${userToken}`,
       },
     });
 
     expect(response.status).toBe(200);
     const space = response.data;
     expect(space.dimensions).toBe("100x200");
-    expect(space.elements.length).toBe(4);
+    expect(space.spaceElements.length).toBe(4);
   });
 
   test("Delete endpoint is able to delete an element", async () => {
+  
     const spaceResponse = await axios.get(
       `${BACKEND_URL}/api/v1/space/${spaceId}`,
       {
         headers: {
-          authorization: `Bearer ${userId}`,
+          authorization: `Bearer ${userToken}`,
         },
       }
     );
 
-    await axios.delete(
+
+    const deleteElementResponse = await axios.delete(
       `${BACKEND_URL}/api/v1/space/element`,
       {
         headers: {
-          authorization: `Bearer ${userId}`,
+          authorization: `Bearer ${userToken}`,
+        },
+        data: {
+          id: spaceResponse.data.spaceElements[0].id,
         },
       },
-      {
-        data: {
-          id: spaceResponse.data.elements[0].id,
-        },
-      }
     );
+
 
     const newSpaceResponse = await axios.get(
       `${BACKEND_URL}/api/v1/space/${spaceId}`,
       {
         headers: {
-          authorization: `Bearer ${userId}`,
+          authorization: `Bearer ${userToken}`,
         },
       }
     );
 
-    const deleteElementId = spaceResponse.data.elements[0].id;
+    const deleteElementId = spaceResponse.data.spaceElements[0].id;
 
     expect(
-      newSpaceResponse.data.elements.some((e) => e.id === deleteElementId)
+      newSpaceResponse.data.spaceElements.some((e) => e.id === deleteElementId)
     ).toBe(false);
 
-    expect(newSpaceResponse.data.elements.length).toBe(3);
+    expect(newSpaceResponse.data.spaceElements.length).toBe(3);
   });
 
   test("Adding an element is working as expected", async () => {
@@ -777,18 +780,18 @@ describe("Arena endpoints", () => {
       },
       {
         headers: {
-          authorization: `Bearer ${userId}`,
+          authorization: `Bearer ${userToken}`,
         },
       }
     );
 
     const response = await axios.get(`${BACKEND_URL}/api/v1/space/${spaceId}`, {
       headers: {
-        authorization: `Bearer ${userId}`,
+        authorization: `Bearer ${userToken}`,
       },
     });
-
-    expect(response.data.elements.length).toBe(4);
+    
+    expect(response.data.spaceElements.length).toBe(4);
   });
 
   test("Adding an element fails if it exists outside the dimensions", async () => {
@@ -802,7 +805,7 @@ describe("Arena endpoints", () => {
       },
       {
         headers: {
-          authorization: `Bearer ${userId}`,
+          authorization: `Bearer ${userToken}`,
         },
       }
     );
