@@ -551,3 +551,265 @@ describe("Space information", () => {
     expect(filteredSpace).toBeDefined();
   });
 });
+
+describe("Arena endpoints", () => {
+  let mapId;
+  let element1Id;
+  let element2Id;
+  let adminId;
+  let adminToken;
+  let userId;
+  let userToken;
+  let spaceId;
+
+  beforeAll(async () => {
+    const username = "user" + Math.random();
+    const username2 = "user" + Math.random();
+    const password = "12345678899";
+
+    const signupResponse = await axios.post(
+      `${BACKEND_URL}/api/v1/auth/signup`,
+      {
+        username,
+        password,
+        type: "admin",
+      }
+    );
+
+    adminId = signupResponse.data.userId;
+
+    const signinResponse = await axios.post(
+      `${BACKEND_URL}/api/v1/auth/signin`,
+      {
+        username,
+        password,
+      }
+    );
+
+    adminToken = signinResponse.data.token;
+
+    const userSignupResponse = await axios.post(
+      `${BACKEND_URL}/api/v1/auth/signup`,
+      {
+        username: username2,
+        password,
+        type: "user",
+      }
+    );
+
+    userId = userSignupResponse.data.userId;
+
+    const userSigninResponse = await axios.post(
+      `${BACKEND_URL}/api/v1/auth/signin`,
+      {
+        username: username2,
+        password,
+      }
+    );
+
+    userToken = userSigninResponse.data.token;
+
+    const element1 = await axios.post(
+      `${BACKEND_URL}/api/v1/admin/element`,
+      {
+        imageUrl:
+          "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRCRca3wAR4zjPPTzeIY9rSwbbqB6bB2hVkoTXN4eerXOIkJTG1GpZ9ZqSGYafQPToWy_JTcmV5RHXsAsWQC3tKnMlH_CsibsSZ5oJtbakq&usqp=CAE",
+        width: 1,
+        height: 1,
+        static: true,
+      },
+      {
+        headers: {
+          authorization: `Bearer ${adminToken}`,
+        },
+      }
+    );
+
+    const element2 = await axios.post(
+      `${BACKEND_URL}/api/v1/admin/element`,
+      {
+        imageUrl:
+          "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRCRca3wAR4zjPPTzeIY9rSwbbqB6bB2hVkoTXN4eerXOIkJTG1GpZ9ZqSGYafQPToWy_JTcmV5RHXsAsWQC3tKnMlH_CsibsSZ5oJtbakq&usqp=CAE",
+        width: 1,
+        height: 1,
+        static: true,
+      },
+      {
+        headers: {
+          authorization: `Bearer ${adminToken}`,
+        },
+      }
+    );
+
+    element1Id = element1.data.id;
+    element2Id = element2.data.id;
+
+    const map = await axios.post(
+      `${BACKEND_URL}/api/v1/admin/map`,
+      {
+        thumbnail: "https://thumbnail.com/a.png",
+        dimensions: "100x200",
+        name: "100 person interview room",
+        defaultElements: [
+          {
+            elementId: element1Id,
+            x: 20,
+            y: 20,
+          },
+          {
+            elementId: element1Id,
+            x: 18,
+            y: 20,
+          },
+          {
+            elementId: element2Id,
+            x: 19,
+            y: 20,
+          },
+          {
+            elementId: element2Id,
+            x: 19,
+            y: 20,
+          },
+        ],
+      },
+      {
+        headers: {
+          authorization: `Bearer ${adminToken}`,
+        },
+      }
+    );
+
+    mapId = map.data.id;
+
+    const space = await axios(
+      `${BACKEND_URL}/api/v1/space`,
+      {
+        name: "Test",
+        mapId,
+      },
+      {
+        headers: {
+          authorization: `Bearer ${userToken}`,
+        },
+      }
+    );
+
+    spaceId = space.data.spaceId;
+  });
+
+  test("Incorrect space id while fetching a space returns 400 status code", async () => {
+    const response = await axios.get(
+      `${BACKEND_URL}/api/v1/space/randomSpaceId`,
+      {
+        headers: {
+          authorization: `Bearer ${userId}`,
+        },
+      }
+    );
+
+    expect(response.status).toBe(400);
+  });
+
+  test("Correct space id return the all the elements data along with space information", async () => {
+    const response = await axios.get(`${BACKEND_URL}/api/v1/space/${spaceId}`, {
+      headers: {
+        authorization: `Bearer ${userId}`,
+      },
+    });
+
+    expect(response.status).toBe(200);
+    const space = response.data;
+    expect(space.dimensions).toBe("100x200");
+    expect(space.elements.length).toBe(4);
+  });
+
+  test("Delete endpoint is able to delete an element", async () => {
+    const spaceResponse = await axios.get(
+      `${BACKEND_URL}/api/v1/space/${spaceId}`,
+      {
+        headers: {
+          authorization: `Bearer ${userId}`,
+        },
+      }
+    );
+
+    await axios.delete(
+      `${BACKEND_URL}/api/v1/space/element`,
+      {
+        headers: {
+          authorization: `Bearer ${userId}`,
+        },
+      },
+      {
+        data: {
+          id: spaceResponse.data.elements[0].id,
+        },
+      }
+    );
+
+    const newSpaceResponse = await axios.get(
+      `${BACKEND_URL}/api/v1/space/${spaceId}`,
+      {
+        headers: {
+          authorization: `Bearer ${userId}`,
+        },
+      }
+    );
+
+    const deleteElementId = spaceResponse.data.elements[0].id;
+
+    expect(
+      newSpaceResponse.data.elements.some((e) => e.id === deleteElementId)
+    ).toBe(false);
+
+    expect(newSpaceResponse.data.elements.length).toBe(3);
+  });
+
+  test("Adding an element is working as expected", async() => {
+    await axios.post(
+      `${BACKEND_URL}/api/v1/space/element`,
+      {
+        elementId: element1Id,
+        spaceId,
+        x: 50,
+        y:20
+      },
+      {
+        headers: {
+          authorization: `Bearer ${userId}`,
+        },
+      }
+    );
+
+    const response = await axios.get(
+      `${BACKEND_URL}/api/v1/space/${spaceId}`,
+      {
+        headers: {
+          authorization: `Bearer ${userId}`,
+        },
+      }
+    );
+
+    expect(response.data.elements.length).toBe(4)
+  })
+
+  test("Adding an element fails if it exists outside the dimensions", async() => {
+    const response = await axios.post(
+      `${BACKEND_URL}/api/v1/space/element`,
+      {
+        elementId: element1Id,
+        spaceId,
+        x: 50000,
+        y:20000
+      },
+      {
+        headers: {
+          authorization: `Bearer ${userId}`,
+        },
+      }
+    );
+
+    expect(response.status).toBe(400)
+  })
+});
