@@ -128,6 +128,10 @@ export const AddSpaceElementController = async (
       return;
     }
 
+    if(elementData.x < 0 || elementData.y < 0 || elementData.x > space.width || elementData.y > space.height) {
+      res.status(400).json({message: "Position is outside of space"})
+    }
+
     await CreateSpaceElement(elementData);
 
     res.status(200).json({ message: "Element added" });

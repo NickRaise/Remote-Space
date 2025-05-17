@@ -24,7 +24,6 @@ router.post("/element",userMiddleware, ValidateZodSchema(AddSpaceElementSchema),
 
 router.delete("/element", userMiddleware, ValidateZodSchema(DeleteSpaceElementSchema), async (req, res) => {
     const userId = req.userId!
-    console.log("Running this route")
     await DeleteSpaceElementController(req.body, userId, res)
 })
 
