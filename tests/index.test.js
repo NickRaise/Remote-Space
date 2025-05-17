@@ -766,14 +766,14 @@ describe("Arena endpoints", () => {
     expect(newSpaceResponse.data.elements.length).toBe(3);
   });
 
-  test("Adding an element is working as expected", async() => {
+  test("Adding an element is working as expected", async () => {
     await axios.post(
       `${BACKEND_URL}/api/v1/space/element`,
       {
         elementId: element1Id,
         spaceId,
         x: 50,
-        y:20
+        y: 20,
       },
       {
         headers: {
@@ -782,26 +782,23 @@ describe("Arena endpoints", () => {
       }
     );
 
-    const response = await axios.get(
-      `${BACKEND_URL}/api/v1/space/${spaceId}`,
-      {
-        headers: {
-          authorization: `Bearer ${userId}`,
-        },
-      }
-    );
+    const response = await axios.get(`${BACKEND_URL}/api/v1/space/${spaceId}`, {
+      headers: {
+        authorization: `Bearer ${userId}`,
+      },
+    });
 
-    expect(response.data.elements.length).toBe(4)
-  })
+    expect(response.data.elements.length).toBe(4);
+  });
 
-  test("Adding an element fails if it exists outside the dimensions", async() => {
+  test("Adding an element fails if it exists outside the dimensions", async () => {
     const response = await axios.post(
       `${BACKEND_URL}/api/v1/space/element`,
       {
         elementId: element1Id,
         spaceId,
         x: 50000,
-        y:20000
+        y: 20000,
       },
       {
         headers: {
@@ -810,6 +807,246 @@ describe("Arena endpoints", () => {
       }
     );
 
-    expect(response.status).toBe(400)
-  })
+    expect(response.status).toBe(400);
+  });
+});
+
+describe("Admin endpoints", () => {
+  let adminId;
+  let adminToken;
+  let userId;
+  let userToken;
+
+  beforeAll(async () => {
+    const username = "user" + Math.random();
+    const username2 = "user" + Math.random();
+    const password = "12345678899";
+
+    const signupResponse = await axios.post(
+      `${BACKEND_URL}/api/v1/auth/signup`,
+      {
+        username,
+        password,
+        type: "admin",
+      }
+    );
+
+    adminId = signupResponse.data.userId;
+
+    const signinResponse = await axios.post(
+      `${BACKEND_URL}/api/v1/auth/signin`,
+      {
+        username,
+        password,
+      }
+    );
+
+    adminToken = signinResponse.data.token;
+
+    const userSignupResponse = await axios.post(
+      `${BACKEND_URL}/api/v1/auth/signup`,
+      {
+        username: username2,
+        password,
+        type: "user",
+      }
+    );
+
+    userId = userSignupResponse.data.userId;
+
+    const userSigninResponse = await axios.post(
+      `${BACKEND_URL}/api/v1/auth/signin`,
+      {
+        username: username2,
+        password,
+      }
+    );
+
+    userToken = userSigninResponse.data.token;
+  });
+
+  test("User is not able to hit admin endpoints", async () => {
+    const r1 = await axios.post(
+      `${BACKEND_URL}/api/v1/admin/element`,
+      {
+        imageUrl:
+          "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRCRca3wAR4zjPPTzeIY9rSwbbqB6bB2hVkoTXN4eerXOIkJTG1GpZ9ZqSGYafQPToWy_JTcmV5RHXsAsWQC3tKnMlH_CsibsSZ5oJtbakq&usqp=CAE",
+      },
+      {
+        headers: {
+          authorization: `Bearer ${userToken}`,
+        },
+      }
+    );
+
+    const r2 = await axios.put(
+      `${BACKEND_URL}/api/v1/admin/element/:randomElementId`,
+      {
+        imageUrl:
+          "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRCRca3wAR4zjPPTzeIY9rSwbbqB6bB2hVkoTXN4eerXOIkJTG1GpZ9ZqSGYafQPToWy_JTcmV5RHXsAsWQC3tKnMlH_CsibsSZ5oJtbakq&usqp=CAE",
+      },
+      {
+        headers: {
+          authorization: `Bearer ${userToken}`,
+        },
+      }
+    );
+
+    const r3 = await axios.post(
+      `${BACKEND_URL}/api/v1/admin/map`,
+      {
+        thumbnail: "https://thumbnail.com/a.png",
+        dimensions: "100x200",
+        name: "100 person interview room",
+        defaultElements: [
+          {
+            elementId: "chair1",
+            x: 20,
+            y: 20,
+          },
+          {
+            elementId: "chair2",
+            x: 18,
+            y: 20,
+          },
+          {
+            elementId: "table1",
+            x: 19,
+            y: 20,
+          },
+          {
+            elementId: "table2",
+            x: 19,
+            y: 20,
+          },
+        ],
+      },
+      {
+        headers: {
+          authorization: `Bearer ${userToken}`,
+        },
+      }
+    );
+
+    const r4 = await axios.post(
+      `${BACKEND_URL}/api/v1/admin/avatar`,
+      {
+        imageUrl:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQm3RFDZM21teuCMFYx_AROjt-AzUwDBROFww&s",
+        name: "Timmy",
+      },
+      {
+        headers: {
+          authorization: `Bearer ${userToken}`,
+        },
+      }
+    );
+
+    expect(r1.status).toBe(403);
+    expect(r2.status).toBe(403);
+    expect(r3.status).toBe(403);
+    expect(r4.status).toBe(403);
+  });
+
+  test("Admin is able to hit admin endpoints", async () => {
+    const r1 = await axios.post(
+      `${BACKEND_URL}/api/v1/admin/element`,
+      {
+        imageUrl:
+          "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRCRca3wAR4zjPPTzeIY9rSwbbqB6bB2hVkoTXN4eerXOIkJTG1GpZ9ZqSGYafQPToWy_JTcmV5RHXsAsWQC3tKnMlH_CsibsSZ5oJtbakq&usqp=CAE",
+      },
+      {
+        headers: {
+          authorization: `Bearer ${adminToken}`,
+        },
+      }
+    );
+
+    const r2 = await axios.post(
+      `${BACKEND_URL}/api/v1/admin/map`,
+      {
+        thumbnail: "https://thumbnail.com/a.png",
+        dimensions: "100x200",
+        name: "100 person interview room",
+        defaultElements: [
+          {
+            elementId: "chair1",
+            x: 20,
+            y: 20,
+          },
+          {
+            elementId: "chair2",
+            x: 18,
+            y: 20,
+          },
+          {
+            elementId: "table1",
+            x: 19,
+            y: 20,
+          },
+          {
+            elementId: "table2",
+            x: 19,
+            y: 20,
+          },
+        ],
+      },
+      {
+        headers: {
+          authorization: `Bearer ${adminToken}`,
+        },
+      }
+    );
+
+    const r3 = await axios.post(
+      `${BACKEND_URL}/api/v1/admin/avatar`,
+      {
+        imageUrl:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQm3RFDZM21teuCMFYx_AROjt-AzUwDBROFww&s",
+        name: "Timmy",
+      },
+      {
+        headers: {
+          authorization: `Bearer ${adminToken}`,
+        },
+      }
+    );
+
+    expect(r1.status).toBe(200);
+    expect(r2.status).toBe(200);
+    expect(r3.status).toBe(200);
+  });
+
+  test("Admin is able to update the element image", async () => {
+    const elementResponse = await axios.post(
+      `${BACKEND_URL}/api/v1/admin/element`,
+      {
+        imageUrl:
+          "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRCRca3wAR4zjPPTzeIY9rSwbbqB6bB2hVkoTXN4eerXOIkJTG1GpZ9ZqSGYafQPToWy_JTcmV5RHXsAsWQC3tKnMlH_CsibsSZ5oJtbakq&usqp=CAE",
+        width: 1,
+        height: 1,
+        static: true,
+      },
+      {
+        headers: {
+          authorization: `Bearer ${adminToken}`,
+        },
+      }
+    );
+
+    const updateElementResponse = await axios.put(
+      `${BACKEND_URL}/api/v1/admin/element/${elementResponse.data.id}`,
+      {
+        imageUrl:
+          "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRCRca3wAR4zjPPTzeIY9rSwbbqB6bB2hVkoTXN4eerXOIkJTG1GpZ9ZqSGYafQPToWy_JTcmV5RHXsAsWQC3tKnMlH_CsibsSZ5oJtbakq&usqp=CAE",
+      },
+      {
+        headers: {
+          authorization: `Bearer ${adminToken}`,
+        },
+      }
+    );
+
+    expect(updateElementResponse.status).toBe(200)
+  });
 });
