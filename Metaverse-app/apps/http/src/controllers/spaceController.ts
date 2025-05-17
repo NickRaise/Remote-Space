@@ -128,8 +128,14 @@ export const AddSpaceElementController = async (
       return;
     }
 
-    if(elementData.x < 0 || elementData.y < 0 || elementData.x > space.width || elementData.y > space.height) {
-      res.status(400).json({message: "Position is outside of space"})
+    if (
+      elementData.x < 0 ||
+      elementData.y < 0 ||
+      elementData.x > space.width ||
+      elementData.y > space.height
+    ) {
+      res.status(400).json({ message: "Position is outside of space" });
+      return;
     }
 
     await CreateSpaceElement(elementData);
@@ -153,8 +159,15 @@ export const DeleteSpaceElementController = async (
 ) => {
   try {
     const spaceElement = await FindSpaceElementById(id);
+
+    if (!spaceElement) {
+      res.status(400).json({ message: "This space element does not exists" });
+      return;
+    }
+
     if (spaceElement.space.creatorId !== userId) {
       res.status(403).json({ message: "Unauthorized" });
+      return;
     }
 
     await DeleteSpaceElementById(id);
@@ -173,10 +186,10 @@ export const DeleteSpaceElementController = async (
 
 export const GetSpacesController = async (spaceId: string, res: Response) => {
   try {
-    const space = await GetSpaceDataById(spaceId) 
-    if(!space) {
-      res.status(400).json({message: "Space not found"})
-      return
+    const space = await GetSpaceDataById(spaceId);
+    if (!space) {
+      res.status(400).json({ message: "Space not found" });
+      return;
     }
 
     res.status(200).json({
@@ -188,12 +201,12 @@ export const GetSpacesController = async (spaceId: string, res: Response) => {
           imageUrl: e.element.imageUrl,
           height: e.element.height,
           width: e.element.width,
-          static: e.element.static
+          static: e.element.static,
         },
         x: e.x,
-        y: e.y
-      }))
-    })
+        y: e.y,
+      })),
+    });
   } catch (err) {
     console.log("Error deleting space element: ", err);
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
@@ -203,4 +216,4 @@ export const GetSpacesController = async (spaceId: string, res: Response) => {
       .status(500)
       .json({ message: "Internal server error while creating space." });
   }
-}
+};

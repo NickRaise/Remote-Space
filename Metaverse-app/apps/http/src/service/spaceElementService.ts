@@ -31,8 +31,8 @@ export const DeleteSpaceElementById = async (
 
 export const FindSpaceElementById = async (
   id: string
-): Promise<SpaceElementWithSpace> => {
-  const spaceElement = await Prisma.spaceElements.delete({
+): Promise<SpaceElementWithSpace | null> => {
+  const spaceElement = await Prisma.spaceElements.findUnique({
     where: {
       id,
     },
