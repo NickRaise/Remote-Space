@@ -48,6 +48,17 @@ export const userJoinEvent = async (
   };
 
   user.send(spaceJoinedResponse);
+
+  const broadcastMessage = {
+    type: "user-join",
+    payload: {
+      userId: user.id,
+      x: user.x,
+      y: user.y,
+    },
+  };
+
+  RoomManager.getInstance().broadcast(broadcastMessage, user, user.spaceId);
 };
 
 export const userMoveEvent = async (
@@ -82,7 +93,7 @@ export const userMoveEvent = async (
     );
   } else {
     const movementRejectedMessage = {
-      type: "move",
+      type: "movement-rejected",
       payload: {
         x: user.x,
         y: user.y,
