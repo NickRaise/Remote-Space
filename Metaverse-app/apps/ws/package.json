@@ -1,5 +1,5 @@
 {
-  "name": "ws",
+  "name": "ws-server",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,5 +11,12 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs"
+  "type": "commonjs",
+  "dependencies": {
+    "@repo/db": "*",
+    "ws": "^8.18.2"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.18.1"
+  }
 }
