@@ -8,6 +8,7 @@ export class User {
   x?: number;
   y?: number;
   spaceId?: string
+  userId?: string
 
   constructor(ws: WebSocket) {
     this.ws = ws;
@@ -17,6 +18,7 @@ export class User {
   initHandlers() {
     this.ws.on("message", async (data) => {
       const parsedData = JSON.parse(data.toString());
+
       switch (parsedData.type) {
         case "join":
           await userJoinEvent(parsedData.payload, this);

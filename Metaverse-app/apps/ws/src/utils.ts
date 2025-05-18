@@ -7,3 +7,7 @@ export function generateUserId() {
   }
   return userId;
 }
+
+// export const verifyUser = async (token: string): Promise<{userId: string, role: "admin" | "user"}> => {
+
+// }

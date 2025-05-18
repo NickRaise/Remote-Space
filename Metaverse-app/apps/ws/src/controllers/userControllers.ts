@@ -11,6 +11,9 @@ export const userJoinEvent = async (
   payload: IUserSpaceJoinRequestPayload,
   user: User
 ) => {
+
+  const userMetadata = await verifyUser(payload.token)
+
   const spaceId = payload.spaceId;
 
   const space = await Prisma.space.findUnique({
