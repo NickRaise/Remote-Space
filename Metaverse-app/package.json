@@ -22,6 +22,8 @@
     "packages/*"
   ],
   "dependencies": {
+    "@types/jsonwebtoken": "^9.0.9",
+    "jsonwebtoken": "^9.0.2",
     "zod": "^3.24.3"
   }
 }

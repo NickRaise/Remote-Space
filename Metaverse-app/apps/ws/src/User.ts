@@ -22,15 +22,18 @@ export class User {
       switch (parsedData.type) {
         case "join":
           await userJoinEvent(parsedData.payload, this);
+          break
 
         case "move":
             await userMoveEvent(parsedData.payload, this)
+            break
         
       }
     });
   }
 
-  send(payload: OutgoingMessage) {
+
+  send(payload: any) {
     this.ws.send(JSON.stringify(payload));
   }
 }

@@ -3,16 +3,26 @@ import {
   ISpaceJoinedResponse,
   IUserMoveRequestPayload,
   IUserSpaceJoinRequestPayload,
-} from "../types";
+} from "@repo/common/ws-types";
+
 import type { User } from "../User";
 import Prisma from "@repo/db/client";
+import { verifyUser } from "../utils";
 
 export const userJoinEvent = async (
   payload: IUserSpaceJoinRequestPayload,
   user: User
 ) => {
 
-  const userMetadata = await verifyUser(payload.token)
+  
+  const userMetadata = verifyUser(payload.token)
+  
+  if(!userMetadata) {
+    user.ws.close()
+    return
+  }
+  
+  user.userId = userMetadata?.userId
 
   const spaceId = payload.spaceId;
 
