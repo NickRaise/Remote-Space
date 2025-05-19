@@ -12,6 +12,8 @@ import type { User } from "../User";
 import Prisma from "@repo/db/client";
 import { verifyUser } from "../utils";
 
+const roomManager = RoomManager.getInstance();
+
 export const userJoinEvent = async (
   payload: IUserSpaceJoinRequestPayload,
   user: User
@@ -19,6 +21,12 @@ export const userJoinEvent = async (
   const userMetadata = verifyUser(payload.token);
 
   if (!userMetadata) {
+    user.send({
+      type: "error",
+      payload: {
+        reason: "Invalid token",
+      },
+    });
     user.ws.close();
     return;
   }
@@ -34,6 +42,12 @@ export const userJoinEvent = async (
   });
 
   if (!space) {
+    user.send({
+      type: "error",
+      payload: {
+        reason: "Space not found",
+      },
+    });
     user.ws.close();
     return;
   }
@@ -43,7 +57,7 @@ export const userJoinEvent = async (
   user.x = Math.floor(Math.random() * space.width);
   user.y = Math.floor(Math.random() * space.height);
 
-  RoomManager.getInstance().addUser(spaceId, user);
+  roomManager.addUser(spaceId, user);
 
   const spaceJoinedResponse: ISpaceJoinedResponse = {
     type: "space-join",
@@ -72,17 +86,22 @@ export const userJoinEvent = async (
     },
   };
 
-  RoomManager.getInstance().broadcast(broadcastMessage, user, user.spaceId);
+  roomManager.broadcast(broadcastMessage, user, user.spaceId);
 };
 
 export const userMoveEvent = async (
   payload: IUserMoveRequestPayload,
   user: User
 ) => {
-
-  if(!user.userId) {
-    user.ws.close()
-    return
+  if (!user.userId || !user.spaceId) {
+    user.send({
+      type: "error",
+      payload: {
+        reason: "Invalid token or space",
+      },
+    });
+    user.ws.close();
+    return;
   }
 
   const moveX = payload.x;
@@ -110,7 +129,7 @@ export const userMoveEvent = async (
     RoomManager.getInstance().broadcast(
       movementSuccessMessage,
       user,
-      user.spaceId!
+      user.spaceId
     );
   } else {
     const movementRejectedMessage: IUserMovementRejected = {
@@ -121,15 +140,13 @@ export const userMoveEvent = async (
       },
     };
 
-    RoomManager.getInstance().broadcast(
-      movementRejectedMessage,
-      user,
-      user.spaceId!
-    );
+    roomManager.broadcast(movementRejectedMessage, user, user.spaceId);
   }
 };
 
 export const removeUser = (user: User) => {
+  if (!user.spaceId) return;
+
   const broadcastMessage: IUserLeftResponse = {
     type: "user-left",
     payload: {
@@ -137,6 +154,6 @@ export const removeUser = (user: User) => {
     },
   };
 
-  RoomManager.getInstance().broadcast(broadcastMessage, user, user.spaceId!);
-  RoomManager.getInstance().removeUser(user, user.spaceId!);
+  roomManager.broadcast(broadcastMessage, user, user.spaceId);
+  roomManager.removeUser(user, user.spaceId);
 };

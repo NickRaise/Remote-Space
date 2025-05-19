@@ -33,7 +33,7 @@ export class RoomManager {
   }
 
   public broadcast(message: any, user: User, roomId: string) {
-    if (this.rooms.has(roomId)) {
+    if (!this.rooms.has(roomId)) {
       return;
     }
 
