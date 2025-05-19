@@ -79,6 +79,12 @@ export const userMoveEvent = async (
   payload: IUserMoveRequestPayload,
   user: User
 ) => {
+
+  if(!user.userId) {
+    user.ws.close()
+    return
+  }
+
   const moveX = payload.x;
   const moveY = payload.y;
 
