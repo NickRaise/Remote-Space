@@ -8,9 +8,9 @@ import {
 } from "../service/authService";
 import jwt from "jsonwebtoken";
 import { PrismaClientKnownRequestError } from "../../../../packages/db/prisma/generated/prisma/runtime/library";
-require("dotenv").config();
+import { environmentConfig } from "@repo/common/config";
 
-const JWT_SECRET = process.env.JWT_SECRET!;
+const JWT_SECRET = environmentConfig.jwtSecret as string;
 
 export const SignUpUser = async (
   userData: z.infer<typeof SignUpSchema>,
@@ -55,7 +55,7 @@ export const SignInUser = async (
 
     if (!isValid) {
       res.status(403).json({ success: false, message: "Invalid password" });
-      return
+      return;
     }
 
     const token = jwt.sign(

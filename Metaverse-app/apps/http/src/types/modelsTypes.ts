@@ -1,4 +1,4 @@
-import { Role } from "@prisma/client"; // Import the Role enum
+import { Role } from "../../../../packages/db/prisma/generated/prisma";
 
 export interface IUser {
   username: string;
