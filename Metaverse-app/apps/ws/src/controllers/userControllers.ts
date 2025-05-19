@@ -1,7 +1,10 @@
 import { RoomManager } from "../RoomManager";
 import {
   ISpaceJoinedResponse,
+  IUserLeftResponse,
+  IUserMovementRejected,
   IUserMoveRequestPayload,
+  IUserMoveResponse,
   IUserSpaceJoinRequestPayload,
 } from "@repo/common/ws-types";
 
@@ -13,16 +16,14 @@ export const userJoinEvent = async (
   payload: IUserSpaceJoinRequestPayload,
   user: User
 ) => {
+  const userMetadata = verifyUser(payload.token);
 
-  
-  const userMetadata = verifyUser(payload.token)
-  
-  if(!userMetadata) {
-    user.ws.close()
-    return
+  if (!userMetadata) {
+    user.ws.close();
+    return;
   }
-  
-  user.userId = userMetadata?.userId
+
+  user.userId = userMetadata?.userId;
 
   const spaceId = payload.spaceId;
 
@@ -91,11 +92,12 @@ export const userMoveEvent = async (
   ) {
     (user.x = moveX), (user.y = moveY);
 
-    const movementSuccessMessage = {
-      type: "move",
+    const movementSuccessMessage: IUserMoveResponse = {
+      type: "movement",
       payload: {
         x: user.x,
         y: user.y,
+        userId: user.id,
       },
     };
 
@@ -105,11 +107,11 @@ export const userMoveEvent = async (
       user.spaceId!
     );
   } else {
-    const movementRejectedMessage = {
+    const movementRejectedMessage: IUserMovementRejected = {
       type: "movement-rejected",
       payload: {
-        x: user.x,
-        y: user.y,
+        x: user.x!,
+        y: user.y!,
       },
     };
 
@@ -119,4 +121,16 @@ export const userMoveEvent = async (
       user.spaceId!
     );
   }
+};
+
+export const removeUser = (user: User) => {
+  const broadcastMessage: IUserLeftResponse = {
+    type: "user-left",
+    payload: {
+      userId: user.id,
+    },
+  };
+
+  RoomManager.getInstance().broadcast(broadcastMessage, user, user.spaceId!);
+  RoomManager.getInstance().removeUser(user, user.spaceId!);
 };

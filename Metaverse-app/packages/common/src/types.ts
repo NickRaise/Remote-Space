@@ -25,9 +25,26 @@ export interface ISpaceJoinedResponse {
   };
 }
 
-export interface IUserMovementRejected {
+export interface IUserMoveResponse {
+  type: "movement";
   payload: {
     x: number;
     y: number;
+    userId: string;
+  };
+}
+
+export interface IUserMovementRejected {
+  type: "movement-rejected";
+  payload: {
+    x: number;
+    y: number;
+  };
+}
+
+export interface IUserLeftResponse {
+  type: "user-left";
+  payload: {
+    userId: string;
   };
 }

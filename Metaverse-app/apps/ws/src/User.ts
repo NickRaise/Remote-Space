@@ -1,14 +1,18 @@
 import { WebSocket } from "ws";
 import { generateUserId } from "./utils";
-import { userJoinEvent, userMoveEvent } from "./controllers/userControllers";
+import {
+  removeUser,
+  userJoinEvent,
+  userMoveEvent,
+} from "./controllers/userControllers";
 
 export class User {
   ws: WebSocket;
   id: string;
   x?: number;
   y?: number;
-  spaceId?: string
-  userId?: string
+  spaceId?: string;
+  userId?: string;
 
   constructor(ws: WebSocket) {
     this.ws = ws;
@@ -22,16 +26,18 @@ export class User {
       switch (parsedData.type) {
         case "join":
           await userJoinEvent(parsedData.payload, this);
-          break
+          break;
 
         case "move":
-            await userMoveEvent(parsedData.payload, this)
-            break
-        
+          await userMoveEvent(parsedData.payload, this);
+          break;
       }
     });
   }
 
+  destroy() {
+    removeUser(this);
+  }
 
   send(payload: any) {
     this.ws.send(JSON.stringify(payload));
