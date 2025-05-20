@@ -4,7 +4,7 @@ import { User } from './User';
 const wss = new WebSocketServer({ port: 3001 });
 
 wss.on('connection', function connection(ws) {
-
+  console.log("User connected")
   let user: User = new User(ws)
   user.initHandlers()
 
@@ -14,5 +14,4 @@ wss.on('connection', function connection(ws) {
     user.destroy()
   })
 
-  ws.send('something');
 });

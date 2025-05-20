@@ -60,7 +60,7 @@ export const userJoinEvent = async (
   roomManager.addUser(spaceId, user);
 
   const spaceJoinedResponse: ISpaceJoinedResponse = {
-    type: "space-join",
+    type: "space-joined",
     payload: {
       spaceId: spaceId,
       userId: user.id,
@@ -71,16 +71,17 @@ export const userJoinEvent = async (
       users:
         RoomManager.getInstance()
           .rooms.get(spaceId)
-          ?.map((u) => ({ id: u.id })) ?? [],
+          ?.filter((u) => u.id !== user.id)
+          .map((u) => ({ id: u.id })) ?? [],
     },
   };
 
   user.send(spaceJoinedResponse);
 
   const broadcastMessage = {
-    type: "user-join",
+    type: "user-joined",
     payload: {
-      userId: user.id,
+      userId: user.userId,
       x: user.x,
       y: user.y,
     },

@@ -13,7 +13,7 @@ export interface IUserMoveRequestPayload {
 // WS server responses
 
 export interface ISpaceJoinedResponse {
-  type: "space-join";
+  type: "space-joined";
   payload: {
     spaceId: string;
     userId: string;
