@@ -63,7 +63,7 @@ export const userJoinEvent = async (
     type: "space-joined",
     payload: {
       spaceId: spaceId,
-      userId: user.id,
+      userId: user.userId,
       spawn: {
         x: user.x,
         y: user.y,
