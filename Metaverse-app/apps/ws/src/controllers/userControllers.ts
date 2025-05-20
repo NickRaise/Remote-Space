@@ -146,12 +146,12 @@ export const userMoveEvent = async (
 };
 
 export const removeUser = (user: User) => {
-  if (!user.spaceId) return;
+  if (!user.spaceId || !user.userId) return;
 
   const broadcastMessage: IUserLeftResponse = {
     type: "user-left",
     payload: {
-      userId: user.id,
+      userId: user.userId,
     },
   };
 
