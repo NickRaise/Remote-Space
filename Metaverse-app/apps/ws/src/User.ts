@@ -28,9 +28,12 @@ export class User {
           await userJoinEvent(parsedData.payload, this);
           break;
 
-        case "move":
+        case "movement":
           await userMoveEvent(parsedData.payload, this);
           break;
+
+        default:
+          this.send({ message: "Invalid event" });
       }
     });
   }

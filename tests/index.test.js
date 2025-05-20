@@ -1251,8 +1251,6 @@ describe("Websocket tests", () => {
     const message2 = await waitForAndPopulateLatestMessage(ws2Messages);
     const message3 = await waitForAndPopulateLatestMessage(ws1Messages);
 
-    console.log(message1, message2, message3);
-
     expect(message1.type).toBe("space-joined");
     expect(message2.type).toBe("space-joined");
 

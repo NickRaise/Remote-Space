@@ -113,8 +113,8 @@ export const userMoveEvent = async (
 
   // Do not allow the user to move diagonally
   if (
-    (xDisplacement > 1 && yDisplacement == 0) ||
-    (yDisplacement > 1 && xDisplacement == 0)
+    (xDisplacement == 1 && yDisplacement == 0) ||
+    (yDisplacement == 1 && xDisplacement == 0)
   ) {
     (user.x = moveX), (user.y = moveY);
 
@@ -141,7 +141,7 @@ export const userMoveEvent = async (
       },
     };
 
-    roomManager.broadcast(movementRejectedMessage, user, user.spaceId);
+    user.send(movementRejectedMessage);
   }
 };
 
