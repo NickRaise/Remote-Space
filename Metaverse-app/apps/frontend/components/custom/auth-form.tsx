@@ -16,17 +16,31 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { IAuthParams } from "@/lib/types/apiTypes";
+import { LoginUserAPI, RegisterUserAPI } from "@/lib/apis";
+import { toast } from "sonner";
+import Loader from "./loader";
 
 const formSchema = z.object({
-  username: z.string().min(3).max(50),
-  password: z.string(),
+  username: z
+    .string()
+    .min(3, {
+      message: "Username length should be between 3 and 30 characters",
+    })
+    .max(30),
+  password: z
+    .string()
+    .min(8, { message: "Password must be at least 8 characters long" }),
 });
 
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const toggleAuthType = () => {
     setIsLogin((type) => !type);
+    setErrorMessage(null);
   };
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -38,10 +52,51 @@ const AuthForm = () => {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+    setLoading(true);
+    setErrorMessage(null);
+    if (isLogin) {
+      handleLoginUser(values);
+    } else {
+      handleRegisterUser(values);
+    }
   }
+
+  const handleRegisterUser = async (values: IAuthParams) => {
+    try {
+      const result = await RegisterUserAPI(values);
+      if (result.status === 200) {
+        toast("Account created successfully. Please login now.");
+        setIsLogin(true);
+        form.reset();
+      }
+    } catch (err: any) {
+      if (err.response?.status === 400) {
+        setErrorMessage("User already exists.");
+      } else {
+        setErrorMessage("Registration failed. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLoginUser = async (values: IAuthParams) => {
+    try {
+      const result = await LoginUserAPI(values);
+      if (result.status === 200) {
+        toast("Login successful.");
+        form.reset();
+      }
+    } catch (err: any) {
+      if (err.response?.status === 403) {
+        setErrorMessage("Invalid username or password.");
+      } else {
+        setErrorMessage("Login failed. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
@@ -77,8 +132,10 @@ const AuthForm = () => {
                       {...field}
                       className="w-full"
                     />
-                  </FormControl>
-                  <FormDescription>This name must be unique.</FormDescription>
+                  </FormControl>{" "}
+                  {!isLogin && (
+                    <FormDescription>This name must be unique.</FormDescription>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}
@@ -103,8 +160,18 @@ const AuthForm = () => {
               )}
             />
 
-            <Button type="submit" className="w-full cursor-pointer">
-              {isLogin ? "Login" : "Register"}
+            {errorMessage && (
+              <p className="text-sm text-red-500 text-center -mt-4">
+                {errorMessage}
+              </p>
+            )}
+
+            <Button
+              type="submit"
+              className="w-full cursor-pointer"
+              disabled={loading}
+            >
+              {loading ? <Loader /> : isLogin ? "Login" : "Register"}
             </Button>
           </form>
         </Form>
