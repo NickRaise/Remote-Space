@@ -140,8 +140,23 @@ describe("User metadata endpoints", () => {
     const avatarResponse = await axios.post(
       `${BACKEND_URL}/api/v1/admin/avatar`,
       {
-        imageUrl:
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQm3RFDZM21teuCMFYx_AROjt-AzUwDBROFww&s",
+        imageUrls: {
+          standingDown: "standingDown",
+          walkingDown1: "walkingDown1",
+          walkingDown2: "walkingDown2",
+
+          standingLeft: "standingLeft",
+          walkingLeft1: "walkingLeft1",
+          walkingLeft2: "walkingLeft2",
+
+          standingRight: "standingRight",
+          walkingRight1: "walkingRight1",
+          walkingRight2: "walkingRight2",
+
+          standingUp: "standingUp",
+          walkingUp1: "walkingUp1",
+          walkingUp2: "walkingUp2",
+        },
         name: "Timmy",
       },
       {
@@ -225,8 +240,23 @@ describe("User avatar information", () => {
     const avatarResponse = await axios.post(
       `${BACKEND_URL}/api/v1/admin/avatar`,
       {
-        imageUrl:
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQm3RFDZM21teuCMFYx_AROjt-AzUwDBROFww&s",
+        imageUrls: {
+          standingDown: "standingDown",
+          walkingDown1: "walkingDown1",
+          walkingDown2: "walkingDown2",
+
+          standingLeft: "standingLeft",
+          walkingLeft1: "walkingLeft1",
+          walkingLeft2: "walkingLeft2",
+
+          standingRight: "standingRight",
+          walkingRight1: "walkingRight1",
+          walkingRight2: "walkingRight2",
+
+          standingUp: "standingUp",
+          walkingUp1: "walkingUp1",
+          walkingUp2: "walkingUp2",
+        },
         name: "Timmy",
       },
       {
@@ -927,8 +957,23 @@ describe("Admin endpoints", () => {
     const r4 = await axios.post(
       `${BACKEND_URL}/api/v1/admin/avatar`,
       {
-        imageUrl:
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQm3RFDZM21teuCMFYx_AROjt-AzUwDBROFww&s",
+        imageUrls: {
+          standingDown: "standingDown",
+          walkingDown1: "walkingDown1",
+          walkingDown2: "walkingDown2",
+
+          standingLeft: "standingLeft",
+          walkingLeft1: "walkingLeft1",
+          walkingLeft2: "walkingLeft2",
+
+          standingRight: "standingRight",
+          walkingRight1: "walkingRight1",
+          walkingRight2: "walkingRight2",
+
+          standingUp: "standingUp",
+          walkingUp1: "walkingUp1",
+          walkingUp2: "walkingUp2",
+        },
         name: "Timmy",
       },
       {
@@ -978,8 +1023,23 @@ describe("Admin endpoints", () => {
     const r3 = await axios.post(
       `${BACKEND_URL}/api/v1/admin/avatar`,
       {
-        imageUrl:
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQm3RFDZM21teuCMFYx_AROjt-AzUwDBROFww&s",
+        imageUrls: {
+          standingDown: "standingDown",
+          walkingDown1: "walkingDown1",
+          walkingDown2: "walkingDown2",
+
+          standingLeft: "standingLeft",
+          walkingLeft1: "walkingLeft1",
+          walkingLeft2: "walkingLeft2",
+
+          standingRight: "standingRight",
+          walkingRight1: "walkingRight1",
+          walkingRight2: "walkingRight2",
+
+          standingUp: "standingUp",
+          walkingUp1: "walkingUp1",
+          walkingUp2: "walkingUp2",
+        },
         name: "Timmy",
       },
       {
