@@ -1,12 +1,14 @@
 import z from "zod";
 import Prisma from "@repo/db/client";
 import {
+  CreateAvatarImagesSchema,
   CreateAvatarSchema,
   CreateElementSchema,
   CreateMapSchema,
 } from "../types";
 import {
   Avatar,
+  AvatarImage,
   Element,
   Map,
 } from "../../../../packages/db/prisma/generated/prisma";
@@ -38,13 +40,27 @@ export const UpdateElement = async (
 };
 
 export const CreateAvatar = async (
-  avatarData: z.infer<typeof CreateAvatarSchema>
+  name: string,
+  avatarImagesId: string
 ): Promise<Avatar> => {
   const avatar = await Prisma.avatar.create({
-    data: avatarData,
+    data: {
+      name,
+      imageUrlId: avatarImagesId,
+    },
   });
 
   return avatar;
+};
+
+export const CreateAvatarImages = async (
+  avatarUrls: z.infer<typeof CreateAvatarImagesSchema>
+): Promise<AvatarImage> => {
+  const avatarImages = await Prisma.avatarImage.create({
+    data: avatarUrls,
+  });
+
+  return avatarImages;
 };
 
 export const CreateMap = async (

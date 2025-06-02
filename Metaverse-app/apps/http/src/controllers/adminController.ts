@@ -8,6 +8,7 @@ import {
 import { Response } from "express";
 import {
   CreateAvatar,
+  CreateAvatarImages,
   CreateElement,
   CreateMap,
   UpdateElement,
@@ -50,7 +51,8 @@ export const CreateAvatarController = async (
   res: Response
 ) => {
   try {
-    const avatar = await CreateAvatar(avatarData);
+    const avatarImages = await CreateAvatarImages(avatarData.imageUrls)
+    const avatar = await CreateAvatar(avatarData.name, avatarImages.id);
 
     res.status(200).json({ message: "Avatar created.", avatarId: avatar.id });
   } catch (err) {
