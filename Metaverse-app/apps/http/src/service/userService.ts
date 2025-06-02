@@ -1,5 +1,11 @@
 import Prisma from "@repo/db/client";
-import { Avatar } from "../../../../packages/db/prisma/generated/prisma";
+import { AvatarImage } from "../../../../packages/db/prisma/generated/prisma";
+
+type AvatarWithImagesSubset = {
+  id: string;
+  name: string | null;
+  imageUrl: AvatarImage;
+};
 
 export const UpdateMetadata = async (userId: string, avatarId: string) => {
   try {
@@ -18,7 +24,7 @@ export const UpdateMetadata = async (userId: string, avatarId: string) => {
 
 export const GetAvatarByIds = async (
   ids: string[]
-): Promise<{ id: string; avatar: Avatar | null }[]> => {
+): Promise<{ id: string; avatar: AvatarWithImagesSubset | null }[]> => {
   const metaData = await Prisma.user.findMany({
     where: {
       id: {
@@ -26,8 +32,14 @@ export const GetAvatarByIds = async (
       },
     },
     select: {
-      avatar: true,
       id: true,
+      avatar: {
+        select: {
+          id: true,
+          name: true,
+          imageUrl: true,
+        },
+      },
     },
   });
 
