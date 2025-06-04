@@ -35,46 +35,45 @@ const Page = () => {
         <p className="text-[#CCCCCC] mt-3 text-lg">Enter the world in style.</p>
       </div>
 
-      {avatars ? (
+      {avatars && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 px-6 py-6 w-full max-w-6xl">
           {avatars.map((avatar) => (
-            <>
-              <div
-                key={avatar.id}
-                onClick={() => setSelectedAvatarId(avatar.id)}
-                className={clsx(
-                  "rounded-xl p-5 bg-[#393E46] border-2 transition-all duration-300 cursor-pointer flex flex-col items-center shadow-md hover:shadow-[#00ADB5]/60 hover:scale-105",
-                  avatar.id === selectedAvatarId
-                    ? "border-[#FFD369] ring-2 ring-[#FFD369]"
-                    : "border-transparent"
-                )}
-              >
-                <img
-                  src={avatar.imageUrl.standingDown}
-                  alt="avatar"
-                  className="w-24 h-24 object-contain mb-3"
-                />
-              </div>
-              <div className="mt-8 mb-12">
-                <button
-                  disabled={!selectedAvatarId}
-                  className={clsx(
-                    "px-8 py-4 text-lg rounded-full font-semibold transition-all duration-300 shadow-md",
-                    selectedAvatarId
-                      ? "bg-gradient-to-r from-[#00ADB5] to-[#FF2E63] text-white hover:scale-105"
-                      : "bg-gray-600 text-gray-400 cursor-not-allowed"
-                  )}
-                >
-                  {selectedAvatarId ? "Confirm Avatar" : "Select an Avatar"}
-                </button>
-              </div>
-            </>
+            <div
+              key={avatar.id}
+              onClick={() => setSelectedAvatarId(avatar.id)}
+              className={clsx(
+                "rounded-xl p-5 bg-[#393E46] border-2 transition-all duration-300 cursor-pointer flex flex-col items-center shadow-md hover:shadow-[#00ADB5]/60 hover:scale-105",
+                avatar.id === selectedAvatarId
+                  ? "border-[#FFD369] ring-2 ring-[#FFD369]"
+                  : "border-transparent"
+              )}
+            >
+              <img
+                src={avatar.imageUrl.standingDown}
+                alt="avatar"
+                className="w-24 h-24 object-contain mb-3"
+              />
+            </div>
           ))}
         </div>
-      ) : (
-        <div className="my-28">
-          <Loader />
+      )}
+
+      {avatars ? (
+        <div className="mt-8 mb-12">
+          <button
+            disabled={!selectedAvatarId}
+            className={clsx(
+              "px-8 py-4 text-lg rounded-full font-semibold transition-all duration-300 shadow-md",
+              selectedAvatarId
+                ? "bg-gradient-to-r from-[#00ADB5] to-[#FF2E63] text-white hover:scale-105"
+                : "bg-gray-600 text-gray-400 cursor-not-allowed"
+            )}
+          >
+            {selectedAvatarId ? "Confirm Avatar" : "Select an Avatar"}
+          </button>
         </div>
+      ) : (
+        <Loader classname="my-28" />
       )}
     </div>
   );
