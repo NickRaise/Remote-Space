@@ -100,23 +100,31 @@ const AuthForm = () => {
 
   return (
     <>
-      <div
-        className={cn(
-          buttonVariants({ variant: "ghost" }),
-          "absolute right-4 top-4 md:right-10 md:top-10 cursor-pointer font-semibold border"
-        )}
-        onClick={toggleAuthType}
-      >
-        {isLogin ? "Register" : "Login"}
+      <div className="absolute top-6 right-6">
+        <button
+          className="px-4 py-2 text-sm font-medium border border-[#00ADB5] text-[#00ADB5] rounded-full hover:bg-[#00ADB5] hover:text-white transition cursor-pointer"
+          onClick={toggleAuthType}
+        >
+          {isLogin ? "Register" : "Login"}
+        </button>
       </div>
 
-      <div className="h-screen w-full flex items-center justify-center">
+      <div
+        className="h-screen w-full flex items-center justify-center"
+        style={{
+          background: "linear-gradient(135deg, #222831 0%, #393E46 100%)",
+        }}
+      >
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-6 w-full max-w-md mx-auto p-6 bg-white dark:bg-zinc-900 rounded-lg shadow-md"
+            className="space-y-6 w-full max-w-md mx-auto p-8 rounded-lg shadow-lg"
+            style={{ backgroundColor: "#222831" }}
           >
-            <h1 className="text-2xl font-semibold text-center">
+            <h1
+              className="text-3xl font-semibold text-center"
+              style={{ color: "#EEEEEE" }}
+            >
               {isLogin ? "Login" : "Register"}
             </h1>
 
@@ -125,18 +133,42 @@ const AuthForm = () => {
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Username</FormLabel>
+                  <FormLabel
+                    style={{ color: "#EEEEEE" }}
+                    className="mb-1 font-medium"
+                  >
+                    Username
+                  </FormLabel>
                   <FormControl>
                     <Input
                       placeholder="Enter a username"
                       {...field}
-                      className="w-full"
+                      className="w-full rounded-md border border-gray-600 bg-[#393E46] px-3 py-2 text-[#EEEEEE] placeholder-[#AAAAAA] transition focus:outline-none"
+                      style={{
+                        borderColor: "transparent",
+                        boxShadow: `0 0 0 2px transparent`,
+                      }}
+                      onFocus={(e) => {
+                        e.target.style.borderColor = "#FF2E63"; // Accent pink
+                        e.target.style.boxShadow = "0 0 8px #FF2E63";
+                      }}
+                      onBlur={(e) => {
+                        e.target.style.borderColor = "#555"; // fallback border color
+                        e.target.style.boxShadow = "none";
+                      }}
                     />
-                  </FormControl>{" "}
+                  </FormControl>
                   {!isLogin && (
-                    <FormDescription>This name must be unique.</FormDescription>
+                    <FormDescription
+                      style={{ color: "#CCCCCC", fontSize: "0.85rem" }}
+                    >
+                      This name must be unique.
+                    </FormDescription>
                   )}
-                  <FormMessage />
+                  <FormMessage
+                    className="mt-1"
+                    style={{ color: "#FFD369" }} // highlight border yellow-gold for messages
+                  />
                 </FormItem>
               )}
             />
@@ -146,29 +178,42 @@ const AuthForm = () => {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel
+                    style={{ color: "#EEEEEE" }}
+                    className="mb-1 font-medium"
+                  >
+                    Password
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="password"
                       placeholder="Enter your password"
                       {...field}
-                      className="w-full"
+                      className="w-full rounded-md border border-gray-600 bg-[#393E46] px-3 py-2 text-[#EEEEEE] placeholder-[#AAAAAA] transition focus:outline-none"
+                      onFocus={(e) => {
+                        e.target.style.borderColor = "#FF2E63";
+                        e.target.style.boxShadow = "0 0 8px #FF2E63";
+                      }}
+                      onBlur={(e) => {
+                        e.target.style.borderColor = "#555";
+                        e.target.style.boxShadow = "none";
+                      }}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="mt-1" style={{ color: "#FFD369" }} />
                 </FormItem>
               )}
             />
 
             {errorMessage && (
-              <p className="text-sm text-red-500 text-center -mt-4">
+              <p className="text-sm text-[#FF2E63] text-center -mt-4">
                 {errorMessage}
               </p>
             )}
 
             <Button
               type="submit"
-              className="w-full cursor-pointer"
+              className="w-full py-3 font-semibold rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-[#00ADB5] text-[#EEEEEE] hover:bg-[#FF2E63] cursor-pointer"
               disabled={loading}
             >
               {loading ? <Loader /> : isLogin ? "Login" : "Register"}
