@@ -101,34 +101,25 @@ const AuthForm = () => {
 
   return (
     <>
-      <div className="absolute top-6 right-6 flex justify-around max-lg:w-full">
+      <div className="absolute top-6 lg:right-4 flex justify-around max-lg:w-full">
         <div className="lg:hidden">
           <Logo />
         </div>
         <button
-          className="px-4 py-2 text-sm font-medium border border-[#00ADB5] text-[#00ADB5] rounded-full hover:bg-[#00ADB5] hover:text-white transition cursor-pointer"
+          className="px-4 py-2 text-sm font-medium border border-custom-primary text-custom-primary rounded-full hover:bg-custom-primary hover:text-white transition cursor-pointer"
           onClick={toggleAuthType}
         >
           {isLogin ? "Register" : "Login"}
         </button>
       </div>
 
-      <div
-        className="h-screen w-full flex items-center justify-center"
-        style={{
-          background: "linear-gradient(135deg, #222831 0%, #393E46 100%)",
-        }}
-      >
+      <div className="h-screen w-full flex items-center justify-center custom-bg-gradient">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-6 w-full max-w-md mx-auto p-8 rounded-lg shadow-lg"
-            style={{ backgroundColor: "#222831" }}
+            className="space-y-6 w-full max-w-md mx-auto p-8 rounded-lg shadow-lg bg-custom-bg-dark-1"
           >
-            <h1
-              className="text-3xl font-semibold text-center"
-              style={{ color: "#EEEEEE" }}
-            >
+            <h1 className="text-3xl font-semibold text-center text-custom-text-primary">
               {isLogin ? "Login" : "Register"}
             </h1>
 
@@ -137,17 +128,14 @@ const AuthForm = () => {
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel
-                    style={{ color: "#EEEEEE" }}
-                    className="mb-1 font-medium"
-                  >
+                  <FormLabel className="mb-1 font-medium text-custom-text-primary">
                     Username
                   </FormLabel>
                   <FormControl>
                     <Input
                       placeholder="Enter a username"
                       {...field}
-                      className="w-full rounded-md border border-gray-600 bg-[#393E46] px-3 py-2 text-[#EEEEEE] placeholder-[#AAAAAA] transition focus:outline-none"
+                      className="w-full rounded-md border border-gray-600 bg-custom-bg-dark-2 px-3 py-2 text-custom-text-primary transition focus:outline-none"
                       style={{
                         borderColor: "transparent",
                         boxShadow: `0 0 0 2px transparent`,
@@ -163,16 +151,11 @@ const AuthForm = () => {
                     />
                   </FormControl>
                   {!isLogin && (
-                    <FormDescription
-                      style={{ color: "#CCCCCC", fontSize: "0.85rem" }}
-                    >
+                    <FormDescription className="text-custom-text-secondary text-[0.85rem]">
                       This name must be unique.
                     </FormDescription>
                   )}
-                  <FormMessage
-                    className="mt-1"
-                    style={{ color: "#FFD369" }} // highlight border yellow-gold for messages
-                  />
+                  <FormMessage className="mt-1 text-custom-highlight" />
                 </FormItem>
               )}
             />
@@ -182,10 +165,7 @@ const AuthForm = () => {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel
-                    style={{ color: "#EEEEEE" }}
-                    className="mb-1 font-medium"
-                  >
+                  <FormLabel className="mb-1 font-medium text-custom-text-primary">
                     Password
                   </FormLabel>
                   <FormControl>
@@ -193,31 +173,31 @@ const AuthForm = () => {
                       type="password"
                       placeholder="Enter your password"
                       {...field}
-                      className="w-full rounded-md border border-gray-600 bg-[#393E46] px-3 py-2 text-[#EEEEEE] placeholder-[#AAAAAA] transition focus:outline-none"
+                      className="w-full rounded-md border border-gray-600 bg-custom-bg-dark-2 px-3 py-2 text-custom-text-primary transition focus:outline-none"
                       onFocus={(e) => {
-                        e.target.style.borderColor = "#FF2E63";
+                        e.target.style.borderColor = "#FF2E63"; // Accent pink
                         e.target.style.boxShadow = "0 0 8px #FF2E63";
                       }}
                       onBlur={(e) => {
-                        e.target.style.borderColor = "#555";
+                        e.target.style.borderColor = "#555"; // fallback border color
                         e.target.style.boxShadow = "none";
                       }}
                     />
                   </FormControl>
-                  <FormMessage className="mt-1" style={{ color: "#FFD369" }} />
+                  <FormMessage className="mt-1 text-custom-highlight" />
                 </FormItem>
               )}
             />
 
             {errorMessage && (
-              <p className="text-sm text-[#FF2E63] text-center -mt-4">
+              <p className="text-sm text-custom-accent text-center -mt-4">
                 {errorMessage}
               </p>
             )}
 
             <Button
               type="submit"
-              className="w-full py-3 font-semibold rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-[#00ADB5] text-[#EEEEEE] hover:bg-[#FF2E63] cursor-pointer"
+              className="w-full py-3 font-semibold rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-custom-primary text-custom-text-primary hover:bg-custom-accent cursor-pointer"
               disabled={loading}
             >
               {loading ? <Loader /> : isLogin ? "Login" : "Register"}

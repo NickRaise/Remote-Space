@@ -3,6 +3,28 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@utility custom-bg-gradient {
+  background: linear-gradient(135deg, #222831 0%, #393e46 100%);
+} 
+
+@theme {
+  --color-custom-primary: #00adb5;
+  --color-custom-accent: #ff2e63;
+  --color-custom-highlight: #ffd369;
+
+  --color-custom-bg-dark-1: #222831;
+  --color-custom-bg-dark-2: #393e46;
+  --color-custom-bg-disabled: #4b5563;
+
+  --color-custom-text-primary: #eeeeee;
+  --color-custom-text-secondary: #cccccc;
+  --color-custom-text-disabled: #9ca3af;
+
+  --color-custom-border-highlight: #ffd369;
+
+  --color-custom-shadow-hover: rgba(0, 173, 181, 0.6);
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
