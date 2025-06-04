@@ -21,18 +21,14 @@ const Page = () => {
   }, []);
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-[#222831] to-[#393E46] text-[#EEEEEE] flex flex-col items-center">
-      <nav className="w-full flex items-center justify-between px-6 py-4 bg-[#222831] shadow-md">
-        <div className="flex items-center gap-3">
-          <Logo />
-        </div>
-      </nav>
-
+    <div className="min-h-screen w-full bg-gradient-to-br from-custom-bg-dark-1 to-custom-bg-dark-2 text-custom-text-primary flex flex-col items-center">
       <div className="mt-12 mb-6 text-center">
-        <h1 className="text-4xl md:text-6xl font-extrabold bg-gradient-to-r from-[#00ADB5] to-[#FF2E63] text-transparent bg-clip-text">
+        <h1 className="text-4xl md:text-6xl font-extrabold bg-gradient-to-r from-custom-primary to-custom-accent text-transparent bg-clip-text">
           Choose Your Avatar
         </h1>
-        <p className="text-[#CCCCCC] mt-3 text-lg">Enter the world in style.</p>
+        <p className="text-custom-text-secondary mt-3 text-lg">
+          Enter the world in style.
+        </p>
       </div>
 
       {avatars && (
@@ -42,9 +38,9 @@ const Page = () => {
               key={avatar.id}
               onClick={() => setSelectedAvatarId(avatar.id)}
               className={clsx(
-                "rounded-xl p-5 bg-[#393E46] border-2 transition-all duration-300 cursor-pointer flex flex-col items-center shadow-md hover:shadow-[#00ADB5]/60 hover:scale-105",
+                "rounded-xl p-5 bg-custom-bg-dark-2 border-2 transition-all duration-300 cursor-pointer flex flex-col items-center shadow-md hover:shadow-custom-primary/60 hover:scale-105",
                 avatar.id === selectedAvatarId
-                  ? "border-[#FFD369] ring-2 ring-[#FFD369]"
+                  ? "border-custom-border-highlight ring-2 ring-custom-border-highlight"
                   : "border-transparent"
               )}
             >
@@ -63,9 +59,9 @@ const Page = () => {
           <button
             disabled={!selectedAvatarId}
             className={clsx(
-              "px-8 py-4 text-lg rounded-full font-semibold transition-all duration-300 shadow-md",
+              "px-8 py-4 text-lg rounded-full font-semibold transition-all duration-300 shadow-md cursor-pointer",
               selectedAvatarId
-                ? "bg-gradient-to-r from-[#00ADB5] to-[#FF2E63] text-white hover:scale-105"
+                ? "bg-gradient-to-r from-custom-primary to-custom-accent text-white hover:scale-105"
                 : "bg-gray-600 text-gray-400 cursor-not-allowed"
             )}
           >
