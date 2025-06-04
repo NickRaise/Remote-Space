@@ -12,3 +12,11 @@ export interface IRegisterResponse {
 export interface ILoginResponse {
   token: string;
 }
+
+export type Avatar = {
+  id: string;
+  name: string | null;
+  imageUrl: {
+    standingDown: string;
+  };
+};
