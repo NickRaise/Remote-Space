@@ -5,7 +5,7 @@ import Image from "next/image";
 
 const AuthenticationPage = () => {
   return (
-    <div className="h-screen md:grid md:grid-cols-2 relative w-full">
+    <div className="h-screen lg:grid lg:grid-cols-2 relative w-full">
       <LeftSide />
       <AuthForm />
     </div>
@@ -16,9 +16,9 @@ export default AuthenticationPage;
 
 const LeftSide = () => {
   return (
-    <div className="relative w-full hidden md:flex flex-col bg-muted ">
-      <div className="absolute w-full h-[30%] bg-gradient-to-t from-transparent to-black/50 top-0 left-0 z-10" />
-      <div className="absolute w-full h-[40%] bg-gradient-to-b from-transparent to-black/50 bottom-0 left-0 z-10" />
+    <div className="relative w-full hidden lg:flex flex-col bg-muted ">
+      <div className="absolute w-full h-[30%] bg-gradient-to-t from-transparent to-gray-900/100 top-0 left-0 z-10" />
+      <div className="absolute w-full h-[40%] bg-gradient-to-b from-transparent to-gray-900/100 bottom-0 left-0 z-10" />
       <div />
       <Image
         src={AuthImg}

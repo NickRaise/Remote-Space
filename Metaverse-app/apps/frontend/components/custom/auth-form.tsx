@@ -20,6 +20,7 @@ import { IAuthParams } from "@/lib/types/apiTypes";
 import { LoginUserAPI, RegisterUserAPI } from "@/lib/apis";
 import { toast } from "sonner";
 import Loader from "./loader";
+import Logo from "./logo";
 
 const formSchema = z.object({
   username: z
@@ -100,7 +101,10 @@ const AuthForm = () => {
 
   return (
     <>
-      <div className="absolute top-6 right-6">
+      <div className="absolute top-6 right-6 flex justify-around max-lg:w-full">
+        <div className="lg:hidden">
+          <Logo />
+        </div>
         <button
           className="px-4 py-2 text-sm font-medium border border-[#00ADB5] text-[#00ADB5] rounded-full hover:bg-[#00ADB5] hover:text-white transition cursor-pointer"
           onClick={toggleAuthType}
