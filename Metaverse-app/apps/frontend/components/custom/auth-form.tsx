@@ -19,6 +19,7 @@ import { LoginUserAPI, RegisterUserAPI } from "@/lib/apis";
 import { toast } from "sonner";
 import Loader from "./loader";
 import Logo from "./logo";
+import { useUserStore } from "@/store/userStore";
 
 const formSchema = z.object({
   username: z
@@ -36,6 +37,7 @@ const AuthForm = () => {
   const [isLogin, setIsLogin] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const updateUserToken = useUserStore((state) => state.setUserToken);
 
   const toggleAuthType = () => {
     setIsLogin((type) => !type);
@@ -84,6 +86,7 @@ const AuthForm = () => {
       const result = await LoginUserAPI(values);
       if (result.status === 200) {
         toast("Login successful.");
+        updateUserToken(result.data.token);
         form.reset();
       }
     } catch (err: any) {

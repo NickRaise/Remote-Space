@@ -3,16 +3,36 @@
 import { useEffect, useState } from "react";
 import clsx from "clsx";
 import Loader from "@/components/custom/loader";
-import { GetAllAvatars } from "@/lib/apis";
+import { GetAllAvatars, UpdateUserAvatar } from "@/lib/apis";
 import { Avatar } from "@/lib/types/apiTypes";
+import { useUserStore } from "@/store/userStore";
+import { toast } from "sonner";
 
 const Page = () => {
   const [avatars, setAvatars] = useState<Avatar[] | null>(null);
   const [selectedAvatarId, setSelectedAvatarId] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const token = useUserStore((state) => state.userToken);
 
   const fetchAvatars = async () => {
     const allAvatars = await GetAllAvatars();
     setAvatars(allAvatars);
+  };
+
+  const handleUpdateAvatar = async () => {
+    if (!token || !selectedAvatarId) return;
+    try {
+      setLoading(true);
+      const response = await UpdateUserAvatar(token, selectedAvatarId);
+      if (response.status === 200) {
+        toast("Avatar updated successfully!");
+      }
+    } catch (err) {
+      console.log(err);
+      toast("Avatar update failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -48,6 +68,7 @@ const Page = () => {
                 alt="avatar"
                 className="w-24 h-24 object-contain mb-3"
               />
+              <span>{avatar.name}</span>
             </div>
           ))}
         </div>
@@ -56,11 +77,12 @@ const Page = () => {
       {avatars ? (
         <div className="mt-8 mb-12">
           <button
-            disabled={!selectedAvatarId}
+            disabled={!selectedAvatarId || loading}
+            onClick={handleUpdateAvatar}
             className={clsx(
-              "px-8 py-4 text-lg rounded-full font-semibold transition-all duration-300 shadow-md cursor-pointer",
+              "px-8 py-4 text-lg rounded-full font-semibold transition-all duration-300 shadow-md",
               selectedAvatarId
-                ? "bg-gradient-to-r from-custom-primary to-custom-accent text-white hover:scale-105"
+                ? "bg-gradient-to-r from-custom-primary to-custom-accent text-white hover:scale-105 cursor-pointer"
                 : "bg-gray-600 text-gray-400 cursor-not-allowed"
             )}
           >

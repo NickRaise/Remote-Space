@@ -20,3 +20,16 @@ export type Avatar = {
     standingDown: string;
   };
 };
+
+export interface ILoginResponse {
+  token: string;
+}
+
+export interface IGetAllAvatarResponse {
+  avatars: Avatar[];
+}
+
+export interface IUpdateAvatarResponse {
+  success: string;
+  message: string;
+}
