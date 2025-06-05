@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import clsx from "clsx";
 import Loader from "@/components/custom/loader";
-import Logo from "@/components/custom/logo";
 import { GetAllAvatars } from "@/lib/apis";
 import { Avatar } from "@/lib/types/apiTypes";
 
