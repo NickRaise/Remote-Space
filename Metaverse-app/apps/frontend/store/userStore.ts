@@ -10,7 +10,7 @@ interface IDecodedToken {
 interface IUserStore {
   userToken: null | string;
   setUserToken: (token: string) => void;
-  getUserAccess: () => null | [userId: string, role: string];
+  getUserId: () => null | string;
 }
 
 const userStore = (set: any, get: any): IUserStore => ({
@@ -18,7 +18,7 @@ const userStore = (set: any, get: any): IUserStore => ({
 
   setUserToken: (token) => set(() => ({ userToken: token })),
 
-  getUserAccess: () => {
+  getUserId: () => {
     const token = get().userToken;
     if (!token) return null;
 
@@ -26,7 +26,7 @@ const userStore = (set: any, get: any): IUserStore => ({
 
     if (!decoded) return null;
 
-    return [decoded.userId, decoded.role];
+    return decoded.userId;
   },
 });
 
