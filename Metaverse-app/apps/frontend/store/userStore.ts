@@ -30,7 +30,7 @@ const userStore = (set: any, get: any): IUserStore => ({
   },
 });
 
-const useUserStore = create<IUserStore>()(
+export const useUserStore = create<IUserStore>()(
   persist(userStore, {
     name: "user-storage",
   })
