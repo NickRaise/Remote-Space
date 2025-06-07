@@ -14,7 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { IAuthParams } from "@/lib/types/apiTypes";
+import { IAuthParams } from "@/lib/types/frontendApiTypes"; 
 import { LoginUserAPI, RegisterUserAPI } from "@/lib/apis";
 import { toast } from "sonner";
 import Loader from "./loader";

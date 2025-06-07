@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Loader from "@/components/custom/loader";
 import { GetAllAvatars } from "@/lib/apis";
-import { Avatar } from "@/lib/types/apiTypes";
+import { Avatar } from "@/lib/types/frontendApiTypes";
 import { useRouter } from "next/navigation";
 
 const Page = () => {

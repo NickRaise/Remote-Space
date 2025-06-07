@@ -1,11 +1,14 @@
 import axios from "axios";
 import {
-  Avatar,
+  IAvatarSelection,
   IAuthParams,
-  IGetAllAvatarResponse,
+  IGetAllAvatarSelectionResponse,
   ILoginResponse,
   IUpdateUserAvatarResponse,
-} from "./types/apiTypes";
+} from "./types/frontendApiTypes";
+
+import { CreateAvatarSchema } from "@repo/common/api-types";
+import { z } from "zod";
 
 const BACKEND_URL = "http://localhost:3000/api/v1";
 
@@ -32,9 +35,9 @@ export const LoginUserAPI = async ({ username, password }: IAuthParams) => {
   return response;
 };
 
-export const GetAllAvatars = async (): Promise<Avatar[]> => {
-  const response = await api.get<IGetAllAvatarResponse>("/avatars");
-  return response.data.avatars as Avatar[];
+export const GetAllAvatars = async (): Promise<IAvatarSelection[]> => {
+  const response = await api.get<IGetAllAvatarSelectionResponse>("/avatars");
+  return response.data.avatars as IAvatarSelection[];
 };
 
 export const UpdateUserAvatar = async (token: string, avatarId: string) => {
@@ -53,4 +56,15 @@ export const UpdateUserAvatar = async (token: string, avatarId: string) => {
   return response;
 };
 
-// export const CreateAvatar = async (data: )
+export const CreateAvatarAPI = async (
+  token: string,
+  data: z.infer<typeof CreateAvatarSchema>
+) => {
+  const response = await api.post("/admin/avatar", data, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response;
+};

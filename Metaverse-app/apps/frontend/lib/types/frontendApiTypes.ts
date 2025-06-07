@@ -13,7 +13,7 @@ export interface ILoginResponse {
   token: string;
 }
 
-export type Avatar = {
+export type IAvatarSelection = {
   id: string;
   name: string | null;
   imageUrl: {
@@ -25,8 +25,8 @@ export interface ILoginResponse {
   token: string;
 }
 
-export interface IGetAllAvatarResponse {
-  avatars: Avatar[];
+export interface IGetAllAvatarSelectionResponse {
+  avatars: IAvatarSelection[];
 }
 
 export interface IUpdateUserAvatarResponse {

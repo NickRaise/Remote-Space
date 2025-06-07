@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import clsx from "clsx";
 import Loader from "@/components/custom/loader";
 import { GetAllAvatars, UpdateUserAvatar } from "@/lib/apis";
-import { Avatar } from "@/lib/types/apiTypes";
+import { Avatar } from "@/lib/types/frontendApiTypes";
 import { useUserStore } from "@/store/userStore";
 import { toast } from "sonner";
 

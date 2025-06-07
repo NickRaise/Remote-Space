@@ -13,6 +13,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { useUserStore } from "@/store/userStore";
+import { CreateAvatarAPI } from "@/lib/apis";
+import { CreateAvatarSchema } from "@repo/common/api-types";
+import { toast } from "sonner";
+import { useState } from "react";
+import Loader from "./loader";
 
 const avatarSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -47,6 +53,9 @@ const fieldLabels: Record<keyof z.infer<typeof avatarSchema>, string> = {
 };
 
 export default function AvatarCreationForm() {
+  const token = useUserStore((state) => state.userToken);
+  const [loading, setLoading] = useState<boolean>(false);
+
   const form = useForm<z.infer<typeof avatarSchema>>({
     resolver: zodResolver(avatarSchema),
     defaultValues: {
@@ -68,7 +77,24 @@ export default function AvatarCreationForm() {
 
   const onSubmit = async (data: z.infer<typeof avatarSchema>) => {
     console.log("Avatar Data:", data);
-    // handle API logic here
+    if (!token) return;
+    try {
+      setLoading(true);
+      const { name, ...imageUrls } = data;
+      const avatarData: z.infer<typeof CreateAvatarSchema> = {
+        name,
+        imageUrls,
+      };
+      const response = await CreateAvatarAPI(token, avatarData);
+      if (response.status === 200) {
+        toast("Avatar creation successful!");
+      }
+    } catch (err) {
+      console.log(err);
+      toast("avatar creation failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -118,8 +144,9 @@ export default function AvatarCreationForm() {
           <Button
             type="submit"
             className="w-full py-3 font-semibold rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-custom-primary text-custom-text-primary hover:bg-custom-accent cursor-pointer"
+            disabled={loading}
           >
-            Submit
+            {!loading ? "Submit" : <Loader />}
           </Button>
         </div>
       </form>
