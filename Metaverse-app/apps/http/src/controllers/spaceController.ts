@@ -3,7 +3,7 @@ import {
   AddSpaceElementSchema,
   CreateSpaceSchema,
   DeleteSpaceElementSchema,
-} from "../types";
+} from "@repo/common/api-types";
 import z from "zod";
 import {
   CreateSpaceWithMapId,

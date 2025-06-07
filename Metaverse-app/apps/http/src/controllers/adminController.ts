@@ -4,7 +4,7 @@ import {
   CreateElementSchema,
   CreateMapSchema,
   UpdateElementSchema,
-} from "../types";
+} from "@repo/common/api-types";
 import { Response } from "express";
 import {
   CreateAvatar,

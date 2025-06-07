@@ -1,5 +1,5 @@
 import z from "zod";
-import { SignInSchema, SignUpSchema } from "../types";
+import { SignInSchema, SignUpSchema } from "@repo/common/api-types";
 import { Response } from "express";
 import {
   CreateUser,
