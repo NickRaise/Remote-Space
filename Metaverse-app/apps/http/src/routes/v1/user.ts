@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
 import { ValidateZodSchema } from "../../middleware/common";
-import { UpdateMetadataSchema } from "../../types";
+import { UpdateMetadataSchema } from "@repo/common/api-types";
 import { userMiddleware } from "../../middleware/authMiddleware";
 import {
   GetMetaDataByIds,

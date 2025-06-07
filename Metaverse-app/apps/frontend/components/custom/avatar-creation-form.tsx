@@ -46,11 +46,7 @@ const fieldLabels: Record<keyof z.infer<typeof avatarSchema>, string> = {
   walkingUp2: "Walking Up 2 URL",
 };
 
-interface IAvatarCreationFormProps {
-  type: "create" | "update";
-}
-
-export default function AvatarCreationForm({ type }: IAvatarCreationFormProps) {
+export default function AvatarCreationForm() {
   const form = useForm<z.infer<typeof avatarSchema>>({
     resolver: zodResolver(avatarSchema),
     defaultValues: {
@@ -82,7 +78,7 @@ export default function AvatarCreationForm({ type }: IAvatarCreationFormProps) {
         className="w-full max-w-7xl px-4 lg:px-0"
       >
         <h1 className="text-3xl font-semibold text-center text-custom-text-primary my-5">
-          {type === "create" ? "Create Avatar" : "Update Avatar"}
+          Create Avatar
         </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

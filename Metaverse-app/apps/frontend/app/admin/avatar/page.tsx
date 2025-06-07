@@ -8,8 +8,8 @@ import { useRouter } from "next/navigation";
 
 const Page = () => {
   const [avatars, setAvatars] = useState<Avatar[] | null>(null);
-  const [selectedAvatarId, setSelectedAvatarId] = useState<string | null>(null);
   const router = useRouter();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const fetchAvatars = async () => {
     const allAvatars = await GetAllAvatars();
@@ -17,6 +17,7 @@ const Page = () => {
   };
 
   const sendToAvatarCreationPage = () => {
+    setLoading(true);
     router.push(`${window.location.pathname}/create`);
   };
 
@@ -60,8 +61,9 @@ const Page = () => {
 
       <div className="mt-8 mb-12">
         <button
+          disabled={loading}
           onClick={sendToAvatarCreationPage}
-          className="px-8 py-4 text-lg rounded-full font-semibold transition-all duration-300 shadow-md bg-gradient-to-r from-custom-primary to-custom-accent text-white hover:scale-105 cursor-pointer"
+          className="px-8 py-4 text-lg rounded-full font-semibold transition-all duration-300 shadow-md bg-gradient-to-r from-custom-primary to-custom-accent text-white hover:scale-105 cursor-pointer disabled:cursor-not-allowed"
         >
           Create an Avatar
         </button>

@@ -1,7 +1,7 @@
 import { Request, Response, Router } from "express";
 import { userMiddleware } from "../../middleware/authMiddleware";
 import { ValidateZodSchema } from "../../middleware/common";
-import { AddSpaceElementSchema, CreateSpaceSchema, DeleteSpaceElementSchema } from "../../types";
+import { AddSpaceElementSchema, CreateSpaceSchema, DeleteSpaceElementSchema } from "@repo/common/api-types";
 import { AddSpaceElementController, CreateSpaceController, DeleteSpaceController, DeleteSpaceElementController, GetAllSpacesController, GetSpacesController } from "../../controllers/spaceController";
 
 const router = Router()

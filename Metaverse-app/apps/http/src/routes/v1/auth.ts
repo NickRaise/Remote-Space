@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { SignInSchema, SignUpSchema } from "../../types";
+import { SignInSchema, SignUpSchema } from "@repo/common/api-types";
 import { SignInUser, SignUpUser } from "../../controllers/authController";
 import { ValidateZodSchema } from "../../middleware/common";
 

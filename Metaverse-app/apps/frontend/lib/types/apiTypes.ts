@@ -29,7 +29,11 @@ export interface IGetAllAvatarResponse {
   avatars: Avatar[];
 }
 
-export interface IUpdateAvatarResponse {
+export interface IUpdateUserAvatarResponse {
   success: string;
   message: string;
+}
+
+export interface ICreateAvatar {
+  name: string
 }

@@ -4,7 +4,7 @@ import {
   IAuthParams,
   IGetAllAvatarResponse,
   ILoginResponse,
-  IUpdateAvatarResponse,
+  IUpdateUserAvatarResponse,
 } from "./types/apiTypes";
 
 const BACKEND_URL = "http://localhost:3000/api/v1";
@@ -38,7 +38,7 @@ export const GetAllAvatars = async (): Promise<Avatar[]> => {
 };
 
 export const UpdateUserAvatar = async (token: string, avatarId: string) => {
-  const response = await api.post<IUpdateAvatarResponse>(
+  const response = await api.post<IUpdateUserAvatarResponse>(
     "/user/metadata",
     {
       avatarId,
@@ -52,3 +52,5 @@ export const UpdateUserAvatar = async (token: string, avatarId: string) => {
 
   return response;
 };
+
+// export const CreateAvatar = async (data: )

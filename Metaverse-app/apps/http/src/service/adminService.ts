@@ -2,10 +2,9 @@ import z from "zod";
 import Prisma from "@repo/db/client";
 import {
   CreateAvatarImagesSchema,
-  CreateAvatarSchema,
   CreateElementSchema,
   CreateMapSchema,
-} from "../types";
+} from "@repo/common/api-types";
 import {
   Avatar,
   AvatarImage,

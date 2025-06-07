@@ -1,6 +1,6 @@
 import Prisma from "@repo/db/client";
 import z from "zod";
-import { AddSpaceElementSchema } from "../types";
+import { AddSpaceElementSchema } from "@repo/common/api-types";
 import { Space, SpaceElements } from "../../../../packages/db/prisma/generated/prisma";
 
 interface SpaceElementWithSpace extends SpaceElements {

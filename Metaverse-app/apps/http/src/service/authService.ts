@@ -1,5 +1,5 @@
 import z from "zod";
-import { SignUpSchema } from "../types";
+import { SignUpSchema } from "@repo/common/api-types";
 import Prisma from "@repo/db/client";
 import { IUser } from "../types/modelsTypes";
 import bcrypt from "bcryptjs";

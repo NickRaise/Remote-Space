@@ -1,6 +1,6 @@
 import Prisma from "@repo/db/client";
 import z from "zod";
-import { CreateSpaceSchema } from "../types";
+import { CreateSpaceSchema } from "@repo/common/api-types";
 import {
   Element,
   MapElements,
