@@ -7,7 +7,10 @@ import {
   IUpdateUserAvatarResponse,
 } from "./types/frontendApiTypes";
 
-import { CreateAvatarSchema } from "@repo/common/api-types";
+import {
+  CreateAvatarSchema,
+  CreateElementSchema,
+} from "@repo/common/api-types";
 import { z } from "zod";
 
 const BACKEND_URL = "http://localhost:3000/api/v1";
@@ -61,6 +64,19 @@ export const CreateAvatarAPI = async (
   data: z.infer<typeof CreateAvatarSchema>
 ) => {
   const response = await api.post("/admin/avatar", data, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response;
+};
+
+export const CreateElementAPI = async (
+  token: string,
+  data: z.infer<typeof CreateElementSchema>
+) => {
+  const response = await api.post("/admin/element", data, {
     headers: {
       authorization: `Bearer ${token}`,
     },

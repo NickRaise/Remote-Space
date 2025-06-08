@@ -9,10 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@repo/common": "*",
     "@hookform/resolvers": "^5.0.1",
     "@radix-ui/react-label": "^2.1.7",
     "@radix-ui/react-slot": "^1.2.3",
+    "@radix-ui/react-switch": "^1.2.5",
+    "@repo/common": "*",
     "@tailwindcss/postcss": "^4.1.7",
     "@types/axios": "^0.9.36",
     "@types/jsonwebtoken": "^9.0.9",

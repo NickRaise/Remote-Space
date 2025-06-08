@@ -3,11 +3,11 @@
 import { useEffect, useState } from "react";
 import Loader from "@/components/custom/loader";
 import { GetAllAvatars } from "@/lib/apis";
-import { Avatar } from "@/lib/types/frontendApiTypes";
+import { IAvatarSelection } from "@/lib/types/frontendApiTypes";
 import { useRouter } from "next/navigation";
 
 const Page = () => {
-  const [avatars, setAvatars] = useState<Avatar[] | null>(null);
+  const [avatars, setAvatars] = useState<IAvatarSelection[] | null>(null);
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
 

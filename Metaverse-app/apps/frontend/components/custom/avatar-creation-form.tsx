@@ -88,6 +88,9 @@ export default function AvatarCreationForm() {
       const response = await CreateAvatarAPI(token, avatarData);
       if (response.status === 200) {
         toast("Avatar creation successful!");
+        form.reset();
+      } else {
+        throw Error;
       }
     } catch (err) {
       console.log(err);
