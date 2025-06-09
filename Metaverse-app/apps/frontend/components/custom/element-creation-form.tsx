@@ -22,8 +22,8 @@ import { CreateElementAPI } from "@/lib/apis";
 
 const elementSchema = z.object({
   imageUrl: z.string().url("Must be a valid URL"),
-  width: z.number().min(1, "Width must be at least 1"),
-  height: z.number().min(1, "Height must be at least 1"),
+  width: z.coerce.number().min(1, "Width must be at least 1"),
+  height: z.coerce.number().min(1, "Height must be at least 1"),
   static: z.boolean(),
 });
 
@@ -42,8 +42,8 @@ export default function CreateElementForm() {
     resolver: zodResolver(elementSchema),
     defaultValues: {
       imageUrl: "",
-      width: 50,
-      height: 50,
+      width: 40,
+      height: 40,
       static: false,
     },
   });

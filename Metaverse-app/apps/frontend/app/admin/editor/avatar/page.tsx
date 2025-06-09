@@ -41,9 +41,6 @@ const Page = () => {
           {avatars.map((avatar) => (
             <div
               key={avatar.id}
-              onClick={() =>
-                router.push(`${window.location.pathname}/${avatar.id}`)
-              }
               className="rounded-xl p-5 bg-custom-bg-dark-2 border-2 transition-all duration-300 cursor-pointer flex flex-col items-center shadow-md hover:shadow-custom-primary/60 hover:scale-105 border-transparent"
             >
               <img
