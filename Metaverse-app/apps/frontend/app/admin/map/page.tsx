@@ -1,69 +1,96 @@
 "use client";
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect } from "react";
 
 const TILE_SIZE = 40;
+const TILE_IMAGE_SRC = "/assests/objects/tile.png";
 
 export default function FullScreenGrid() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-
-  // Set initial dimensions only on client side
-  useEffect(() => {
-    function updateDimensions() {
-      setDimensions({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    }
-
-    updateDimensions(); // Initial set
-    window.addEventListener("resize", updateDimensions);
-    return () => window.removeEventListener("resize", updateDimensions);
-  }, []);
 
   useEffect(() => {
-    if (dimensions.width === 0 || dimensions.height === 0) return;
-
     const canvas = canvasRef.current;
     if (!canvas) return;
-
-    canvas.width = dimensions.width;
-    canvas.height = dimensions.height;
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+
+    // Set actual canvas size in pixels
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+
+    // Make sure the canvas is still styled to its CSS size
+    canvas.style.width = `${rect.width}px`;
+    canvas.style.height = `${rect.height}px`;
+
+    // Scale the context so 1 unit in drawing = 1 CSS pixel
+    ctx.scale(dpr, dpr);
+
+    // Clear before drawing
+    ctx.clearRect(0, 0, rect.width, rect.height);
+
+    // Draw grid lines
     ctx.strokeStyle = "#444";
     ctx.lineWidth = 1;
 
-    // Draw vertical lines
-    for (let x = 0; x <= dimensions.width; x += TILE_SIZE) {
+    for (let x = 0; x <= rect.width; x += TILE_SIZE) {
       ctx.beginPath();
       ctx.moveTo(x, 0);
-      ctx.lineTo(x, dimensions.height);
+      ctx.lineTo(x, rect.height);
       ctx.stroke();
     }
 
-    // Draw horizontal lines
-    for (let y = 0; y <= dimensions.height; y += TILE_SIZE) {
+    for (let y = 0; y <= rect.height; y += TILE_SIZE) {
       ctx.beginPath();
       ctx.moveTo(0, y);
-      ctx.lineTo(dimensions.width, y);
+      ctx.lineTo(rect.width, y);
       ctx.stroke();
     }
-  }, [dimensions]);
+
+    // const tileImg = new Image();
+    // tileImg.src = TILE_IMAGE_SRC;
+
+    // tileImg.onload = () => {
+    //   for (let y = 0; y <= rect.height; y += TILE_SIZE) {
+    //     for (let x = 0; x <= rect.width; x += TILE_SIZE) {
+    //       ctx.drawImage(tileImg, x, y, TILE_SIZE, TILE_SIZE);
+    //     }
+    //   }
+    // };
+
+    // Click event handler to log grid cell
+    function handleClick(event: MouseEvent) {
+      if (!canvas) return;
+
+      const boundingRect = canvas.getBoundingClientRect();
+
+      // Calculate click coordinates relative to canvas top-left
+      const clickX = event.clientX - boundingRect.left;
+      const clickY = event.clientY - boundingRect.top;
+
+      // Find grid cell indices
+      const gridX = Math.floor(clickX / TILE_SIZE);
+      const gridY = Math.floor(clickY / TILE_SIZE);
+
+      console.log(`Grid cell clicked: (${gridX}, ${gridY})`);
+    }
+
+    canvas.addEventListener("click", handleClick);
+
+    // Cleanup
+    return () => {
+      canvas.removeEventListener("click", handleClick);
+    };
+  }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        backgroundColor: "#111",
-        zIndex: 0,
-      }}
-    />
+    <div className="bg-slate-800 relative h-screen w-screen">
+      <canvas
+        ref={canvasRef}
+        className="fixed top-0 left-1/2 -translate-x-1/2 z-0 md:w-[80vw] h-screen overflow-hidden"
+      />
+    </div>
   );
 }
