@@ -8,7 +8,7 @@ const TILE_IMAGE_SRC = "/assests/objects/tile.png";
 
 export default function FullScreenGrid() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [selectedElementId, setSelectedElementId] = useState<Element | null>(
+  const [selectedElementInstance, setSelectedElementInstance] = useState<Element | null>(
     null
   );
 
@@ -91,11 +91,11 @@ export default function FullScreenGrid() {
   }, []);
 
   return (
-    <div className="bg-slate-800 relative h-screen w-screen">
-      <AllElementsSidebar setElementId={setSelectedElementId} />
+    <div className="bg-custom-bg-dark-1 relative h-screen w-screen">
+      <AllElementsSidebar setElement={setSelectedElementInstance} element={selectedElementInstance}  />
       <canvas
         ref={canvasRef}
-        className="fixed top-0 left-1/2 -translate-x-1/2 z-0 md:w-[80vw] h-screen overflow-hidden"
+        className="fixed top-0 right-10 z-0 md:w-[80vw] h-screen overflow-hidden"
       />
     </div>
   );

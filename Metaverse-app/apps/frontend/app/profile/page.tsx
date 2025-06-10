@@ -4,12 +4,13 @@ import { useEffect, useState } from "react";
 import clsx from "clsx";
 import Loader from "@/components/custom/loader";
 import { GetAllAvatars, UpdateUserAvatar } from "@/lib/apis";
-import { Avatar } from "@/lib/types/frontendApiTypes";
 import { useUserStore } from "@/store/userStore";
 import { toast } from "sonner";
+import { IAvatarSelection } from "@/lib/types/frontendApiTypes";
+import Image from "next/image";
 
 const Page = () => {
-  const [avatars, setAvatars] = useState<Avatar[] | null>(null);
+  const [avatars, setAvatars] = useState<IAvatarSelection[] | null>(null);
   const [selectedAvatarId, setSelectedAvatarId] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const token = useUserStore((state) => state.userToken);
@@ -63,10 +64,12 @@ const Page = () => {
                   : "border-transparent"
               )}
             >
-              <img
+              <Image
                 src={avatar.imageUrl.standingDown}
                 alt="avatar"
-                className="w-24 h-24 object-contain mb-3"
+                height={96}
+                width={96}
+                className="object-contain mb-3"
               />
               <span>{avatar.name}</span>
             </div>
