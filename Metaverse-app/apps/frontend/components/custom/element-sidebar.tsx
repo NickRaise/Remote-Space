@@ -28,7 +28,7 @@ const AllElementsSidebar = ({
   }, []);
 
   return (
-    <div className="h-screen overflow-y-scroll w-[10vw] bg-custom-bg-dark-2">
+    <div className="h-screen overflow-y-scroll w-[15vw] bg-custom-bg-dark-2">
       <div className="py-2">
         <div className="mb-6 text-center text-custom-text-primary font-semibold text-lg">
           <button className="text-custom-accent hover:underline cursor-pointer hover:text-custom-highlight transition duration-150">
@@ -42,7 +42,9 @@ const AllElementsSidebar = ({
                 src={e.imageUrl}
                 width={100}
                 height={100}
-                onClick={() => setElement(e)}
+                onClick={() =>
+                  setElement((state) => (state?.id !== e.id ? e : null))
+                }
                 alt="element image"
                 className={clsx(
                   "p-2 border-2 bg-custom-bg-dark-1 rounded-lg cursor-pointer hover:scale-105 transition-all duration-200 hover:shadow-custom-shadow-hover shadow-sm",
