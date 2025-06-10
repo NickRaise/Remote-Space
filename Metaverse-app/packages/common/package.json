@@ -6,7 +6,8 @@
   "exports": {
     "./ws-types": "./src/types.ts",
     "./config": "./src/config.ts",
-    "./api-types": "./src/apiTypes.ts"
+    "./api-types": "./src/apiTypes.ts",
+    "./schema-types": "./src/schemaTypes.ts"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

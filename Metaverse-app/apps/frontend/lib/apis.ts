@@ -6,6 +6,7 @@ import {
   ILoginResponse,
   IUpdateUserAvatarResponse,
 } from "./types/frontendApiTypes";
+import { Element } from "@repo/common/schema-types";
 
 import {
   CreateAvatarSchema,
@@ -82,5 +83,10 @@ export const CreateElementAPI = async (
     },
   });
 
+  return response;
+};
+
+export const GetAllAvatarsAPI = async () => {
+  const response = await api.get<Element[]>("/elements");
   return response;
 };

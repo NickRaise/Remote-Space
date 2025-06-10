@@ -1,11 +1,16 @@
 "use client";
-import React, { useRef, useEffect } from "react";
+import AllElementsSidebar from "@/components/custom/element-sidebar";
+import React, { useRef, useEffect, useState } from "react";
+import { Element } from "@repo/common/schema-types";
 
 const TILE_SIZE = 40;
 const TILE_IMAGE_SRC = "/assests/objects/tile.png";
 
 export default function FullScreenGrid() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [selectedElementId, setSelectedElementId] = useState<Element | null>(
+    null
+  );
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -87,6 +92,7 @@ export default function FullScreenGrid() {
 
   return (
     <div className="bg-slate-800 relative h-screen w-screen">
+      <AllElementsSidebar setElementId={setSelectedElementId} />
       <canvas
         ref={canvasRef}
         className="fixed top-0 left-1/2 -translate-x-1/2 z-0 md:w-[80vw] h-screen overflow-hidden"
