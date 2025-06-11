@@ -42,8 +42,8 @@ export default function CreateElementForm() {
     resolver: zodResolver(elementSchema),
     defaultValues: {
       imageUrl: "",
-      width: 40,
-      height: 40,
+      width: 1,
+      height: 1,
       static: false,
     },
   });
