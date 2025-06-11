@@ -28,7 +28,7 @@ const AllElementsSidebar = ({
   }, []);
 
   return (
-    <div className="h-screen overflow-y-scroll w-[15vw] bg-custom-bg-dark-2">
+    <div className="h-screen overflow-y-scroll w-[10vw] bg-custom-bg-dark-2">
       <div className="py-2">
         <div className="mb-6 text-center text-custom-text-primary font-semibold text-lg">
           <button className="text-custom-accent hover:underline cursor-pointer hover:text-custom-highlight transition duration-150">

@@ -95,7 +95,7 @@ export default function FullScreenGrid() {
       <AllElementsSidebar setElement={setSelectedElementInstance} element={selectedElementInstance}  />
       <canvas
         ref={canvasRef}
-        className="fixed top-0 right-10 z-0 md:w-[80vw] h-screen overflow-hidden"
+        className="fixed top-0 right-10 z-0 md:w-[85vw] h-screen overflow-hidden"
       />
     </div>
   );
