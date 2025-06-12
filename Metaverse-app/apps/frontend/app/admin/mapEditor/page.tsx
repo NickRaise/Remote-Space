@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import AllElementsSidebar from "@/components/custom/element-sidebar";
+import AllElementsMenu from "@/components/custom/element-sidebar";
 import { Element } from "@repo/common/schema-types";
 
 export default function MapEditorGame() {
@@ -46,7 +46,7 @@ export default function MapEditorGame() {
 
   return (
     <div className="w-screen h-screen">
-      <AllElementsSidebar
+      <AllElementsMenu
         element={selectedElement}
         setElement={setSelectedElement}
       />

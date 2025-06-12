@@ -9,8 +9,9 @@ import { Element } from "@repo/common/schema-types";
 import { GetAllAvatarsAPI } from "@/lib/apis";
 import Image from "next/image";
 import clsx from "clsx";
+import { ChevronDown, ChevronLeft, X } from "lucide-react";
 
-const AllElementsSidebar = ({
+const AllElementsMenu = ({
   element,
   setElement,
 }: {
@@ -65,11 +66,10 @@ const AllElementsSidebar = ({
                 hover:bg-custom-text-primary hover:text-custom-bg-dark-1 
                 transition duration-200 cursor-pointer"
               >
-                ←
+                <ChevronLeft className="w-4 h-4" />
               </div>
             </div>
 
-            {/* Avatar Items */}
             <div className="h-full flex items-center pl-16">
               <div
                 ref={scrollRef}
@@ -102,16 +102,20 @@ const AllElementsSidebar = ({
       <div className="w-full flex justify-center">
         <div
           onClick={() => setIsOpen((prev) => !prev)}
-          className="w-28 h-16 bg-custom-text-primary text-custom-bg-dark-2 flex items-center justify-center cursor-pointer -mt-6"
+          className="w-28 h-16 text-custom-text-primary bg-custom-bg-dark-2 transition-all duration-200 flex items-center justify-center cursor-pointer -mt-5 hover:bg-gradient-to-b hover:from-custom-bg-dark-2 hover:to-custom-bg-dark-1 border border-custom-bg-dark-2"
           style={{
             clipPath: "polygon(0.87% 31.21%, 99.13% 31.21%, 75% 75%, 25% 75%)",
           }}
         >
-          {isOpen ? "x" : "↓"}
+          {isOpen ? (
+            <X className="w-4 h-4 mt-1" />
+          ) : (
+            <ChevronDown className="w-4 h-4" />
+          )}
         </div>
       </div>
     </div>
   );
 };
 
-export default AllElementsSidebar;
+export default AllElementsMenu;
