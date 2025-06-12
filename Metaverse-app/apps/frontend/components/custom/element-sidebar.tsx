@@ -28,7 +28,7 @@ const AllElementsSidebar = ({
   }, []);
 
   return (
-    <div className="h-screen overflow-y-scroll w-[10vw] bg-custom-bg-dark-2 z-10 relative">
+    <div className="h-screen overflow-y-scroll w-[10vw] bg-custom-bg-dark-2 z-10 fixed">
       <div className="py-2">
         <div className="mb-6 text-center text-custom-text-primary font-semibold text-lg">
           <button className="text-custom-accent hover:underline cursor-pointer hover:text-custom-highlight transition duration-150">
@@ -44,8 +44,8 @@ const AllElementsSidebar = ({
                 height={100}
                 onClick={() =>
                   setElement((state) => {
-                    console.log(state?.id)
-                    return state?.id !== e.id ? e : null
+                    console.log(state?.id);
+                    return state?.id !== e.id ? e : null;
                   })
                 }
                 alt="element image"
