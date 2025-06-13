@@ -10,6 +10,7 @@ import { GetAllAvatarsAPI } from "@/lib/apis";
 import Image from "next/image";
 import clsx from "clsx";
 import { ChevronDown, ChevronLeft, X } from "lucide-react";
+import { TILE_SIZE } from "@/lib/constant";
 
 const AllElementsMenu = ({
   element,
@@ -20,7 +21,6 @@ const AllElementsMenu = ({
 }) => {
   const [allElements, setAllElements] = useState<Element[]>();
   const [isOpen, setIsOpen] = useState(true);
-  const scrollRef = useRef<HTMLDivElement>(null);
 
   const fetchAllElements = async () => {
     try {
@@ -35,58 +35,36 @@ const AllElementsMenu = ({
     fetchAllElements();
   }, []);
 
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    const onWheel = (e: WheelEvent) => {
-      if (e.deltaY === 0) return;
-      e.preventDefault();
-      el.scrollLeft += e.deltaY * 2;
-    };
-
-    el.addEventListener("wheel", onWheel);
-    return () => el.removeEventListener("wheel", onWheel);
-  }, [isOpen]);
-
   return (
-    <div className="fixed top-0 left-0 w-screen z-50">
+    <div className="sticky top-0 left-0 z-50">
       <div
         className={clsx(
-          "w-full bg-custom-bg-dark-2 overflow-hidden transition-all duration-300 relative",
-          isOpen ? "h-36" : "h-0"
+          " h-screen bg-custom-bg-dark-2 overflow-y-scroll transition-all duration-300 relative",
+          isOpen ? "w-36" : "w-0"
         )}
       >
         {isOpen && (
           <>
-            <div className="absolute left-4 z-20 flex items-center h-full ">
-              <div
-                className="w-10 h-10 flex items-center justify-center rounded-full 
-                text-custom-text-primary border-2 border-custom-text-primary 
-                hover:bg-custom-text-primary hover:text-custom-bg-dark-1 
-                transition duration-200 cursor-pointer"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </div>
+            <div className="my-3 text-center text-custom-text-primary font-semibold text-md">
+              <button className="text-custom-accent hover:underline cursor-pointer hover:text-custom-highlight transition duration-150">
+                ← Go Back
+              </button>
             </div>
 
-            <div className="h-full flex items-center pl-16">
-              <div
-                ref={scrollRef}
-                className="flex gap-3 px-4 py-2 flex-nowrap overflow-x-auto scrollbar-hide scroll-smooth"
-              >
+            <div className="flex items-center">
+              <div className="flex gap-3 px-4 flex-wrap items-center justify-center">
                 {allElements?.map((e) => (
                   <div className="flex-shrink-0" key={e.id}>
                     <Image
                       src={e.imageUrl}
-                      width={100}
-                      height={100}
+                      width={e.width * TILE_SIZE}
+                      height={e.height * TILE_SIZE}
                       onClick={() =>
                         setElement((state) => (state?.id !== e.id ? e : null))
                       }
                       alt="element image"
                       className={clsx(
-                        "p-2 bg-custom-bg-dark-1 rounded-lg cursor-pointer hover:scale-105 transition-all duration-200 hover:shadow-[rgba(0,173,181,0.6)] shadow-sm w-[100px] h-auto max-h-[90px] object-contain",
+                        "p-2 bg-custom-bg-dark-1 rounded-lg cursor-pointer hover:scale-105 transition-all duration-200 hover:shadow-[rgba(0,173,181,0.6)] shadow-sm max-h-[90px] object-contain",
                         element?.id === e.id
                           ? "border-2 border-custom-border-highlight"
                           : "border-2 border-transparent"
@@ -99,7 +77,7 @@ const AllElementsMenu = ({
           </>
         )}
       </div>
-      <div className="w-full flex justify-center">
+      {/* <div className="w-full flex justify-center">
         <div
           onClick={() => setIsOpen((prev) => !prev)}
           className="w-28 h-16 text-custom-text-primary bg-custom-bg-dark-2 transition-all duration-200 flex items-center justify-center cursor-pointer -mt-5 hover:bg-gradient-to-b hover:from-custom-bg-dark-2 hover:to-custom-bg-dark-1 border border-custom-bg-dark-2"
@@ -113,7 +91,7 @@ const AllElementsMenu = ({
             <ChevronDown className="w-4 h-4" />
           )}
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

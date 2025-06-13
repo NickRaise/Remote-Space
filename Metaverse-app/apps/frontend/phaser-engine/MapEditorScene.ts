@@ -1,6 +1,6 @@
+import { TILE_SIZE } from '@/lib/constant';
 import * as Phaser from 'phaser';
 
-const TILE_SIZE = 40;
 const MAP_WIDTH = 1600;
 const MAP_HEIGHT = 1000;
 

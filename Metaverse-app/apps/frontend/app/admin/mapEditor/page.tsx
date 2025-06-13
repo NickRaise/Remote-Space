@@ -45,7 +45,7 @@ export default function MapEditorGame() {
   }, []);
 
   return (
-    <div className="w-screen h-screen">
+    <div className="w-screen h-screen flex overflow-scroll">
       <AllElementsMenu
         element={selectedElement}
         setElement={setSelectedElement}
