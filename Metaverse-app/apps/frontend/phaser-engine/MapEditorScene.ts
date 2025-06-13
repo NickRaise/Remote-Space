@@ -28,6 +28,10 @@ export class MapEditorScene extends Phaser.Scene {
   private cameraStart = { x: 0, y: 0 };
   private isSpacePressed = false;
 
+  // Zoom interpolation
+  private targetZoom = 1;
+  private zoomLerpSpeed = 0.1;
+
   constructor() {
     super("MapEditor");
   }
@@ -35,7 +39,6 @@ export class MapEditorScene extends Phaser.Scene {
   create() {
     this.drawGrid();
 
-    // Setup the values when the space bar is pressed
     this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
       if (this.isSpacePressed) {
         this.isDragging = true;
@@ -74,13 +77,11 @@ export class MapEditorScene extends Phaser.Scene {
       });
     });
 
-    // Release cursor
     this.input.on("pointerup", () => {
       this.isDragging = false;
       this.input.setDefaultCursor("default");
     });
 
-    // Move the canvas when dragging
     this.input.on("pointermove", (pointer: Phaser.Input.Pointer) => {
       if (this.isDragging && this.isSpacePressed) {
         const dx = pointer.x - this.dragStart.x;
@@ -91,18 +92,46 @@ export class MapEditorScene extends Phaser.Scene {
       }
     });
 
-    // Set space bar to pressed
     this.input.keyboard?.on("keydown-SPACE", () => {
       this.isSpacePressed = true;
       this.input.setDefaultCursor("grab");
     });
 
-    // Set space bar to released
     this.input.keyboard?.on("keyup-SPACE", () => {
       this.isSpacePressed = false;
       this.isDragging = false;
       this.input.setDefaultCursor("default");
     });
+
+    // Smooth zoom: Ctrl + Scroll sets targetZoom
+    window.addEventListener(
+      "wheel",
+      (event: WheelEvent) => {
+        if (!event.ctrlKey) return;
+
+        event.preventDefault();
+
+        const zoomSpeed = 0.0015;
+
+        this.targetZoom = Phaser.Math.Clamp(
+          this.targetZoom - event.deltaY * zoomSpeed,
+          0.3,
+          3
+        );
+      },
+      { passive: false }
+    );
+  }
+
+  update() {
+    // Smoothly interpolate the zoom level
+    const currentZoom = this.cameras.main.zoom;
+    const newZoom = Phaser.Math.Linear(
+      currentZoom,
+      this.targetZoom,
+      this.zoomLerpSpeed
+    );
+    this.cameras.main.setZoom(newZoom);
   }
 
   drawGrid() {
