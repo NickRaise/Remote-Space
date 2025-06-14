@@ -1,15 +1,9 @@
 import { TILE_SIZE } from "@/lib/constant";
 import * as Phaser from "phaser";
+import { Element } from "@repo/common/schema-types";
 
 const MAP_WIDTH = 1600;
 const MAP_HEIGHT = 1000;
-
-interface ElementData {
-  id: string;
-  imageUrl: string;
-  width: number;
-  height: number;
-}
 
 interface MapElement {
   id: string;
@@ -19,8 +13,7 @@ interface MapElement {
 }
 
 export class MapEditorScene extends Phaser.Scene {
-  selectedElement: ElementData | null = null;
-  allElements: ElementData[] = [];
+  selectedElement: Element | null = null;
   mapElements: MapElement[] = [];
 
   private isDragging = false;
@@ -28,7 +21,6 @@ export class MapEditorScene extends Phaser.Scene {
   private cameraStart = { x: 0, y: 0 };
   private isSpacePressed = false;
 
-  // Zoom interpolation
   private targetZoom = 1;
   private zoomLerpSpeed = 0.1;
 
@@ -61,13 +53,57 @@ export class MapEditorScene extends Phaser.Scene {
       const posX = gridX * TILE_SIZE;
       const posY = gridY * TILE_SIZE;
 
+      const elemWidth = this.selectedElement.width;
+      const elemHeight = this.selectedElement.height;
+
+      const spriteWidth = elemWidth * TILE_SIZE;
+      const spriteHeight = elemHeight * TILE_SIZE;
+
+      // Check if element is out of bounds
+      if (
+        posX < 0 ||
+        posY < 0 ||
+        posX + spriteWidth > MAP_WIDTH ||
+        posY + spriteHeight > MAP_HEIGHT
+      ) {
+        console.warn("Cannot place element: would overflow map bounds.");
+        return;
+      }
+
+      // Check for overlap
+      const isOverlapping = this.mapElements.some((elem) => {
+        const otherWidth = elem.sprite.displayWidth / TILE_SIZE;
+        const otherHeight = elem.sprite.displayHeight / TILE_SIZE;
+
+        return !(
+          gridX + elemWidth <= elem.x || // right
+          gridX >= elem.x + otherWidth || // left
+          gridY + elemHeight <= elem.y || // below
+          gridY >= elem.y + otherHeight // above
+        );
+      });
+
+      if (isOverlapping) {
+        console.warn("Cannot place element: overlaps another element.");
+        return;
+      }
+
+      // Add pink background rectangle
+      // const bg = this.add.rectangle(
+      //   posX + spriteWidth / 2,
+      //   posY + spriteHeight / 2,
+      //   spriteWidth,
+      //   spriteHeight,
+      //   0xff69b4,
+      //   0.4
+      // );
+      // bg.setOrigin(0.5, 0.5);
+
+      // Add sprite on top
       const sprite = this.add
         .image(posX, posY, this.selectedElement.id)
         .setOrigin(0, 0)
-        .setDisplaySize(
-          this.selectedElement.width * TILE_SIZE,
-          this.selectedElement.height * TILE_SIZE
-        );
+        .setDisplaySize(spriteWidth, spriteHeight);
 
       this.mapElements.push({
         id: this.selectedElement.id,
@@ -75,6 +111,8 @@ export class MapEditorScene extends Phaser.Scene {
         x: gridX,
         y: gridY,
       });
+
+      console.log(this.mapElements);
     });
 
     this.input.on("pointerup", () => {
@@ -103,16 +141,12 @@ export class MapEditorScene extends Phaser.Scene {
       this.input.setDefaultCursor("default");
     });
 
-    // Smooth zoom: Ctrl + Scroll sets targetZoom
     window.addEventListener(
       "wheel",
       (event: WheelEvent) => {
         if (!event.ctrlKey) return;
-
         event.preventDefault();
-
         const zoomSpeed = 0.0015;
-
         this.targetZoom = Phaser.Math.Clamp(
           this.targetZoom - event.deltaY * zoomSpeed,
           0.3,
@@ -124,7 +158,6 @@ export class MapEditorScene extends Phaser.Scene {
   }
 
   update() {
-    // Smoothly interpolate the zoom level
     const currentZoom = this.cameras.main.zoom;
     const newZoom = Phaser.Math.Linear(
       currentZoom,
@@ -151,7 +184,24 @@ export class MapEditorScene extends Phaser.Scene {
     graphics.strokePath();
   }
 
-  setElements(elements: ElementData[]) {
-    this.allElements = elements;
+  setElements(element: Element | null) {
+    if (!element) {
+      this.selectedElement = null;
+      return;
+    }
+
+    const key = element.id;
+
+    if (!this.textures.exists(key)) {
+      this.load.image(key, element.imageUrl);
+      this.load.once("complete", () => {
+        this.selectedElement = element;
+        console.log("Texture loaded and element set:", element);
+      });
+      this.load.start();
+    } else {
+      this.selectedElement = element;
+      console.log("Texture already loaded, element set:", element);
+    }
   }
 }

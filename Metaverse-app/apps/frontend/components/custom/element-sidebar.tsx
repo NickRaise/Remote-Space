@@ -9,15 +9,18 @@ import { Element } from "@repo/common/schema-types";
 import { GetAllAvatarsAPI } from "@/lib/apis";
 import Image from "next/image";
 import clsx from "clsx";
-import { ChevronDown, ChevronLeft, X } from "lucide-react";
 import { TILE_SIZE } from "@/lib/constant";
+import { MapEditorScene } from "@/phaser-engine/MapEditorScene";
+import { Game } from "phaser";
 
 const AllElementsMenu = ({
   element,
   setElement,
+  gameRef,
 }: {
   element: Element | null;
   setElement: Dispatch<SetStateAction<Element | null>>;
+  gameRef: React.RefObject<Game | null>;
 }) => {
   const [allElements, setAllElements] = useState<Element[]>();
 
@@ -27,6 +30,19 @@ const AllElementsMenu = ({
       setAllElements(response.data);
     } catch (err) {
       console.log(err);
+    }
+  };
+
+  const handleSelectElement = (ele: Element) => {
+    console.log(ele);
+    setElement((state) => (state?.id !== ele.id ? ele : null));
+    const scene = gameRef.current?.scene?.keys["MapEditor"] as MapEditorScene;
+    if (ele !== null) {
+      console.log("Add element as selected");
+      scene.setElements(ele as Element);
+    } else {
+      scene.setElements(null);
+      console.log("Remove element as selected");
     }
   };
 
@@ -51,9 +67,7 @@ const AllElementsMenu = ({
                   src={e.imageUrl}
                   width={e.width * TILE_SIZE}
                   height={e.height * TILE_SIZE}
-                  onClick={() =>
-                    setElement((state) => (state?.id !== e.id ? e : null))
-                  }
+                  onClick={() => handleSelectElement(e)}
                   alt="element image"
                   className={clsx(
                     "p-2 bg-custom-bg-dark-1 rounded-lg cursor-pointer hover:scale-105 transition-all duration-200 hover:shadow-[rgba(0,173,181,0.6)] shadow-sm max-h-[90px] object-contain",

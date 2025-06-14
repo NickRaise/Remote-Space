@@ -3,10 +3,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import AllElementsMenu from "@/components/custom/element-sidebar";
 import { Element } from "@repo/common/schema-types";
+import { Game } from "phaser";
 
 export default function MapEditorGame() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const gameRef = useRef<any>(null); // Cannot use Game directly due to dynamic import
+  const gameRef = useRef<Game>(null);
   const [selectedElement, setSelectedElement] = useState<Element | null>(null);
 
   const initGame = async () => {
@@ -18,6 +19,7 @@ export default function MapEditorGame() {
       return;
 
     const Phaser = await import("phaser");
+
     const { MapEditorScene } = await import("@/phaser-engine/MapEditorScene");
 
     const config: Phaser.Types.Core.GameConfig = {
@@ -49,6 +51,7 @@ export default function MapEditorGame() {
       <AllElementsMenu
         element={selectedElement}
         setElement={setSelectedElement}
+        gameRef={gameRef}
       />
       <div ref={containerRef} className="flex-1" />
     </div>
