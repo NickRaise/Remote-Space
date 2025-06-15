@@ -13,7 +13,6 @@ interface MapElement {
 }
 
 export class MapEditorScene extends Phaser.Scene {
-  selectedElement: Element | null = null;
   mapElements: MapElement[] = [];
 
   private isDragging = false;
@@ -41,78 +40,6 @@ export class MapEditorScene extends Phaser.Scene {
         this.input.setDefaultCursor("grabbing");
         return;
       }
-
-      if (!this.selectedElement) return;
-
-      const worldPoint = pointer.positionToCamera(
-        this.cameras.main
-      ) as Phaser.Math.Vector2;
-      const gridX = Math.floor(worldPoint.x / TILE_SIZE);
-      const gridY = Math.floor(worldPoint.y / TILE_SIZE);
-
-      const posX = gridX * TILE_SIZE;
-      const posY = gridY * TILE_SIZE;
-
-      const elemWidth = this.selectedElement.width;
-      const elemHeight = this.selectedElement.height;
-
-      const spriteWidth = elemWidth * TILE_SIZE;
-      const spriteHeight = elemHeight * TILE_SIZE;
-
-      // Check if element is out of bounds
-      if (
-        posX < 0 ||
-        posY < 0 ||
-        posX + spriteWidth > MAP_WIDTH ||
-        posY + spriteHeight > MAP_HEIGHT
-      ) {
-        console.warn("Cannot place element: would overflow map bounds.");
-        return;
-      }
-
-      // Check for overlap
-      const isOverlapping = this.mapElements.some((elem) => {
-        const otherWidth = elem.sprite.displayWidth / TILE_SIZE;
-        const otherHeight = elem.sprite.displayHeight / TILE_SIZE;
-
-        return !(
-          gridX + elemWidth <= elem.x || // right
-          gridX >= elem.x + otherWidth || // left
-          gridY + elemHeight <= elem.y || // below
-          gridY >= elem.y + otherHeight // above
-        );
-      });
-
-      if (isOverlapping) {
-        console.warn("Cannot place element: overlaps another element.");
-        return;
-      }
-
-      // Add pink background rectangle
-      // const bg = this.add.rectangle(
-      //   posX + spriteWidth / 2,
-      //   posY + spriteHeight / 2,
-      //   spriteWidth,
-      //   spriteHeight,
-      //   0xff69b4,
-      //   0.4
-      // );
-      // bg.setOrigin(0.5, 0.5);
-
-      // Add sprite on top
-      const sprite = this.add
-        .image(posX, posY, this.selectedElement.id)
-        .setOrigin(0, 0)
-        .setDisplaySize(spriteWidth, spriteHeight);
-
-      this.mapElements.push({
-        id: this.selectedElement.id,
-        sprite,
-        x: gridX,
-        y: gridY,
-      });
-
-      console.log(this.mapElements);
     });
 
     this.input.on("pointerup", () => {
@@ -184,24 +111,81 @@ export class MapEditorScene extends Phaser.Scene {
     graphics.strokePath();
   }
 
-  setElements(element: Element | null) {
-    if (!element) {
-      this.selectedElement = null;
+  placeElementAt(element: Element, clientX: number, clientY: number) {
+    const worldPoint = this.cameras.main.getWorldPoint(clientX, clientY);
+    const gridX = Math.floor(worldPoint.x / TILE_SIZE);
+    const gridY = Math.floor(worldPoint.y / TILE_SIZE);
+
+    const posX = gridX * TILE_SIZE;
+    const posY = gridY * TILE_SIZE;
+    const elemWidth = element.width;
+    const elemHeight = element.height;
+
+    const spriteWidth = elemWidth * TILE_SIZE;
+    const spriteHeight = elemHeight * TILE_SIZE;
+
+    if (
+      posX < 0 ||
+      posY < 0 ||
+      posX + spriteWidth > MAP_WIDTH ||
+      posY + spriteHeight > MAP_HEIGHT
+    ) {
+      console.warn("Out of bounds drop");
       return;
     }
 
+    const isOverlapping = this.mapElements.some((elem) => {
+      const otherWidth = elem.sprite.displayWidth / TILE_SIZE;
+      const otherHeight = elem.sprite.displayHeight / TILE_SIZE;
+
+      return !(
+        gridX + elemWidth <= elem.x || // to the left
+        gridX >= elem.x + otherWidth || // to the right
+        gridY + elemHeight <= elem.y || // below
+        gridY >= elem.y + otherHeight // above
+      );
+    });
+
+    if (isOverlapping) {
+      console.warn("Drop overlaps existing element");
+      return;
+    }
+
+    // Ensure texture is loaded
     const key = element.id;
+    const handlePlace = () => {
+      // Background for visualizing
+      const bg = this.add
+        .rectangle(
+          posX + spriteWidth / 2,
+          posY + spriteHeight / 2,
+          spriteWidth,
+          spriteHeight,
+          0x3a3a3c,
+          0.4
+        )
+        .setOrigin(0.5, 0.5);
+
+      // Image
+      const sprite = this.add
+        .image(posX, posY, key)
+        .setOrigin(0, 0)
+        .setDisplaySize(spriteWidth, spriteHeight);
+
+      this.mapElements.push({
+        id: key,
+        sprite,
+        x: gridX,
+        y: gridY,
+      });
+    };
 
     if (!this.textures.exists(key)) {
       this.load.image(key, element.imageUrl);
-      this.load.once("complete", () => {
-        this.selectedElement = element;
-        console.log("Texture loaded and element set:", element);
-      });
+      this.load.once("complete", handlePlace);
       this.load.start();
     } else {
-      this.selectedElement = element;
-      console.log("Texture already loaded, element set:", element);
+      handlePlace();
     }
   }
 }
