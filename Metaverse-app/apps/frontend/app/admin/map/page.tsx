@@ -5,12 +5,12 @@ import AllElementsMenu from "@/components/custom/element-sidebar";
 import { Element } from "@repo/common/schema-types";
 import { Game } from "phaser";
 import { MapEditorScene } from "@/phaser-engine/MapEditorScene";
-import { motion } from "framer-motion";
+import MapEditorHelpBox from "@/components/custom/map-editor-helpbox";
 
 export default function MapEditorGame() {
   const containerRef = useRef<HTMLDivElement>(null);
   const gameRef = useRef<Game>(null);
-  const [showTutorial, setShowTutorial] = useState(true);
+  
 
   const initGame = async () => {
     if (
@@ -84,36 +84,7 @@ export default function MapEditorGame() {
     <div className="w-screen h-screen flex overflow-scroll scrollbar-hide relative">
       <AllElementsMenu />
       <div ref={containerRef} className="flex-1" />
-
-      {showTutorial && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: "easeOut" }}
-          className="absolute top-6 right-6 rounded-2xl shadow-lg border border-gray-700 p-4 w-[320px] z-50 custom-bg-1 text-white select-none"
-        >
-          <div className="flex justify-between items-center mb-2">
-            <h2 className="text-lg font-semibold">🧭 Map Editor Tips</h2>
-            <button
-              className="text-sm text-gray-400 hover:text-white cursor-pointer"
-              onClick={() => setShowTutorial(false)}
-            >
-              ✕
-            </button>
-          </div>
-          <ul className="space-y-2 text-sm text-gray-300">
-            <li>
-              🔲 <strong>Hold Spacebar</strong> to move the map
-            </li>
-            <li>
-              🔍 <strong>Ctrl + Scroll</strong> to zoom in and out
-            </li>
-            <li>
-              🧩 <strong>Drag & Drop</strong> elements to place them on the grid
-            </li>
-          </ul>
-        </motion.div>
-      )}
+      <MapEditorHelpBox />
     </div>
   );
 }
