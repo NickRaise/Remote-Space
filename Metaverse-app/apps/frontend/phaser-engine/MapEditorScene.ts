@@ -116,14 +116,18 @@ export class MapEditorScene extends Phaser.Scene {
   handlePointerUp(pointer: Phaser.Input.Pointer) {
     if (this.selectedSprite && this.selectedElement) {
       const worldPoint = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
-      const gridX = Math.floor(worldPoint.x / TILE_SIZE);
-      const gridY = Math.floor(worldPoint.y / TILE_SIZE);
+      const elemWidth = this.selectedSprite.displayWidth;
+      const elemHeight = this.selectedSprite.displayHeight;
+
+      // Find the center point's grid cell
+      const centerX = worldPoint.x;
+      const centerY = worldPoint.y;
+
+      const gridX = Math.floor((centerX - elemWidth / 2) / TILE_SIZE);
+      const gridY = Math.floor((centerY - elemHeight / 2) / TILE_SIZE);
 
       const newX = gridX * TILE_SIZE;
       const newY = gridY * TILE_SIZE;
-
-      const elemWidth = this.selectedSprite.displayWidth;
-      const elemHeight = this.selectedSprite.displayHeight;
 
       if (this.isValidPlacement(newX, newY, elemWidth, elemHeight)) {
         this.updateElementPosition(this.selectedElement, newX, newY);

@@ -26,7 +26,7 @@ const AllElementsMenu = () => {
 
   return (
     <div className="sticky top-0 left-0 z-50">
-      <div className="h-screen w-36 bg-custom-bg-dark-2 overflow-y-scroll overflow-x-hidden transition-all duration-300 relative">
+      <div className="h-screen w-40 bg-custom-bg-dark-2 overflow-y-scroll overflow-x-hidden transition-all duration-300 relative">
         <div className="my-3 text-center text-custom-text-primary font-semibold text-md">
           <button className="text-custom-accent hover:underline cursor-pointer hover:text-custom-highlight transition duration-150">
             ← Go Back
