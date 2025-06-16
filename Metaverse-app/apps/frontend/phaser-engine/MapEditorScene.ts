@@ -23,6 +23,9 @@ export class MapEditorScene extends Phaser.Scene {
   private targetZoom = 1;
   private zoomLerpSpeed = 0.1;
 
+  private selectedSprite: Phaser.GameObjects.Image | null = null;
+  private selectedElement: MapElement | null = null;
+
   constructor() {
     super("MapEditor");
   }
@@ -40,11 +43,68 @@ export class MapEditorScene extends Phaser.Scene {
         this.input.setDefaultCursor("grabbing");
         return;
       }
+
+      const worldPoint = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
+
+      // Check if an element was clicked
+      const clickedElement = this.mapElements.find((elem) =>
+        elem.sprite.getBounds().contains(worldPoint.x, worldPoint.y)
+      );
+
+      if (clickedElement) {
+        this.selectedElement = clickedElement;
+        this.selectedSprite = clickedElement.sprite;
+        this.children.bringToTop(this.selectedSprite); // bring to top visually
+        this.input.setDefaultCursor("grabbing");
+      }
     });
 
-    this.input.on("pointerup", () => {
+    this.input.on("pointerup", (pointer: Phaser.Input.Pointer) => {
+      if (this.selectedSprite && this.selectedElement) {
+        const worldPoint = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
+        const gridX = Math.floor(worldPoint.x / TILE_SIZE);
+        const gridY = Math.floor(worldPoint.y / TILE_SIZE);
+
+        const newX = gridX * TILE_SIZE;
+        const newY = gridY * TILE_SIZE;
+        const elemWidth = this.selectedSprite.displayWidth;
+        const elemHeight = this.selectedSprite.displayHeight;
+
+        const outOfBounds =
+          newX < 0 ||
+          newY < 0 ||
+          newX + elemWidth > MAP_WIDTH ||
+          newY + elemHeight > MAP_HEIGHT;
+
+        const isOverlapping = this.mapElements.some((elem) => {
+          if (elem.id === this.selectedElement?.id) return false;
+
+          const otherWidth = elem.sprite.displayWidth;
+          const otherHeight = elem.sprite.displayHeight;
+
+          return !(
+            newX + elemWidth <= elem.sprite.x || // to the left
+            newX >= elem.sprite.x + otherWidth || // to the right
+            newY + elemHeight <= elem.sprite.y || // below
+            newY >= elem.sprite.y + otherHeight // above
+          );
+        });
+
+        if (!outOfBounds && !isOverlapping) {
+          this.selectedSprite.setPosition(newX, newY);
+          this.selectedElement.x = gridX;
+          this.selectedElement.y = gridY;
+        }
+
+        this.selectedElement = null;
+        this.selectedSprite = null;
+        this.input.setDefaultCursor("default");
+      }
+
       this.isDragging = false;
-      this.input.setDefaultCursor("default");
+      if (!this.isSpacePressed) {
+        this.input.setDefaultCursor("default");
+      }
     });
 
     this.input.on("pointermove", (pointer: Phaser.Input.Pointer) => {
@@ -54,6 +114,14 @@ export class MapEditorScene extends Phaser.Scene {
 
         this.cameras.main.scrollX = this.cameraStart.x - dx;
         this.cameras.main.scrollY = this.cameraStart.y - dy;
+      }
+
+      if (this.selectedSprite && this.selectedElement) {
+        const worldPoint = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
+        this.selectedSprite.setPosition(
+          worldPoint.x - (this.selectedSprite.displayWidth / 2),
+          worldPoint.y - (this.selectedSprite.displayHeight / 2)
+        );
       }
     });
 
