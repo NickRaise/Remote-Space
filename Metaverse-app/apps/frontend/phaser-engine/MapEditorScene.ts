@@ -61,7 +61,10 @@ export class MapEditorScene extends Phaser.Scene {
 
     this.input.on("pointerup", (pointer: Phaser.Input.Pointer) => {
       if (this.selectedSprite && this.selectedElement) {
-        const worldPoint = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
+        const worldPoint = this.cameras.main.getWorldPoint(
+          pointer.x,
+          pointer.y
+        );
         const gridX = Math.floor(worldPoint.x / TILE_SIZE);
         const gridY = Math.floor(worldPoint.y / TILE_SIZE);
 
@@ -94,6 +97,10 @@ export class MapEditorScene extends Phaser.Scene {
           this.selectedSprite.setPosition(newX, newY);
           this.selectedElement.x = gridX;
           this.selectedElement.y = gridY;
+        } else {
+          const revertX = this.selectedElement.x * TILE_SIZE;
+          const revertY = this.selectedElement.y * TILE_SIZE;
+          this.selectedSprite.setPosition(revertX, revertY);
         }
 
         this.selectedElement = null;
@@ -117,10 +124,13 @@ export class MapEditorScene extends Phaser.Scene {
       }
 
       if (this.selectedSprite && this.selectedElement) {
-        const worldPoint = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
+        const worldPoint = this.cameras.main.getWorldPoint(
+          pointer.x,
+          pointer.y
+        );
         this.selectedSprite.setPosition(
-          worldPoint.x - (this.selectedSprite.displayWidth / 2),
-          worldPoint.y - (this.selectedSprite.displayHeight / 2)
+          worldPoint.x - this.selectedSprite.displayWidth / 2,
+          worldPoint.y - this.selectedSprite.displayHeight / 2
         );
       }
     });
