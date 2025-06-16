@@ -32,12 +32,13 @@ export class MapEditorScene extends Phaser.Scene {
   }
 
   create() {
-    this.drawGrid();
+    this.drawGrid(); // Draw initial grid on map
 
     this.input.on("pointerdown", this.handlePointerDown, this);
     this.input.on("pointerup", this.handlePointerUp, this);
     this.input.on("pointermove", this.handlePointerMove, this);
 
+    // Handle panning
     this.input.keyboard?.on("keydown-SPACE", () => {
       this.isSpacePressed = true;
       this.input.setDefaultCursor("grab");
@@ -49,6 +50,7 @@ export class MapEditorScene extends Phaser.Scene {
       this.input.setDefaultCursor("default");
     });
 
+    // Zoom handling with Ctrl + Scroll
     window.addEventListener(
       "wheel",
       (event: WheelEvent) => {
@@ -66,6 +68,7 @@ export class MapEditorScene extends Phaser.Scene {
   }
 
   update() {
+    // Smooth zoom transition
     const currentZoom = this.cameras.main.zoom;
     const newZoom = Phaser.Math.Linear(
       currentZoom,
@@ -94,6 +97,7 @@ export class MapEditorScene extends Phaser.Scene {
 
   handlePointerDown(pointer: Phaser.Input.Pointer) {
     if (this.isSpacePressed) {
+      // Start camera drag
       this.isDragging = true;
       this.dragStart.x = pointer.x;
       this.dragStart.y = pointer.y;
@@ -149,17 +153,23 @@ export class MapEditorScene extends Phaser.Scene {
 
   handlePointerMove(pointer: Phaser.Input.Pointer) {
     if (this.isDragging && this.isSpacePressed) {
+      // Update camera position while dragging
       const dx = pointer.x - this.dragStart.x;
       const dy = pointer.y - this.dragStart.y;
       this.cameras.main.scrollX = this.cameraStart.x - dx;
       this.cameras.main.scrollY = this.cameraStart.y - dy;
     }
 
+    // Dragging selected element
     if (this.selectedSprite && this.selectedElement) {
       const worldPoint = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
       const newX = worldPoint.x - this.selectedSprite.displayWidth / 2;
       const newY = worldPoint.y - this.selectedSprite.displayHeight / 2;
       this.selectedSprite.setPosition(newX, newY);
+      this.selectedElement.background.setPosition(
+        newX + this.selectedSprite.displayWidth / 2,
+        newY + this.selectedSprite.displayHeight / 2
+      );
     }
   }
 
@@ -171,6 +181,7 @@ export class MapEditorScene extends Phaser.Scene {
   }
 
   selectElement(elem: MapElement) {
+    // Highlight and set element as selected
     this.selectedElement = elem;
     this.selectedSprite = elem.sprite;
     this.children.bringToTop(elem.background);
@@ -251,10 +262,9 @@ export class MapEditorScene extends Phaser.Scene {
       return;
     }
 
-    // Ensure texture is loaded
     const key = element.id;
     const handlePlace = () => {
-      // Background for visualizing
+      // Draw background highlight
       const bg = this.add
         .rectangle(
           posX + spriteWidth / 2,
@@ -266,7 +276,7 @@ export class MapEditorScene extends Phaser.Scene {
         )
         .setOrigin(0.5, 0.5);
 
-      // Image
+      // Render element image
       const sprite = this.add
         .image(posX, posY, key)
         .setOrigin(0, 0)
