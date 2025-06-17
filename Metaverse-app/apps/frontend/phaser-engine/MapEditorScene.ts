@@ -13,6 +13,9 @@ interface MapElement {
   y: number;
 }
 
+const TILE_IMAGE_URL =
+  "https://raw.githubusercontent.com/NickRaise/Remote-Space/refs/heads/main/Metaverse-app/apps/frontend/public/assests/objects/tile.png";
+
 export class MapEditorScene extends Phaser.Scene {
   mapElements: MapElement[] = [];
 
@@ -29,6 +32,10 @@ export class MapEditorScene extends Phaser.Scene {
 
   constructor() {
     super("MapEditor");
+  }
+
+  preload() {
+    this.load.image("grid-tile", TILE_IMAGE_URL);
   }
 
   create() {
@@ -79,14 +86,27 @@ export class MapEditorScene extends Phaser.Scene {
   }
 
   drawGrid() {
-    const graphics = this.add.graphics();
-    graphics.lineStyle(1, 0x444444, 1);
+    // Draw tile image on each grid square first
+    for (let x = 0; x < MAP_WIDTH; x += TILE_SIZE) {
+      for (let y = 0; y < MAP_HEIGHT; y += TILE_SIZE) {
+        this.add
+          .image(x, y, "grid-tile")
+          .setOrigin(0)
+          .setDisplaySize(TILE_SIZE, TILE_SIZE);
+      }
+    }
 
+    // Now draw grid lines *on top* of the tiles
+    const graphics = this.add.graphics();
+    graphics.lineStyle(1, 0x8888aa, 1);
+
+    // Vertical lines
     for (let x = 0; x <= MAP_WIDTH; x += TILE_SIZE) {
       graphics.moveTo(x, 0);
       graphics.lineTo(x, MAP_HEIGHT);
     }
 
+    // Horizontal lines
     for (let y = 0; y <= MAP_HEIGHT; y += TILE_SIZE) {
       graphics.moveTo(0, y);
       graphics.lineTo(MAP_WIDTH, y);
