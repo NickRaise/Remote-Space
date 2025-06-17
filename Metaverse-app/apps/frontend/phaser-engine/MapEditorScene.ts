@@ -57,6 +57,12 @@ export class MapEditorScene extends Phaser.Scene {
       this.input.setDefaultCursor("default");
     });
 
+    this.input.keyboard?.on("keydown-Z", (event: KeyboardEvent) => {
+      if (event.ctrlKey) {
+        this.removeRecentElement();
+      }
+    });
+
     // Zoom handling with Ctrl + Scroll
     window.addEventListener(
       "wheel",
@@ -323,4 +329,11 @@ export class MapEditorScene extends Phaser.Scene {
       handlePlace();
     }
   }
+
+  removeRecentElement = () => {
+    if (this.mapElements.length === 0) return;
+    const removedElement = this.mapElements.pop();
+    removedElement?.sprite.destroy();
+    removedElement?.background.destroy();
+  };
 }

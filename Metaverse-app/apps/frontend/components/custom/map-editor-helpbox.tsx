@@ -31,6 +31,9 @@ const MapEditorHelpBox = () => {
           <li>
             🧩 <strong>Drag & Drop</strong> elements to place them on the grid
           </li>
+          <li>
+            ⏪ <strong>Ctrl + Z</strong> to undo placed element
+          </li>
         </ul>
       </motion.div>
     )
