@@ -1,4 +1,4 @@
-import { TILE_SIZE } from "@/lib/constant";
+import { TILE_IMAGE_URL, TILE_SIZE } from "@/lib/constant";
 import * as Phaser from "phaser";
 import { Element } from "@repo/common/schema-types";
 
@@ -12,9 +12,6 @@ interface MapElement {
   x: number;
   y: number;
 }
-
-const TILE_IMAGE_URL =
-  "https://raw.githubusercontent.com/NickRaise/Remote-Space/refs/heads/main/Metaverse-app/apps/frontend/public/assests/objects/tile.png";
 
 export class MapEditorScene extends Phaser.Scene {
   mapElements: MapElement[] = [];
@@ -335,5 +332,16 @@ export class MapEditorScene extends Phaser.Scene {
     const removedElement = this.mapElements.pop();
     removedElement?.sprite.destroy();
     removedElement?.background.destroy();
+  };
+
+  generateThumbnail = async (): Promise<string> => {
+    return await new Promise((resolve) => {
+      this.renderer.snapshot((snapshot) => {
+        //Make sure it is a image, not a color object
+        if (snapshot instanceof HTMLImageElement) {
+          resolve(snapshot.src);
+        }
+      });
+    });
   };
 }

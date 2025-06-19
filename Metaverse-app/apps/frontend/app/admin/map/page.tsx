@@ -6,11 +6,39 @@ import { Element } from "@repo/common/schema-types";
 import { Game } from "phaser";
 import { MapEditorScene } from "@/phaser-engine/MapEditorScene";
 import MapEditorHelpBox from "@/components/custom/map-editor-helpbox";
+import { UploadToCloudinary } from "@/cloudinary";
+import { CLOUDINARY_MAP_FOLDER } from "@/lib/constant";
+import { useUserStore } from "@/store/userStore";
+import { CreateMapAPI } from "@/lib/apis";
+import { z } from "zod";
+import { CreateMapSchema } from "@repo/common/api-types";
 
 export default function MapEditorGame() {
   const containerRef = useRef<HTMLDivElement>(null);
   const gameRef = useRef<Game>(null);
-  
+  const token = useUserStore().userToken;
+
+  const createMap = async () => {
+    if (!token) return;
+    const mapObject = gameRef.current?.scene.keys[
+      "MapEditor"
+    ] as MapEditorScene;
+    const image = await mapObject.generateThumbnail();
+    const imageUrl = await UploadToCloudinary(image, CLOUDINARY_MAP_FOLDER);
+    const mapElements = mapObject.mapElements;
+    if (!imageUrl) return;
+    const mapMetaData: z.infer<typeof CreateMapSchema> = {
+      thumbnail: imageUrl,
+      dimensions: "100x100", // work on this, use custom dimensions for map
+      name: "Temp Name",
+      defaultElements: mapElements.map((e) => ({
+        elementId: e.id,
+        x: e.x,
+        y: e.y,
+      })),
+    };
+    const response = await CreateMapAPI(token, mapMetaData);
+  };
 
   const initGame = async () => {
     if (

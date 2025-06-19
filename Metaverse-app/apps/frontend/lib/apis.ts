@@ -11,6 +11,7 @@ import { Element } from "@repo/common/schema-types";
 import {
   CreateAvatarSchema,
   CreateElementSchema,
+  CreateMapSchema,
 } from "@repo/common/api-types";
 import { z } from "zod";
 
@@ -90,3 +91,7 @@ export const GetAllAvatarsAPI = async () => {
   const response = await api.get<Element[]>("/elements");
   return response;
 };
+
+export const CreateMapAPI = async (token: string, data: z.infer<typeof CreateMapSchema>) => {
+  console.log(data)
+}
