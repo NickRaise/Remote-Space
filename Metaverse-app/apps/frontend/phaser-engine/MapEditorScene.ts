@@ -13,6 +13,8 @@ interface MapElement {
   y: number;
 }
 
+type Action = { type: "add" | "delete"; element: MapElement };
+
 export class MapEditorScene extends Phaser.Scene {
   mapElements: MapElement[] = [];
 
@@ -20,6 +22,7 @@ export class MapEditorScene extends Phaser.Scene {
   private dragStart = { x: 0, y: 0 };
   private cameraStart = { x: 0, y: 0 };
   private isSpacePressed = false;
+  private historyStack: Action[] = [];
 
   private targetZoom = 1;
   private zoomLerpSpeed = 0.1;
@@ -38,6 +41,7 @@ export class MapEditorScene extends Phaser.Scene {
   create() {
     this.drawGrid(); // Draw initial grid on map
 
+    this.input.mouse?.disableContextMenu();
     this.input.on("pointerdown", this.handlePointerDown, this);
     this.input.on("pointerup", this.handlePointerUp, this);
     this.input.on("pointermove", this.handlePointerMove, this);
@@ -56,7 +60,7 @@ export class MapEditorScene extends Phaser.Scene {
 
     this.input.keyboard?.on("keydown-Z", (event: KeyboardEvent) => {
       if (event.ctrlKey) {
-        this.removeRecentElement();
+        this.undoLastAction();
       }
     });
 
@@ -128,6 +132,13 @@ export class MapEditorScene extends Phaser.Scene {
       this.cameraStart.y = this.cameras.main.scrollY;
       this.input.setDefaultCursor("grabbing");
       return;
+    }
+
+    if (pointer.rightButtonDown()) {
+      const clickedElement = this.getClickedElement(pointer);
+      if (clickedElement) {
+        this.deleteElement(clickedElement);
+      }
     }
 
     const clickedElement = this.getClickedElement(pointer);
@@ -309,12 +320,19 @@ export class MapEditorScene extends Phaser.Scene {
         .setOrigin(0, 0)
         .setDisplaySize(spriteWidth, spriteHeight);
 
-      this.mapElements.push({
+      const newElement = {
         id: key,
         sprite,
         background: bg,
         x: gridX,
         y: gridY,
+      };
+
+      this.mapElements.push(newElement);
+
+      this.addToHistoryStack({
+        type: "add",
+        element: newElement,
       });
     };
 
@@ -327,11 +345,37 @@ export class MapEditorScene extends Phaser.Scene {
     }
   }
 
-  removeRecentElement = () => {
-    if (this.mapElements.length === 0) return;
-    const removedElement = this.mapElements.pop();
-    removedElement?.sprite.destroy();
-    removedElement?.background.destroy();
+  deleteElement(elem: MapElement) {
+    elem.sprite.destroy();
+    elem.background.destroy();
+
+    this.mapElements = this.mapElements.filter((e) => e !== elem);
+    this.addToHistoryStack({
+      type: "delete",
+      element: elem,
+    });
+  }
+
+  undoLastAction = () => {
+    const lastAction = this.historyStack.pop();
+    if (!lastAction) return;
+
+    if (lastAction.type === "delete") {
+      const restore = lastAction.element;
+      restore.sprite = this.add.existing(restore.sprite);
+      restore.background = this.add.existing(restore.background);
+      this.mapElements.push(restore);
+      return;
+    }
+
+    if (lastAction.type === "add") {
+      const index = this.mapElements.indexOf(lastAction.element);
+      if (index != -1) {
+        lastAction.element.sprite.destroy();
+        lastAction.element.background.destroy();
+        this.mapElements.splice(index, 1);
+      }
+    }
   };
 
   generateThumbnail = async (): Promise<string> => {
@@ -343,5 +387,10 @@ export class MapEditorScene extends Phaser.Scene {
         }
       });
     });
+  };
+
+  private addToHistoryStack = (value: Action) => {
+    this.historyStack.push(value);
+    if (this.historyStack.length > 7) this.historyStack.shift();
   };
 }

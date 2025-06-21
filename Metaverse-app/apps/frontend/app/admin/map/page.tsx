@@ -5,14 +5,13 @@ import AllElementsMenu from "@/components/custom/element-sidebar";
 import { Element } from "@repo/common/schema-types";
 import { Game } from "phaser";
 import { MapEditorScene } from "@/phaser-engine/MapEditorScene";
-import MapEditorHelpBox from "@/components/custom/map-editor-helpbox";
 import { UploadToCloudinary } from "@/cloudinary";
 import { CLOUDINARY_MAP_FOLDER } from "@/lib/constant";
 import { useUserStore } from "@/store/userStore";
 import { CreateMapAPI } from "@/lib/apis";
 import { z } from "zod";
 import { CreateMapSchema } from "@repo/common/api-types";
-import EditMapValues from "@/components/custom/EditMapValues";
+import EditMapMetaData from "@/components/custom/EditMapMetaData";
 import MapDimensionSetting from "@/components/custom/map-dimension-setting";
 
 export default function MapEditorGame() {
@@ -117,7 +116,7 @@ export default function MapEditorGame() {
     <div className="w-screen h-screen flex overflow-scroll scrollbar-hide relative">
       <AllElementsMenu />
       <div ref={containerRef} className="flex-1" />
-      <EditMapValues mapName={mapName} setMapName={setMapName} />
+      <EditMapMetaData mapName={mapName} setMapName={setMapName} />
       <div className="absolute right-8 top-4 pointer-events-auto">
         <MapDimensionSetting />
       </div>

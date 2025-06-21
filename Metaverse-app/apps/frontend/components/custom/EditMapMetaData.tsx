@@ -7,7 +7,7 @@ interface IEditMapValuesProps {
   setMapName: Dispatch<SetStateAction<string>>;
 }
 
-const EditMapValues = ({ mapName, setMapName }: IEditMapValuesProps) => {
+const EditMapMetaData = ({ mapName, setMapName }: IEditMapValuesProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Set cursor to end when client on the field
@@ -49,4 +49,4 @@ const EditMapValues = ({ mapName, setMapName }: IEditMapValuesProps) => {
   );
 };
 
-export default EditMapValues;
+export default EditMapMetaData;
