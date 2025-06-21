@@ -12,10 +12,12 @@ import { useUserStore } from "@/store/userStore";
 import { CreateMapAPI } from "@/lib/apis";
 import { z } from "zod";
 import { CreateMapSchema } from "@repo/common/api-types";
+import EditMapValues from "@/components/custom/EditMapValues";
 
 export default function MapEditorGame() {
   const containerRef = useRef<HTMLDivElement>(null);
   const gameRef = useRef<Game>(null);
+  const [mapName, setMapName] = useState<string>("New Map");
   const token = useUserStore().userToken;
 
   const createMap = async () => {
@@ -112,7 +114,7 @@ export default function MapEditorGame() {
     <div className="w-screen h-screen flex overflow-scroll scrollbar-hide relative">
       <AllElementsMenu />
       <div ref={containerRef} className="flex-1" />
-      <MapEditorHelpBox />
+      <EditMapValues mapName={mapName} setMapName={setMapName} />
     </div>
   );
 }

@@ -10,7 +10,7 @@ const MapEditorHelpBox = () => {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
-        className="absolute top-6 right-6 rounded-2xl shadow-lg border border-gray-700 p-4 w-[320px] z-50 custom-bg-1 text-white select-none"
+        className="absolute top-6 right-6 rounded-2xl shadow-lg border border-gray-700 p-4 w-[320px] z-50 custom-bg-1 text-white select-none pointer-events-auto"
       >
         <div className="flex justify-between items-center mb-2">
           <h2 className="text-lg font-semibold">🧭 Map Editor Tips</h2>
