@@ -78,7 +78,7 @@ export default function CreateElementForm() {
           Create New Element
         </h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 item-start">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
           <FormField
             control={form.control}
             name="imageUrl"
@@ -127,28 +127,30 @@ export default function CreateElementForm() {
             />
           ))}
 
-          <FormField
-            control={form.control}
-            name="static"
-            render={({ field }) => (
-              <FormItem className="flex items-end justify-between gap-4 rounded-md p-2">
-                <div className="space-y-0.5">
-                  <FormLabel className="text-base text-custom-text-primary">
-                    {fieldLabels.static}
-                  </FormLabel>
-                  <FormMessage className="text-custom-highlight" />
-                </div>
-                <FormControl>
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                    id="static"
-                    className="cursor-pointer data-[state=checked]:bg-custom-primary data-[state=unchecked]:bg-gray-500"
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+          <div className="self-end">
+            <FormField
+              control={form.control}
+              name="static"
+              render={({ field }) => (
+                <FormItem className="flex items-center justify-between gap-4 rounded-md py-2 px-3">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base text-custom-text-primary">
+                      {fieldLabels.static}
+                    </FormLabel>
+                    <FormMessage className="text-custom-highlight" />
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                      id="static"
+                      className="cursor-pointer data-[state=checked]:bg-custom-primary data-[state=unchecked]:bg-gray-500"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </div>
         </div>
 
         <div className="mt-10">
