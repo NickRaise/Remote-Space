@@ -13,6 +13,8 @@ import { z } from "zod";
 import { CreateMapSchema } from "@repo/common/api-types";
 import EditMapMetaData from "@/components/custom/EditMapMetaData";
 import MapDimensionSetting from "@/components/custom/map-dimension-setting";
+import { Button } from "@/components/ui/button";
+import { CloudUpload } from "lucide-react";
 
 export default function MapEditorGame() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -117,7 +119,15 @@ export default function MapEditorGame() {
       <AllElementsMenu />
       <div ref={containerRef} className="flex-1" />
       <EditMapMetaData mapName={mapName} setMapName={setMapName} />
-      <div className="absolute right-8 top-4 pointer-events-auto">
+      <div className="absolute right-8 top-4 pointer-events-auto flex gap-2">
+        <div>
+          <Button
+            type="button"
+            className="cursor-pointer bg-custom-primary hover:bg-custom-accent flex items-center justify-center"
+          >
+            Save <CloudUpload />
+          </Button>
+        </div>
         <MapDimensionSetting />
       </div>
     </div>
