@@ -19,18 +19,19 @@ import Loader from "./loader";
 import { useUserStore } from "@/store/userStore";
 import { Switch } from "../ui/switch";
 import { CreateElementAPI } from "@/lib/apis";
+import { UploadFileField } from "../sections/UploadFileField";
 
 const elementSchema = z.object({
-  imageUrl: z.string().url("Must be a valid URL"),
+  imageUrl: z.string().url("Must be a valid image file"),
   width: z.coerce.number().min(1, "Width must be at least 1"),
   height: z.coerce.number().min(1, "Height must be at least 1"),
   static: z.boolean(),
 });
 
 const fieldLabels: Record<keyof z.infer<typeof elementSchema>, string> = {
-  imageUrl: "Image URL",
-  width: "Width (px)",
-  height: "Height (px)",
+  imageUrl: "Image",
+  width: "Width (tiles)",
+  height: "Height (tiles)",
   static: "Static (blocksMovement)",
 };
 
@@ -73,30 +74,42 @@ export default function CreateElementForm() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-full max-w-4xl px-4 lg:px-0"
       >
-        <h1 className="text-3xl font-semibold text-center text-custom-text-primary my-5">
-          Create Element
+        <h1 className="text-3xl font-semibold text-center text-custom-text-primary my-6">
+          Create New Element
         </h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {(["imageUrl", "width", "height"] as const).map((fieldName) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 item-start">
+          <FormField
+            control={form.control}
+            name="imageUrl"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="font-medium text-custom-text-primary">
+                  {fieldLabels.imageUrl}
+                </FormLabel>
+                <FormControl>
+                  <UploadFileField />
+                </FormControl>
+                <FormMessage className="mt-1 text-custom-highlight block min-h-[1.25rem]" />
+              </FormItem>
+            )}
+          />
+
+          {["width", "height"].map((fieldName) => (
             <FormField
               key={fieldName}
               control={form.control}
-              name={fieldName}
+              name={fieldName as "width" | "height"}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="font-medium text-custom-text-primary">
-                    {fieldLabels[fieldName]}
+                    {fieldLabels[fieldName as keyof typeof fieldLabels]}
                   </FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      type={
-                        fieldName === "width" || fieldName === "height"
-                          ? "number"
-                          : "text"
-                      }
-                      placeholder={`Enter ${fieldLabels[fieldName]}`}
+                      type="number"
+                      placeholder={`Enter ${fieldLabels[fieldName as keyof typeof fieldLabels]}`}
                       className="w-full rounded-md border border-gray-600 bg-custom-bg-dark-2 px-3 py-2 text-custom-text-primary transition focus:outline-none"
                       onFocus={(e) => {
                         e.target.style.borderColor = "#FF2E63";
@@ -108,7 +121,7 @@ export default function CreateElementForm() {
                       }}
                     />
                   </FormControl>
-                  <FormMessage className="mt-1 text-custom-highlight" />
+                  <FormMessage className="mt-1 text-custom-highlight block min-h-[1.25rem]" />
                 </FormItem>
               )}
             />
