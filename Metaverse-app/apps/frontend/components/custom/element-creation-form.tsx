@@ -20,9 +20,12 @@ import { useUserStore } from "@/store/userStore";
 import { Switch } from "../ui/switch";
 import { CreateElementAPI } from "@/lib/apis";
 import { UploadFileField } from "../sections/UploadFileField";
+import { UploadToCloudinary } from "@/cloudinary";
+import { CLOUDINARY_ELEMENT_FOLDER } from "@/lib/constant";
+import { IMAGE_FILE } from "@/lib/types";
 
 const elementSchema = z.object({
-  imageUrl: z.string().url("Must be a valid image file"),
+  imageUrl: IMAGE_FILE,
   width: z.coerce.number().min(1, "Width must be at least 1"),
   height: z.coerce.number().min(1, "Height must be at least 1"),
   static: z.boolean(),
@@ -42,7 +45,6 @@ export default function CreateElementForm() {
   const form = useForm<z.infer<typeof elementSchema>>({
     resolver: zodResolver(elementSchema),
     defaultValues: {
-      imageUrl: "",
       width: 1,
       height: 1,
       static: false,
@@ -53,7 +55,16 @@ export default function CreateElementForm() {
     if (!token) return toast("You are not logged in");
     try {
       setLoading(true);
-      const response = await CreateElementAPI(token, data);
+      const imageUrl = await UploadToCloudinary(
+        data.imageUrl,
+        CLOUDINARY_ELEMENT_FOLDER
+      );
+      if (!imageUrl) throw new Error("Couldn't upload image");
+      const elementData = {
+        ...data,
+        imageUrl,
+      };
+      const response = await CreateElementAPI(token, elementData);
       if (response.status === 200) {
         toast("Element created successfully!");
         form.reset();
@@ -88,7 +99,7 @@ export default function CreateElementForm() {
                   {fieldLabels.imageUrl}
                 </FormLabel>
                 <FormControl>
-                  <UploadFileField />
+                  <UploadFileField field={field} />
                 </FormControl>
                 <FormMessage className="mt-1 text-custom-highlight block min-h-[1.25rem]" />
               </FormItem>

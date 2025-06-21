@@ -1,9 +1,11 @@
-import { CLOUDINARY_API, CLOUDINARY_CLOUD_NAME } from "@/lib/constant";
+import { CLOUDINARY_API, CLOUDINARY_AVATAR_FOLDER, CLOUDINARY_CLOUD_NAME, CLOUDINARY_ELEMENT_FOLDER, CLOUDINARY_MAP_FOLDER } from "@/lib/constant";
 import axios from "axios";
 
+type CloudinaryFolderType = typeof CLOUDINARY_MAP_FOLDER | typeof CLOUDINARY_AVATAR_FOLDER | typeof CLOUDINARY_ELEMENT_FOLDER
+
 export const UploadToCloudinary = async (
-  file: string,
-  folder: string
+  file: string | File,
+  folder: CloudinaryFolderType
 ): Promise<string | null> => {
   const formData = new FormData();
   formData.append("file", file);

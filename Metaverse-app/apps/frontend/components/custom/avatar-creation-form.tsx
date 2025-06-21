@@ -20,37 +20,40 @@ import { toast } from "sonner";
 import { useState } from "react";
 import Loader from "./loader";
 import { UploadFileField } from "../sections/UploadFileField";
+import { IMAGE_FILE } from "@/lib/types";
+import { UploadToCloudinary } from "@/cloudinary";
+import { CLOUDINARY_AVATAR_FOLDER } from "@/lib/constant";
 
 const avatarSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  standingDown: z.string().url(),
-  walkingDown1: z.string().url(),
-  walkingDown2: z.string().url(),
-  standingLeft: z.string().url(),
-  walkingLeft1: z.string().url(),
-  walkingLeft2: z.string().url(),
-  standingRight: z.string().url(),
-  walkingRight1: z.string().url(),
-  walkingRight2: z.string().url(),
-  standingUp: z.string().url(),
-  walkingUp1: z.string().url(),
-  walkingUp2: z.string().url(),
+  standingDown: IMAGE_FILE,
+  walkingDown1: IMAGE_FILE,
+  walkingDown2: IMAGE_FILE,
+  standingLeft: IMAGE_FILE,
+  walkingLeft1: IMAGE_FILE,
+  walkingLeft2: IMAGE_FILE,
+  standingRight: IMAGE_FILE,
+  walkingRight1: IMAGE_FILE,
+  walkingRight2: IMAGE_FILE,
+  standingUp: IMAGE_FILE,
+  walkingUp1: IMAGE_FILE,
+  walkingUp2: IMAGE_FILE,
 });
 
 const fieldLabels: Record<keyof z.infer<typeof avatarSchema>, string> = {
   name: "Name",
-  standingDown: "Standing Down Image",
-  walkingDown1: "Walking Down 1 Image",
-  walkingDown2: "Walking Down 2 Image",
-  standingLeft: "Standing Left Image",
-  walkingLeft1: "Walking Left 1 Image",
-  walkingLeft2: "Walking Left 2 Image",
-  standingRight: "Standing Right Image",
-  walkingRight1: "Walking Right 1 Image",
-  walkingRight2: "Walking Right 2 Image",
-  standingUp: "Standing Up Image",
-  walkingUp1: "Walking Up 1 Image",
-  walkingUp2: "Walking Up 2 Image",
+  standingDown: "Standing Down",
+  walkingDown1: "Walking Down Frame 1",
+  walkingDown2: "Walking Down Frame 2",
+  standingLeft: "Standing Left",
+  walkingLeft1: "Walking Left Frame 1",
+  walkingLeft2: "Walking Left Frame 2",
+  standingRight: "Standing Right",
+  walkingRight1: "Walking Right Frame 1",
+  walkingRight2: "Walking Right Frame 2",
+  standingUp: "Standing Up",
+  walkingUp1: "Walking Up Frame 1",
+  walkingUp2: "Walking Up Frame 2",
 };
 
 export default function AvatarCreationForm() {
@@ -61,30 +64,46 @@ export default function AvatarCreationForm() {
     resolver: zodResolver(avatarSchema),
     defaultValues: {
       name: "",
-      standingDown: "",
-      walkingDown1: "",
-      walkingDown2: "",
-      standingLeft: "",
-      walkingLeft1: "",
-      walkingLeft2: "",
-      standingRight: "",
-      walkingRight1: "",
-      walkingRight2: "",
-      standingUp: "",
-      walkingUp1: "",
-      walkingUp2: "",
     },
   });
 
+  const uploadAvatars = async (
+    data: z.infer<typeof avatarSchema>
+  ): Promise<z.infer<typeof CreateAvatarSchema>> => {
+    const { name, ...images } = data;
+
+    const entries = Object.entries(images);
+
+    const uploadedImages = await Promise.all(
+      entries.map(async ([key, file]) => {
+        if (!(file instanceof File)) {
+          throw new Error(`Expected File for ${key}, got ${typeof file}`);
+        }
+
+        const url = await UploadToCloudinary(file, CLOUDINARY_AVATAR_FOLDER);
+
+        if (!url) {
+          throw new Error(`Upload failed for ${key}`);
+        }
+
+        return [key, url];
+      })
+    );
+
+    const imageUrls = Object.fromEntries(uploadedImages);
+
+    return {
+      name,
+      imageUrls,
+    };
+  };
+
   const onSubmit = async (data: z.infer<typeof avatarSchema>) => {
+    console.log(data);
     if (!token) return;
     try {
       setLoading(true);
-      const { name, ...imageUrls } = data;
-      const avatarData: z.infer<typeof CreateAvatarSchema> = {
-        name,
-        imageUrls,
-      };
+      const avatarData = await uploadAvatars(data);
       const response = await CreateAvatarAPI(token, avatarData);
       if (response.status === 200) {
         toast("Avatar creation successful!");
@@ -125,6 +144,7 @@ export default function AvatarCreationForm() {
                     {fieldName === "name" ? (
                       <Input
                         {...field}
+                        value={field.value as string}
                         placeholder="Enter name"
                         className="w-full rounded-md border border-gray-600 bg-custom-bg-dark-2 px-3 py-2 text-custom-text-primary transition focus:outline-none"
                         onFocus={(e) => {
@@ -137,7 +157,15 @@ export default function AvatarCreationForm() {
                         }}
                       />
                     ) : (
-                      <UploadFileField />
+                      <UploadFileField
+                        field={{
+                          value:
+                            field.value instanceof File
+                              ? field.value
+                              : undefined,
+                          onChange: field.onChange,
+                        }}
+                      />
                     )}
                   </FormControl>
                   <FormMessage className="mt-1 text-custom-highlight block min-h-[1.25rem]" />
