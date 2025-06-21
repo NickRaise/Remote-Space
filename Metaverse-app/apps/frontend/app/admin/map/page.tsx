@@ -13,11 +13,14 @@ import { CreateMapAPI } from "@/lib/apis";
 import { z } from "zod";
 import { CreateMapSchema } from "@repo/common/api-types";
 import EditMapValues from "@/components/custom/EditMapValues";
+import MapDimensionSetting from "@/components/custom/map-dimension-setting";
 
 export default function MapEditorGame() {
   const containerRef = useRef<HTMLDivElement>(null);
   const gameRef = useRef<Game>(null);
   const [mapName, setMapName] = useState<string>("New Map");
+  const [mapWidth, setMapWidth] = useState<number>(1600);
+  const [mapHeight, setMapHeight] = useState<number>(1000);
   const token = useUserStore().userToken;
 
   const createMap = async () => {
@@ -115,6 +118,9 @@ export default function MapEditorGame() {
       <AllElementsMenu />
       <div ref={containerRef} className="flex-1" />
       <EditMapValues mapName={mapName} setMapName={setMapName} />
+      <div className="absolute right-8 top-4 pointer-events-auto">
+        <MapDimensionSetting />
+      </div>
     </div>
   );
 }

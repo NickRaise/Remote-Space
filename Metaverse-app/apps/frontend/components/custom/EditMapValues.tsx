@@ -10,7 +10,7 @@ interface IEditMapValuesProps {
 const EditMapValues = ({ mapName, setMapName }: IEditMapValuesProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Set cursor to end on focus
+  // Set cursor to end when client on the field
   const handleFocus = () => {
     const input = inputRef.current;
     if (input) {
