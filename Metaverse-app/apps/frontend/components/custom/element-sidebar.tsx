@@ -36,8 +36,8 @@ const AllElementsMenu = () => {
               <div className="flex-shrink-0" key={e.id}>
                 <Image
                   src={e.imageUrl}
-                  width={e.width * 40}
-                  height={e.height * 40}
+                  width={e.width * 20}
+                  height={e.height * 20}
                   draggable
                   onDragStart={(event) => {
                     setDraggingElementId(e.id);

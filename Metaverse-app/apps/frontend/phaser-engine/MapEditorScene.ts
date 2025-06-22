@@ -2,9 +2,6 @@ import { TILE_IMAGE_URL, TILE_SIZE } from "@/lib/constant";
 import * as Phaser from "phaser";
 import { Element } from "@repo/common/schema-types";
 
-const MAP_WIDTH = 1600;
-const MAP_HEIGHT = 1000;
-
 interface MapElement {
   id: string;
   sprite: Phaser.GameObjects.Image;
@@ -18,6 +15,9 @@ type Action = { type: "add" | "delete"; element: MapElement };
 export class MapEditorScene extends Phaser.Scene {
   mapElements: MapElement[] = [];
 
+  private MAP_WIDTH = 40 * TILE_SIZE;
+  private MAP_HEIGHT = 25 * TILE_SIZE;
+
   private isDragging = false;
   private dragStart = { x: 0, y: 0 };
   private cameraStart = { x: 0, y: 0 };
@@ -30,8 +30,10 @@ export class MapEditorScene extends Phaser.Scene {
   private selectedSprite: Phaser.GameObjects.Image | null = null;
   private selectedElement: MapElement | null = null;
 
-  constructor() {
+  constructor(width: number = 40, height: number = 25) {
     super("MapEditor");
+    this.MAP_WIDTH = width * TILE_SIZE;
+    this.MAP_HEIGHT = height * TILE_SIZE;
   }
 
   preload() {
@@ -94,8 +96,8 @@ export class MapEditorScene extends Phaser.Scene {
 
   drawGrid() {
     // Draw tile image on each grid square first
-    for (let x = 0; x < MAP_WIDTH; x += TILE_SIZE) {
-      for (let y = 0; y < MAP_HEIGHT; y += TILE_SIZE) {
+    for (let x = 0; x < this.MAP_WIDTH; x += TILE_SIZE) {
+      for (let y = 0; y < this.MAP_HEIGHT; y += TILE_SIZE) {
         this.add
           .image(x, y, "grid-tile")
           .setOrigin(0)
@@ -108,15 +110,15 @@ export class MapEditorScene extends Phaser.Scene {
     graphics.lineStyle(1, 0x8888aa, 1);
 
     // Vertical lines
-    for (let x = 0; x <= MAP_WIDTH; x += TILE_SIZE) {
+    for (let x = 0; x <= this.MAP_WIDTH; x += TILE_SIZE) {
       graphics.moveTo(x, 0);
-      graphics.lineTo(x, MAP_HEIGHT);
+      graphics.lineTo(x, this.MAP_HEIGHT);
     }
 
     // Horizontal lines
-    for (let y = 0; y <= MAP_HEIGHT; y += TILE_SIZE) {
+    for (let y = 0; y <= this.MAP_HEIGHT; y += TILE_SIZE) {
       graphics.moveTo(0, y);
-      graphics.lineTo(MAP_WIDTH, y);
+      graphics.lineTo(this.MAP_WIDTH, y);
     }
 
     graphics.strokePath();
@@ -242,7 +244,10 @@ export class MapEditorScene extends Phaser.Scene {
     height: number
   ): boolean {
     const outOfBounds =
-      x < 0 || y < 0 || x + width > MAP_WIDTH || y + height > MAP_HEIGHT;
+      x < 0 ||
+      y < 0 ||
+      x + width > this.MAP_WIDTH ||
+      y + height > this.MAP_HEIGHT;
 
     const isOverlapping = this.mapElements.some((elem) => {
       if (elem === this.selectedElement) return false;
@@ -276,8 +281,8 @@ export class MapEditorScene extends Phaser.Scene {
     if (
       posX < 0 ||
       posY < 0 ||
-      posX + spriteWidth > MAP_WIDTH ||
-      posY + spriteHeight > MAP_HEIGHT
+      posX + spriteWidth > this.MAP_WIDTH ||
+      posY + spriteHeight > this.MAP_HEIGHT
     ) {
       console.warn("Out of bounds drop");
       return;

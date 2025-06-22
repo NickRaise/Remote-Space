@@ -6,7 +6,7 @@ import { Element } from "@repo/common/schema-types";
 import { Game } from "phaser";
 import { MapEditorScene } from "@/phaser-engine/MapEditorScene";
 import { UploadToCloudinary } from "@/cloudinary";
-import { CLOUDINARY_MAP_FOLDER } from "@/lib/constant";
+import { CLOUDINARY_MAP_FOLDER, TILE_SIZE } from "@/lib/constant";
 import { useUserStore } from "@/store/userStore";
 import { CreateMapAPI } from "@/lib/apis";
 import { z } from "zod";
@@ -20,8 +20,8 @@ export default function MapEditorGame() {
   const containerRef = useRef<HTMLDivElement>(null);
   const gameRef = useRef<Game>(null);
   const [mapName, setMapName] = useState<string>("New Map");
-  const [mapWidth, setMapWidth] = useState<number>(1600);
-  const [mapHeight, setMapHeight] = useState<number>(1000);
+  const [mapWidth, setMapWidth] = useState<number>(80);
+  const [mapHeight, setMapHeight] = useState<number>(50);
   const token = useUserStore().userToken;
 
   const createMap = async () => {
@@ -44,6 +44,34 @@ export default function MapEditorGame() {
       })),
     };
     const response = await CreateMapAPI(token, mapMetaData);
+  };
+
+  const reRenderMap = async () => {
+    console.log("Trigger map rerender");
+    if (gameRef.current) {
+      gameRef.current.destroy(true);
+      gameRef.current = null;
+    }
+
+    const Phaser = await import("phaser");
+    const { MapEditorScene } = await import("@/phaser-engine/MapEditorScene");
+
+    const width = Math.max(10, mapWidth);
+    const height = Math.max(10, mapHeight);
+
+    const scene = new MapEditorScene(width, height);
+
+    const config: Phaser.Types.Core.GameConfig = {
+      type: Phaser.AUTO,
+      width: 1600,
+      height: 1000,
+      parent: containerRef.current!,
+      backgroundColor: "#1a1a1a",
+      scene,
+    };
+
+    const game = new Phaser.Game(config);
+    gameRef.current = game;
   };
 
   const initGame = async () => {
@@ -128,7 +156,13 @@ export default function MapEditorGame() {
             Save <CloudUpload />
           </Button>
         </div>
-        <MapDimensionSetting />
+        <MapDimensionSetting
+          height={mapHeight}
+          setHeight={setMapHeight}
+          width={mapWidth}
+          setWidth={setMapWidth}
+          reRenderMap={reRenderMap}
+        />
       </div>
     </div>
   );
