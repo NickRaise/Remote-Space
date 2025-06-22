@@ -68,6 +68,7 @@ export default function CreateElementForm() {
       if (response.status === 200) {
         toast("Element created successfully!");
         form.reset();
+        window.location.reload();
       } else {
         throw Error;
       }

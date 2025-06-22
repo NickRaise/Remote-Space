@@ -3,8 +3,6 @@ import { Element } from "@repo/common/schema-types";
 import { GetAllAvatarsAPI } from "@/lib/apis";
 import Image from "next/image";
 import clsx from "clsx";
-import { TILE_SIZE } from "@/lib/constant";
-
 const AllElementsMenu = () => {
   const [allElements, setAllElements] = useState<Element[]>();
   const [draggingElementId, setDraggingElementId] = useState<string | null>(
@@ -38,8 +36,8 @@ const AllElementsMenu = () => {
               <div className="flex-shrink-0" key={e.id}>
                 <Image
                   src={e.imageUrl}
-                  width={e.width * TILE_SIZE}
-                  height={e.height * TILE_SIZE}
+                  width={e.width * 40}
+                  height={e.height * 40}
                   draggable
                   onDragStart={(event) => {
                     setDraggingElementId(e.id);
