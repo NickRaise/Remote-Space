@@ -108,6 +108,7 @@ export default function AvatarCreationForm() {
       if (response.status === 200) {
         toast("Avatar creation successful!");
         form.reset();
+        window.location.reload();
       } else {
         throw Error;
       }
