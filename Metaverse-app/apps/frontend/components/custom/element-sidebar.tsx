@@ -27,12 +27,11 @@ const AllElementsMenu = () => {
   return (
     <div className="sticky top-0 left-0 z-50">
       <div className="text-center py-3 z-10  bg-gradient-to-b from-custom-bg-dark-1 to-custom-bg-dark-2 shadow-xl">
-        
         <button className="text-custom-highlight hover:underline cursor-pointer hover:text-custom-accent transition duration-150 font-semibold text-md">
           ← Go Back
         </button>
       </div>
-      <div className="h-screen w-40 bg-custom-bg-dark-2 overflow-y-scroll overflow-x-hidden transition-all duration-300 relative">
+      <div className="h-screen w-40 bg-custom-bg-dark-2 overflow-y-scroll overflow-x-hidden transition-all duration-300 relative scrollbar-hide">
         <div className="flex items-center">
           <div className="flex gap-3 px-4 flex-wrap items-center justify-center">
             {allElements?.map((e) => (

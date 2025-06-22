@@ -25,7 +25,7 @@ const MapDimensionSetting = () => {
         <DialogTrigger asChild>
           <Button
             variant="outline"
-            className="bg-custom-highlight text-custom-bg-dark-1 font-semibold cursor-pointer outline-none border-none hover:bg-amber-400"
+            className="bg-custom-highlight text-custom-bg-dark-1 font-semibold cursor-pointer outline-none border-none hover:bg-custom-accent hover:text-custom-text-primary"
           >
             Dimensions
           </Button>

@@ -115,9 +115,9 @@ export default function MapEditorGame() {
   }, []);
 
   return (
-    <div className="w-screen h-screen flex overflow-scroll scrollbar-hide relative">
+    <div className="w-screen h-screen flex overflow-hidden scrollbar-hide relative">
       <AllElementsMenu />
-      <div ref={containerRef} className="flex-1" />
+      <div ref={containerRef} className="flex-1 overflow-hidden" />
       <EditMapMetaData mapName={mapName} setMapName={setMapName} />
       <div className="absolute right-8 top-4 pointer-events-auto flex gap-2">
         <div>
