@@ -208,7 +208,7 @@ const SaveButton = ({
         type="button"
         className="w-24 cursor-pointer bg-custom-primary hover:bg-custom-accent flex items-center justify-center gap-2"
       >
-        {!loading ? (
+        {loading ? (
           <>
             <LucideLoader2 className="h-4 w-4 animate-spin" />
           </>
