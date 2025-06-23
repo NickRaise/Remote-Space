@@ -92,6 +92,19 @@ export const GetAllAvatarsAPI = async () => {
   return response;
 };
 
-export const CreateMapAPI = async (token: string, data: z.infer<typeof CreateMapSchema>) => {
-  console.log(data)
-}
+export const CreateMapAPI = async (
+  token: string,
+  data: z.infer<typeof CreateMapSchema>
+) => {
+  const response = await api.post<{ id: string, message: string }>(
+    "/admin/map",
+    data,
+    {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return response;
+};

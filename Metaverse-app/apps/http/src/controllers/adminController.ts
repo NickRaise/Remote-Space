@@ -51,7 +51,7 @@ export const CreateAvatarController = async (
   res: Response
 ) => {
   try {
-    const avatarImages = await CreateAvatarImages(avatarData.imageUrls)
+    const avatarImages = await CreateAvatarImages(avatarData.imageUrls);
     const avatar = await CreateAvatar(avatarData.name, avatarImages.id);
 
     res.status(200).json({ message: "Avatar created.", avatarId: avatar.id });
@@ -61,13 +61,16 @@ export const CreateAvatarController = async (
   }
 };
 
-export const CreateMapController = async (mapData: z.infer<typeof CreateMapSchema>, res: Response) => {
+export const CreateMapController = async (
+  mapData: z.infer<typeof CreateMapSchema>,
+  res: Response
+) => {
   try {
-    const map = await CreateMap(mapData)
+    const map = await CreateMap(mapData);
 
     res.status(200).json({ message: "Map created.", id: map.id });
-  } catch(err) {
+  } catch (err) {
     console.log("Error creating map: ", err);
     return res.status(500).json({ message: err });
   }
-}
+};

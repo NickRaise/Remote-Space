@@ -14,7 +14,8 @@ import { CreateMapSchema } from "@repo/common/api-types";
 import EditMapMetaData from "@/components/custom/EditMapMetaData";
 import MapDimensionSetting from "@/components/custom/map-dimension-setting";
 import { Button } from "@/components/ui/button";
-import { CloudUpload } from "lucide-react";
+import { CloudUpload, LucideLoader2 } from "lucide-react";
+import { toast } from "sonner";
 
 export default function MapEditorGame() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -22,28 +23,42 @@ export default function MapEditorGame() {
   const [mapName, setMapName] = useState<string>("New Map");
   const [mapWidth, setMapWidth] = useState<number>(80);
   const [mapHeight, setMapHeight] = useState<number>(50);
+  const [loading, setLoading] = useState<boolean>(false);
   const token = useUserStore().userToken;
 
   const createMap = async () => {
-    if (!token) return;
     const mapObject = gameRef.current?.scene.keys[
       "MapEditor"
     ] as MapEditorScene;
-    const image = await mapObject.generateThumbnail();
-    const imageUrl = await UploadToCloudinary(image, CLOUDINARY_MAP_FOLDER);
-    const mapElements = mapObject.mapElements;
-    if (!imageUrl) return;
-    const mapMetaData: z.infer<typeof CreateMapSchema> = {
-      thumbnail: imageUrl,
-      dimensions: "100x100", // work on this, use custom dimensions for map
-      name: "Temp Name",
-      defaultElements: mapElements.map((e) => ({
-        elementId: e.id,
-        x: e.x,
-        y: e.y,
-      })),
-    };
-    const response = await CreateMapAPI(token, mapMetaData);
+    if (!token || !mapObject) return;
+    try {
+      setLoading(true);
+      const image = await mapObject.generateThumbnail();
+      const imageUrl = await UploadToCloudinary(image, CLOUDINARY_MAP_FOLDER);
+      const mapElements = mapObject.mapElements;
+      if (!imageUrl) throw Error("Error uploading image");
+      const mapMetaData: z.infer<typeof CreateMapSchema> = {
+        thumbnail: imageUrl,
+        dimensions: `${mapWidth}x${mapHeight}`,
+        name: mapName,
+        defaultElements: mapElements.map((e) => ({
+          elementId: e.id,
+          x: e.x,
+          y: e.y,
+        })),
+      };
+      const response = await CreateMapAPI(token, mapMetaData);
+      if (response.status !== 200 && response.data.id === undefined) {
+        throw Error(response.data.message);
+      } else {
+        toast("Map Created Successfully");
+      }
+    } catch (err) {
+      console.log(err);
+      toast("Map Creation failed. Try again!");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const reRenderMap = async () => {
@@ -148,14 +163,7 @@ export default function MapEditorGame() {
       <div ref={containerRef} className="flex-1 overflow-hidden" />
       <EditMapMetaData mapName={mapName} setMapName={setMapName} />
       <div className="absolute right-8 top-4 pointer-events-auto flex gap-2">
-        <div>
-          <Button
-            type="button"
-            className="cursor-pointer bg-custom-primary hover:bg-custom-accent flex items-center justify-center"
-          >
-            Save <CloudUpload />
-          </Button>
-        </div>
+        <SaveButton onClick={createMap} loading={loading} />
         <MapDimensionSetting
           height={mapHeight}
           setHeight={setMapHeight}
@@ -167,3 +175,50 @@ export default function MapEditorGame() {
     </div>
   );
 }
+
+const SaveButton = ({
+  onClick,
+  loading,
+}: {
+  onClick: () => void;
+  loading: boolean;
+}) => {
+  const triggerButtonRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    const handleClickOutsideInput = (e: MouseEvent) => {
+      if (
+        triggerButtonRef.current &&
+        !triggerButtonRef.current.contains(e.target as Node)
+      ) {
+        triggerButtonRef.current.blur();
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutsideInput);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutsideInput);
+    };
+  }, []);
+
+  return (
+    <div>
+      <Button
+        disabled={loading}
+        onClick={onClick}
+        ref={triggerButtonRef}
+        type="button"
+        className="w-24 cursor-pointer bg-custom-primary hover:bg-custom-accent flex items-center justify-center gap-2"
+      >
+        {!loading ? (
+          <>
+            <LucideLoader2 className="h-4 w-4 animate-spin" />
+          </>
+        ) : (
+          <>
+            <span>Save</span>
+            <CloudUpload className="h-4 w-4" />
+          </>
+        )}
+      </Button>
+    </div>
+  );
+};
