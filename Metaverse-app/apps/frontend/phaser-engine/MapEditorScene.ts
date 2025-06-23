@@ -10,7 +10,16 @@ interface MapElement {
   y: number;
 }
 
-type Action = { type: "add" | "delete"; element: MapElement };
+type Action =
+  | { type: "add"; element: MapElement }
+  | {
+      type: "delete";
+      element: Omit<MapElement, "sprite" | "background"> & {
+        width: number;
+        height: number;
+        imageUrl: string;
+      };
+    };
 
 export class MapEditorScene extends Phaser.Scene {
   mapElements: MapElement[] = [];
@@ -351,37 +360,103 @@ export class MapEditorScene extends Phaser.Scene {
   }
 
   deleteElement(elem: MapElement) {
+    const elementMeta = {
+      id: elem.id,
+      x: elem.x,
+      y: elem.y,
+      width: elem.sprite.displayWidth,
+      height: elem.sprite.displayHeight,
+      imageUrl: this.textures.getBase64(elem.id),
+    };
+
     elem.sprite.destroy();
     elem.background.destroy();
 
     this.mapElements = this.mapElements.filter((e) => e !== elem);
+
     this.addToHistoryStack({
       type: "delete",
-      element: elem,
+      element: elementMeta,
     });
   }
 
   undoLastAction = () => {
+    console.log("Before", this.historyStack);
     const lastAction = this.historyStack.pop();
     if (!lastAction) return;
 
     if (lastAction.type === "delete") {
-      const restore = lastAction.element;
-      restore.sprite = this.add.existing(restore.sprite);
-      restore.background = this.add.existing(restore.background);
-      this.mapElements.push(restore);
-      return;
+      const { id, x, y, width, height, imageUrl } = lastAction.element;
+
+      if (!this.textures.exists(id)) {
+        this.load.image(id, imageUrl);
+        this.load.once("complete", () => {
+          this.restoreElement(id, x, y, width, height);
+        });
+        this.load.start();
+      } else {
+        this.restoreElement(id, x, y, width, height);
+      }
     }
 
     if (lastAction.type === "add") {
-      const index = this.mapElements.indexOf(lastAction.element);
+      const index = this.mapElements.findIndex(
+        (el) =>
+          el.id === lastAction.element.id &&
+          el.x === lastAction.element.x &&
+          el.y === lastAction.element.y
+      );
+      console.log("index of element to be deleted", index, this.mapElements);
       if (index != -1) {
-        lastAction.element.sprite.destroy();
-        lastAction.element.background.destroy();
+        const element = this.mapElements[index];
+        element.sprite.destroy();
+        element.background.destroy();
         this.mapElements.splice(index, 1);
       }
     }
+    console.log("After", this.historyStack);
   };
+
+  restoreElement(
+    id: string,
+    x: number,
+    y: number,
+    width: number,
+    height: number
+  ) {
+    const posX = x * TILE_SIZE;
+    const posY = y * TILE_SIZE;
+
+    const sprite = this.add
+      .image(posX, posY, id)
+      .setOrigin(0)
+      .setDisplaySize(width, height);
+
+    const background = this.add
+      .rectangle(
+        posX + width / 2,
+        posY + height / 2,
+        width,
+        height,
+        0x3a3a3c,
+        0.4
+      )
+      .setOrigin(0.5);
+
+    // Send background behind the image
+    sprite.setDepth(1);
+    background.setDepth(0);
+
+    const restoredElement: MapElement = {
+      id,
+      x,
+      y,
+      sprite,
+      background,
+    };
+
+    this.mapElements.push(restoredElement);
+  }
 
   generateThumbnail = async (): Promise<string> => {
     return await new Promise((resolve) => {
