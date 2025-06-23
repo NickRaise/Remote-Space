@@ -460,11 +460,29 @@ export class MapEditorScene extends Phaser.Scene {
 
   generateThumbnail = async (): Promise<string> => {
     return await new Promise((resolve) => {
-      this.renderer.snapshot((snapshot) => {
-        //Make sure it is a image, not a color object
-        if (snapshot instanceof HTMLImageElement) {
-          resolve(snapshot.src);
-        }
+      const cam = this.cameras.add(0, 0, this.MAP_WIDTH, this.MAP_HEIGHT);
+      cam.setZoom(1);
+      cam.setScroll(0, 0);
+      cam.setVisible(false); // Don't render visibly
+      cam.ignore(this.children.list); // Ignore all scene objects
+
+      this.time.delayedCall(50, () => {
+        this.game.renderer.snapshotArea(
+          0,
+          0,
+          this.MAP_WIDTH,
+          this.MAP_HEIGHT,
+          (snapshot) => {
+            if (snapshot instanceof HTMLImageElement) {
+              resolve(snapshot.src);
+            } else {
+              console.warn("Snapshot returned non-image", snapshot);
+              resolve("");
+            }
+
+            this.time.delayedCall(16, () => cam.destroy());
+          }
+        );
       });
     });
   };
