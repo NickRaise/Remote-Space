@@ -14,6 +14,7 @@ import {
   CreateMapSchema,
 } from "@repo/common/api-types";
 import { z } from "zod";
+import { IAllSpaceResponse } from "./types";
 
 const BACKEND_URL = "http://localhost:3000/api/v1";
 
@@ -96,9 +97,22 @@ export const CreateMapAPI = async (
   token: string,
   data: z.infer<typeof CreateMapSchema>
 ) => {
-  const response = await api.post<{ id: string, message: string }>(
+  const response = await api.post<{ id: string; message: string }>(
     "/admin/map",
     data,
+    {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return response;
+};
+
+export const GetMySpacesAPI = async (token: string) => {
+  const response = await api.get<{ spaces: IAllSpaceResponse[] }>(
+    "/space/all",
     {
       headers: {
         authorization: `Bearer ${token}`,

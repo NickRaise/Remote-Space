@@ -8,6 +8,13 @@ export interface IMapElements {
   y: number;
 }
 
+export interface IAllSpaceResponse {
+  id: string;
+  name: string;
+  thumbnail: string;
+  dimensions: string;
+}
+
 export const IMAGE_FILE = z
   .instanceof(File, { message: "Please upload a valid image file." })
   .refine((file) => file.type.startsWith("image/"), {
