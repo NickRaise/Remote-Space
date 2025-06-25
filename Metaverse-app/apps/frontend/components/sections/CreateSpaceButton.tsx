@@ -13,10 +13,12 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import clsx from "clsx";
 import { DialogClose } from "@radix-ui/react-dialog";
+import { useUserStore } from "@/store/userStore";
 
 const CreateSpaceButton = () => {
   const [maps, setMaps] = useState<Map[]>([]);
   const [selectedMapId, setSelectedMapId] = useState<string | null>(null);
+  const userToken = useUserStore().userToken;
 
   const fetchAllMaps = async () => {
     try {
@@ -33,9 +35,11 @@ const CreateSpaceButton = () => {
   }, []);
 
   const createSpace = () => {
-    if (selectedMapId) {
-      console.log("Selected Map ID:", selectedMapId);
-    }
+    if (!selectedMapId || !userToken) return;
+  };
+
+  const createBlankSpace = () => {
+    // Send the user to the black map creator
   };
 
   return (
@@ -46,10 +50,25 @@ const CreateSpaceButton = () => {
         </div>
       </DialogTrigger>
 
-      <DialogContent className="min-w-[80vw] p-6 bg-custom-bg-dark-1 border border-black shadow-lg">
+      <DialogContent className="min-w-[80vw] p-6 bg-custom-bg-dark-1 border border-black shadow-lg text-custom-text-primary">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-semibold text-custom-accent">
-            Select a Template Map
+          <DialogTitle className="text-2xl font-semibold">
+            <div className="flex justify-between items-center px-4 py-2">
+              <div className="text-lg font-semibold text-custom-text-primary">
+                Select a Template Map
+              </div>
+              <Button
+                onClick={createBlankSpace}
+                variant="outline"
+                className={clsx(
+                  "border bg-custom-bg-dark-2 border-custom-border-highlight text-custom-border-highlight hover:bg-custom-bg-dark-2 hover:scale-105 transition-all cursor-pointe hover:text-custom-highlight cursor-pointer",
+                  selectedMapId === "blank" &&
+                    "bg-custom-bg-dark-2 ring-1 ring-custom-border-highlight"
+                )}
+              >
+                + Create Empty Space
+              </Button>
+            </div>
           </DialogTitle>
         </DialogHeader>
 

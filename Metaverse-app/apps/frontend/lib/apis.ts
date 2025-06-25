@@ -127,3 +127,7 @@ export const GetMySpacesAPI = async (token: string) => {
 
   return response;
 };
+
+export const CreateSpaceAPI = async () => {
+
+}
