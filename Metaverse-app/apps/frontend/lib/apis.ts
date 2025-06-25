@@ -6,7 +6,7 @@ import {
   ILoginResponse,
   IUpdateUserAvatarResponse,
 } from "./types/frontendApiTypes";
-import { Element } from "@repo/common/schema-types";
+import { Element, Map } from "@repo/common/schema-types";
 
 import {
   CreateAvatarSchema,
@@ -107,6 +107,11 @@ export const CreateMapAPI = async (
     }
   );
 
+  return response;
+};
+
+export const GetAllMapsAPI = async () => {
+  const response = await api.get<{ maps: Map[] }>("/maps");
   return response;
 };
 

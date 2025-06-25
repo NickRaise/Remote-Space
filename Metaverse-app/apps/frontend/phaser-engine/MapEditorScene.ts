@@ -460,30 +460,32 @@ export class MapEditorScene extends Phaser.Scene {
 
   generateThumbnail = async (): Promise<string> => {
     return await new Promise((resolve) => {
-      const cam = this.cameras.add(0, 0, this.MAP_WIDTH, this.MAP_HEIGHT);
-      cam.setZoom(1);
-      cam.setScroll(0, 0);
-      cam.setVisible(false); // Don't render visibly
-      cam.ignore(this.children.list); // Ignore all scene objects
+      // Store the original camera state (optional, if you use scroll/zoom)
+      const originalScrollX = this.cameras.main.scrollX;
+      const originalScrollY = this.cameras.main.scrollY;
+      const originalZoom = this.cameras.main.zoom;
 
-      this.time.delayedCall(50, () => {
-        this.game.renderer.snapshotArea(
-          0,
-          0,
-          this.MAP_WIDTH,
-          this.MAP_HEIGHT,
-          (snapshot) => {
-            if (snapshot instanceof HTMLImageElement) {
-              resolve(snapshot.src);
-            } else {
-              console.warn("Snapshot returned non-image", snapshot);
-              resolve("");
-            }
+      // Center camera to (0,0) and reset zoom to make sure full map is visible
+      this.cameras.main.setScroll(0, 0);
+      this.cameras.main.setZoom(1);
+      this.game.renderer.snapshotArea(
+        0,
+        0,
+        this.MAP_WIDTH - 1,
+        this.MAP_HEIGHT - 1,
+        (snapshot) => {
+          // Restore camera state
+          this.cameras.main.setScroll(originalScrollX, originalScrollY);
+          this.cameras.main.setZoom(originalZoom);
 
-            this.time.delayedCall(16, () => cam.destroy());
+          if (snapshot instanceof HTMLImageElement) {
+            resolve(snapshot.src);
+          } else {
+            console.warn("Snapshot failed", snapshot);
+            resolve("");
           }
-        );
-      });
+        }
+      );
     });
   };
 

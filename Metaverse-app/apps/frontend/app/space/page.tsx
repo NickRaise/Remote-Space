@@ -16,6 +16,7 @@ import { GetMySpacesAPI } from "@/lib/apis";
 import { useUserStore } from "@/store/userStore";
 import { toast } from "sonner";
 import Loader from "@/components/custom/loader";
+import CreateSpaceButton from "@/components/sections/CreateSpaceButton";
 
 const dummySpaces = [
   { id: 1, name: "Workspace Alpha", thumbnail: "/space1.jpg" },
@@ -53,12 +54,7 @@ export default function SpacesPage() {
         <h2 className="text-2xl font-bold text-custom-text-primary">
           Your Spaces
         </h2>
-        <Button
-          variant="outline"
-          className="bg-custom-primary hover:bg-custom-accent text-custom-text-primary hover:text-custom-text-primary border-none transition-all duration-300 cursor-pointer font-semibold"
-        >
-          <Plus className="mr-2 w-4 h-4" /> Create Space
-        </Button>
+        <CreateSpaceButton />
       </div>
 
       {loading && (
