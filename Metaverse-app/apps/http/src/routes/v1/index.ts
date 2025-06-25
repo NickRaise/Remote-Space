@@ -6,6 +6,7 @@ import { AdminRouter } from "./admin";
 import { adminMiddleware } from "../../middleware/authMiddleware";
 import { GetElementsController } from "../../controllers/elementController";
 import { GetAvatarsController } from "../../controllers/avatarController";
+import { GetAllMapsController } from "../../controllers/mapController";
 
 const router = Router();
 
@@ -20,6 +21,10 @@ router.get("/avatars", async (_, res) => {
 
 router.get("/elements", async (_, res) => {
   await GetElementsController(res)
+});
+
+router.get("/maps", async (_, res) => {
+  await GetAllMapsController(res)
 });
 
 export const V1Router = router;
