@@ -15,6 +15,22 @@ export interface IAllSpaceResponse {
   dimensions: string;
 }
 
+export interface ICreateSpaceResponse {
+  dimensions: string;
+  spaceElements: {
+    id: string;
+    element: {
+      id: string;
+      imageUrl: string;
+      height: number;
+      width: number;
+      static: boolean;
+    };
+    x: number;
+    y: number;
+  };
+}
+
 export const IMAGE_FILE = z
   .instanceof(File, { message: "Please upload a valid image file." })
   .refine((file) => file.type.startsWith("image/"), {

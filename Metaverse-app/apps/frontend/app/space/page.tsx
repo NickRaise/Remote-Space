@@ -16,7 +16,7 @@ import { GetMySpacesAPI } from "@/lib/apis";
 import { useUserStore } from "@/store/userStore";
 import { toast } from "sonner";
 import Loader from "@/components/custom/loader";
-import CreateSpaceButton from "@/components/sections/CreateSpaceButton";
+import CreateSpaceMenu from "@/components/sections/CreateSpaceButton";
 
 const dummySpaces = [
   { id: 1, name: "Workspace Alpha", thumbnail: "/space1.jpg" },
@@ -54,7 +54,7 @@ export default function SpacesPage() {
         <h2 className="text-2xl font-bold text-custom-text-primary">
           Your Spaces
         </h2>
-        <CreateSpaceButton />
+        <CreateSpaceMenu />
       </div>
 
       {loading && (

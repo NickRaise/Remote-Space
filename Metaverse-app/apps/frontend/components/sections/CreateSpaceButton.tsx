@@ -14,8 +14,9 @@ import { Button } from "@/components/ui/button";
 import clsx from "clsx";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { useUserStore } from "@/store/userStore";
+import CreateBlankSpacePopUp from "./create-blank-space-popup";
 
-const CreateSpaceButton = () => {
+const CreateSpaceMenu = () => {
   const [maps, setMaps] = useState<Map[]>([]);
   const [selectedMapId, setSelectedMapId] = useState<string | null>(null);
   const userToken = useUserStore().userToken;
@@ -38,10 +39,6 @@ const CreateSpaceButton = () => {
     if (!selectedMapId || !userToken) return;
   };
 
-  const createBlankSpace = () => {
-    // Send the user to the black map creator
-  };
-
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -57,17 +54,7 @@ const CreateSpaceButton = () => {
               <div className="text-lg font-semibold text-custom-text-primary">
                 Select a Template Map
               </div>
-              <Button
-                onClick={createBlankSpace}
-                variant="outline"
-                className={clsx(
-                  "border bg-custom-bg-dark-2 border-custom-border-highlight text-custom-border-highlight hover:bg-custom-bg-dark-2 hover:scale-105 transition-all cursor-pointe hover:text-custom-highlight cursor-pointer",
-                  selectedMapId === "blank" &&
-                    "bg-custom-bg-dark-2 ring-1 ring-custom-border-highlight"
-                )}
-              >
-                + Create Empty Space
-              </Button>
+              <CreateBlankSpacePopUp />
             </div>
           </DialogTitle>
         </DialogHeader>
@@ -132,4 +119,4 @@ const CreateSpaceButton = () => {
   );
 };
 
-export default CreateSpaceButton;
+export default CreateSpaceMenu;

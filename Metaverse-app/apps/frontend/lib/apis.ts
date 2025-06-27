@@ -12,9 +12,10 @@ import {
   CreateAvatarSchema,
   CreateElementSchema,
   CreateMapSchema,
+  CreateSpaceSchema,
 } from "@repo/common/api-types";
 import { z } from "zod";
-import { IAllSpaceResponse } from "./types";
+import { IAllSpaceResponse, ICreateSpaceResponse } from "./types";
 
 const BACKEND_URL = "http://localhost:3000/api/v1";
 
@@ -128,6 +129,20 @@ export const GetMySpacesAPI = async (token: string) => {
   return response;
 };
 
-export const CreateSpaceAPI = async () => {
+// Provide mapId to copy a map
+export const CreateSpaceAPI = async (
+  token: string,
+  data: z.infer<typeof CreateSpaceSchema>
+) => {
+  const response = await api.post<{ id: string; message: string }>(
+    "/space",
+    data,
+    {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
-}
+  return response;
+};
