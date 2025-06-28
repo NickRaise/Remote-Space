@@ -29,7 +29,6 @@ const CreateSpaceMenu = () => {
     try {
       const response = await GetAllMapsAPI();
       setMaps(response.data.maps);
-      console.log(response.data);
     } catch (err) {
       console.log(err);
     }

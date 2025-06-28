@@ -137,6 +137,8 @@ const SpaceEditor = () => {
       const image = await spaceObject.generateThumbnail();
       const imageUrl = await UploadToCloudinary(image, CLOUDINARY_SPACE_FOLDER);
 
+      // Todo: update space thumbnail
+
       await Promise.all(
         spaceObject.actionToBePerformed.map((action) => {
           if (action.type === "add") {
