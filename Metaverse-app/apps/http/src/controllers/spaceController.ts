@@ -226,17 +226,29 @@ export const UpdateThumbnailController = async (
   userId: string,
   res: Response
 ) => {
-  const space = await FindSpaceByIdAndCreator(data.spaceId, userId);
+  try {
+    const space = await FindSpaceByIdAndCreator(data.spaceId, userId);
 
-  if (!space) {
-    res.status(400).json({ message: "Space not found" });
-    return;
+    if (!space) {
+      return res.status(400).json({ message: "Space not found" });
+    }
+
+    if (space.creatorId !== userId) {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
+
+    await UpdateThumbnail(data);
+
+    return res.status(200).json({ message: "Thumbnail updated successfully." });
+  } catch (err) {
+    console.error("Error updating thumbnail:", err);
+
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      return res.status(400).json({ message: "Prisma error: " + err.message });
+    }
+
+    return res
+      .status(500)
+      .json({ message: "Internal server error while updating thumbnail." });
   }
-
-  if (space.creatorId !== userId) {
-    res.status(403).json({ message: "Unauthorized" });
-    return;
-  }
-
-  await UpdateThumbnail(data);
 };
