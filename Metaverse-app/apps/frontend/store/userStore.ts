@@ -1,4 +1,4 @@
-import { create } from "zustand";
+import { create, StateCreator } from "zustand";
 import { persist } from "zustand/middleware";
 import { decode } from "jsonwebtoken";
 
@@ -13,7 +13,7 @@ interface IUserStore {
   getUserId: () => null | string;
 }
 
-const userStore = (set: any, get: any): IUserStore => ({
+const userStore: StateCreator<IUserStore> = (set, get): IUserStore => ({
   userToken: null,
 
   setUserToken: (token) => set(() => ({ userToken: token })),

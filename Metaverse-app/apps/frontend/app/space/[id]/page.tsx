@@ -15,11 +15,12 @@ const SpaceEditor = () => {
   const gameRef = useRef<Game>(null);
   const params = useParams();
   const router = useRouter();
-  const userToken = useUserStore().userToken;
+  const userToken = useUserStore((state) => state.userToken);
 
   const fetchSpaceData = async (): Promise<
     IGetSpaceByIdResponse | undefined
   > => {
+    console.log("Getting space");
     const spaceId = params.id;
     try {
       const response = await GetSpaceByIdAPI(userToken!, spaceId as string);
@@ -33,10 +34,12 @@ const SpaceEditor = () => {
   };
 
   const initGame = async () => {
+    console.log("Getting space", userToken);
     if (!userToken) return;
     // fetch space data
     const space = (await fetchSpaceData()) as IGetSpaceByIdResponse;
     // populate elements in the map
+    console.log(space);
     const Phaser = await import("phaser");
     const { SpaceEditorScene } = await import(
       "@/phaser-engine/SpaceEditorScene"
@@ -48,6 +51,8 @@ const SpaceEditor = () => {
       width: Number(dimensionValues[0]),
       height: Number(dimensionValues[1]),
     };
+
+    console.log(dimensions);
 
     const scene = new SpaceEditorScene(
       "SpaceEditor",
@@ -111,7 +116,7 @@ const SpaceEditor = () => {
         container.removeEventListener("drop", handleDrop);
       }
     };
-  }, []);
+  }, [userToken]);
 
   return (
     <div className="w-screen h-screen flex overflow-hidden scrollbar-hide relative">
