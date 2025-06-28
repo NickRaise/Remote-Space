@@ -1,6 +1,7 @@
 "use client";
 import AllElementsMenu from "@/components/custom/element-sidebar";
 import { GetSpaceByIdAPI } from "@/lib/apis";
+import { IGetSpaceByIdResponse } from "@/lib/types";
 import { SpaceEditorScene } from "@/phaser-engine/SpaceEditorScene";
 import { useUserStore } from "@/store/userStore";
 import { Element } from "@repo/common/schema-types";
@@ -16,11 +17,14 @@ const SpaceEditor = () => {
   const router = useRouter();
   const userToken = useUserStore().userToken;
 
-  const fetchSpaceData = async () => {
+  const fetchSpaceData = async (): Promise<
+    IGetSpaceByIdResponse | undefined
+  > => {
     const spaceId = params.id;
     try {
       const response = await GetSpaceByIdAPI(userToken!, spaceId as string);
-      const spaceElements = response.data.spaceElements;
+      const space = response.data;
+      return space;
     } catch (err) {
       console.log(err);
       toast("Failed to fetch the space. Redirecting...");
@@ -31,8 +35,37 @@ const SpaceEditor = () => {
   const initGame = async () => {
     if (!userToken) return;
     // fetch space data
-    const space = await fetchSpaceData();
+    const space = (await fetchSpaceData()) as IGetSpaceByIdResponse;
     // populate elements in the map
+    const Phaser = await import("phaser");
+    const { SpaceEditorScene } = await import(
+      "@/phaser-engine/SpaceEditorScene"
+    );
+
+    const dimensionValues = space.dimensions.split("x");
+
+    const dimensions = {
+      width: Number(dimensionValues[0]),
+      height: Number(dimensionValues[1]),
+    };
+
+    const scene = new SpaceEditorScene(
+      "SpaceEditor",
+      dimensions,
+      space.spaceElements
+    );
+
+    const config: Phaser.Types.Core.GameConfig = {
+      type: Phaser.AUTO,
+      width: 1600,
+      height: 1000,
+      parent: containerRef.current,
+      backgroundColor: "#1a1a1a",
+      scene: scene,
+    };
+
+    const game = new Phaser.Game(config);
+    gameRef.current = game;
   };
 
   useEffect(() => {
