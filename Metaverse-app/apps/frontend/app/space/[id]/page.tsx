@@ -55,7 +55,7 @@ const SpaceEditor = () => {
       height: Number(dimensionValues[1]),
     };
 
-    console.log(dimensions);
+    const spaceId = params.id;
 
     const scene = new SpaceEditorScene(
       "SpaceEditor",

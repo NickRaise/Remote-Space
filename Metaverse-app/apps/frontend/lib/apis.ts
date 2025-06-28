@@ -9,6 +9,7 @@ import {
 import { Element, Map } from "@repo/common/schema-types";
 
 import {
+  AddSpaceElementSchema,
   CreateAvatarSchema,
   CreateElementSchema,
   CreateMapSchema,
@@ -159,3 +160,7 @@ export const GetSpaceByIdAPI = async (token: string, spaceId: string) => {
 
   return response;
 };
+
+export const AddElementToSpaceIdAPI = async (token: string, data: z.infer<typeof AddSpaceElementSchema>) => {
+  const response = await api.post<{id: string}>("")
+}

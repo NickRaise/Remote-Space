@@ -32,7 +32,7 @@ export class MapEditorScene extends Phaser.Scene {
   private dragStart = { x: 0, y: 0 };
   private cameraStart = { x: 0, y: 0 };
   private isSpacePressed = false;
-  private historyStack: Action[] = [];
+  historyStack: Action[] = [];
 
   private targetZoom = 1;
   private zoomLerpSpeed = 0.1;

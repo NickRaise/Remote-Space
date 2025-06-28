@@ -1,5 +1,5 @@
 import { TILE_SIZE } from "@/lib/constant";
-import { MapEditorScene } from "./MapEditorScene";
+import { ISceneElement, MapEditorScene } from "./MapEditorScene";
 import { Element } from "@repo/common/schema-types";
 
 export interface IReceivedElement extends Element {
@@ -19,8 +19,22 @@ interface IRawSpaceElements {
   y: number;
 }
 
+type IActionPerformed =
+  | {
+      type: "add";
+      id: string;
+      x: number;
+      y: number;
+    }
+  | {
+      type: "delete";
+      elementId: string;
+    };
+
 export class SpaceEditorScene extends MapEditorScene {
   private rawSpaceElements: IRawSpaceElements[] = [];
+
+  actionToBePerformed: IActionPerformed[] = [];
 
   constructor(
     sceneKey: string,
@@ -100,4 +114,106 @@ export class SpaceEditorScene extends MapEditorScene {
 
     this.mapElements.push(newElement);
   }
+
+  placeElementAt(element: Element, clientX: number, clientY: number) {
+    super.placeElementAt(element, clientX, clientY);
+
+    const worldPoint = this.cameras.main.getWorldPoint(clientX, clientY);
+    const gridX = Math.floor(worldPoint.x / TILE_SIZE);
+    const gridY = Math.floor(worldPoint.y / TILE_SIZE);
+
+    this.actionToBePerformed.push({
+      type: "add",
+      id: element.id,
+      x: gridX,
+      y: gridY,
+    });
+  }
+
+  deleteElement(elem: ISceneElement) {
+    super.deleteElement(elem);
+    if (elem.elementId) {
+      this.actionToBePerformed.push({
+        type: "delete",
+        elementId: elem.elementId,
+      });
+    }
+  }
+
+  updateElementPosition(elem: ISceneElement, x: number, y: number) {
+    const oldX = elem.x;
+    const oldY = elem.y;
+
+    super.updateElementPosition(elem, x, y);
+
+    if (elem.elementId) {
+      // Delete from old position
+      this.actionToBePerformed.push({
+        type: "delete",
+        elementId: elem.elementId,
+      });
+
+      // Add to new position
+      this.actionToBePerformed.push({
+        type: "add",
+        id: elem.id,
+        x: x / TILE_SIZE,
+        y: y / TILE_SIZE,
+      });
+    }
+  }
+
+  undoLastAction = () => {
+    const lastAction = this.historyStack.pop();
+    if (!lastAction) return;
+
+    if (lastAction.type === "delete") {
+      const { id, x, y, width, height, imageUrl } = lastAction.element;
+
+      if (!this.textures.exists(id)) {
+        this.load.image(id, imageUrl);
+        this.load.once("complete", () => {
+          this.restoreElement(id, x, y, width, height);
+          this.actionToBePerformed.push({
+            type: "add",
+            id,
+            x: x / TILE_SIZE,
+            y: y / TILE_SIZE,
+          });
+        });
+        this.load.start();
+      } else {
+        this.restoreElement(id, x, y, width, height);
+        this.actionToBePerformed.push({
+          type: "add",
+          id,
+          x: x / TILE_SIZE,
+          y: y / TILE_SIZE,
+        });
+      }
+    }
+
+    if (lastAction.type === "add") {
+      const index = this.mapElements.findIndex(
+        (el) =>
+          el.id === lastAction.element.id &&
+          el.x === lastAction.element.x &&
+          el.y === lastAction.element.y
+      );
+
+      if (index !== -1) {
+        const element = this.mapElements[index];
+        element.sprite.destroy();
+        element.background.destroy();
+        this.mapElements.splice(index, 1);
+
+        if (element.elementId) {
+          this.actionToBePerformed.push({
+            type: "delete",
+            elementId: element.elementId,
+          });
+        }
+      }
+    }
+  };
 }

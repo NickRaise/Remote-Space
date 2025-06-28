@@ -138,9 +138,9 @@ export const AddSpaceElementController = async (
       return;
     }
 
-    await CreateSpaceElement(elementData);
+    const spaceElement = await CreateSpaceElement(elementData);
 
-    res.status(200).json({ message: "Element added" });
+    res.status(200).json({ id: spaceElement.id, message: "Element added" });
   } catch (err) {
     console.log("Error adding element to a space: ", err);
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
