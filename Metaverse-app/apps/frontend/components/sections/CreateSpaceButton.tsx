@@ -5,7 +5,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { GetAllMapsAPI } from "@/lib/apis";
+import { CreateSpaceAPI, GetAllMapsAPI } from "@/lib/apis";
 import { Map } from "@repo/common/schema-types";
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -15,11 +15,15 @@ import clsx from "clsx";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { useUserStore } from "@/store/userStore";
 import CreateBlankSpacePopUp from "./CreateBlankSpacePopUp";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const CreateSpaceMenu = () => {
   const [maps, setMaps] = useState<Map[]>([]);
-  const [selectedMapId, setSelectedMapId] = useState<string | null>(null);
+  const [selectedMap, setSelectedMap] = useState<Map | null>(null);
   const userToken = useUserStore().userToken;
+  const router = useRouter();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const fetchAllMaps = async () => {
     try {
@@ -35,13 +39,25 @@ const CreateSpaceMenu = () => {
     fetchAllMaps();
   }, []);
 
-  const createSpace = () => {
-    if (!selectedMapId || !userToken) return;
+  const createSpace = async () => {
+    if (!selectedMap || !userToken) return;
 
     try {
+      setLoading(true);
+      const data = {
+        name: selectedMap.name,
+        dimensions: `${selectedMap.width}x${selectedMap.height}`,
+        mapId: selectedMap.id,
+      };
 
-    }catch(err) {
-      console.log(err)
+      const response = await CreateSpaceAPI(userToken, data);
+      toast("Space created successfully. Redirecting...");
+      router.push(response.data.id);
+    } catch (err) {
+      console.log(err);
+      toast("Space creation failed. Try again...");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -70,10 +86,12 @@ const CreateSpaceMenu = () => {
             maps.map((map) => (
               <div
                 key={map.id}
-                onClick={() => setSelectedMapId(map.id)}
+                onClick={() => {
+                  setSelectedMap(map);
+                }}
                 className={clsx(
                   "bg-custom-bg-dark-2 border-2 rounded-xl overflow-hidden transition-all duration-300 cursor-pointer flex flex-col shadow-md hover:shadow-custom-primary/50 hover:scale-105",
-                  selectedMapId === map.id
+                  selectedMap?.id === map.id
                     ? "border-custom-border-highlight ring-1 ring-custom-border-highlight"
                     : "border-transparent"
                 )}
@@ -102,7 +120,7 @@ const CreateSpaceMenu = () => {
           <DialogClose asChild>
             <Button
               variant="outline"
-              onClick={() => setSelectedMapId(null)}
+              onClick={() => setSelectedMap(null)}
               className="cursor-pointer text-custom-text-primary hover:text-custom-text-primary bg-custom-bg-dark-2 border-transparent hover:bg-custom-bg-dark-2 hover:border-custom-text-primary"
             >
               Cancel
@@ -110,14 +128,14 @@ const CreateSpaceMenu = () => {
           </DialogClose>
           <DialogClose asChild>
             <Button
-              disabled={!selectedMapId}
+              disabled={!selectedMap?.id || loading}
               onClick={createSpace}
               className={clsx(
                 "bg-custom-primary hover:bg-custom-accent text-white font-medium py-2 rounded-lg transition-all cursor-pointer disabled:bg-custom-bg-dark-2",
-                !selectedMapId && "opacity-50 cursor-not-allowed"
+                !selectedMap?.id && "opacity-50 cursor-not-allowed"
               )}
             >
-              Select
+              {loading ? "Creating..." : "Select"}
             </Button>
           </DialogClose>
         </div>

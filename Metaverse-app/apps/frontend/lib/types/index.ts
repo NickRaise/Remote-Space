@@ -28,7 +28,7 @@ export interface IGetSpaceByIdResponse {
     };
     x: number;
     y: number;
-  };
+  }[];
 }
 
 export const IMAGE_FILE = z
