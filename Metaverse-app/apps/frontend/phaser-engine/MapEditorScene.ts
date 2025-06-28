@@ -2,8 +2,9 @@ import { TILE_IMAGE_URL, TILE_SIZE } from "@/lib/constant";
 import * as Phaser from "phaser";
 import { Element } from "@repo/common/schema-types";
 
-interface MapElement {
+export interface ISceneElement {
   id: string;
+  elementId?: string;
   sprite: Phaser.GameObjects.Image;
   background: Phaser.GameObjects.Rectangle;
   x: number;
@@ -11,10 +12,10 @@ interface MapElement {
 }
 
 type Action =
-  | { type: "add"; element: MapElement }
+  | { type: "add"; element: ISceneElement }
   | {
       type: "delete";
-      element: Omit<MapElement, "sprite" | "background"> & {
+      element: Omit<ISceneElement, "sprite" | "background"> & {
         width: number;
         height: number;
         imageUrl: string;
@@ -22,7 +23,7 @@ type Action =
     };
 
 export class MapEditorScene extends Phaser.Scene {
-  mapElements: MapElement[] = [];
+  mapElements: ISceneElement[] = [];
 
   private MAP_WIDTH = 40 * TILE_SIZE;
   private MAP_HEIGHT = 25 * TILE_SIZE;
@@ -37,12 +38,15 @@ export class MapEditorScene extends Phaser.Scene {
   private zoomLerpSpeed = 0.1;
 
   private selectedSprite: Phaser.GameObjects.Image | null = null;
-  private selectedElement: MapElement | null = null;
+  private selectedElement: ISceneElement | null = null;
 
-  constructor(width: number = 40, height: number = 25) {
-    super("MapEditor");
-    this.MAP_WIDTH = width * TILE_SIZE;
-    this.MAP_HEIGHT = height * TILE_SIZE;
+  constructor(
+    sceneKey: string,
+    dimensions: { width: number; height: number } = { width: 40, height: 25 }
+  ) {
+    super(sceneKey);
+    this.MAP_WIDTH = dimensions.width * TILE_SIZE;
+    this.MAP_HEIGHT = dimensions.height * TILE_SIZE;
   }
 
   preload() {
@@ -222,14 +226,14 @@ export class MapEditorScene extends Phaser.Scene {
     }
   }
 
-  getClickedElement(pointer: Phaser.Input.Pointer): MapElement | undefined {
+  getClickedElement(pointer: Phaser.Input.Pointer): ISceneElement | undefined {
     const worldPoint = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
     return this.mapElements.find((elem) =>
       elem.sprite.getBounds().contains(worldPoint.x, worldPoint.y)
     );
   }
 
-  selectElement(elem: MapElement) {
+  selectElement(elem: ISceneElement) {
     // Highlight and set element as selected
     this.selectedElement = elem;
     this.selectedSprite = elem.sprite;
@@ -238,7 +242,7 @@ export class MapEditorScene extends Phaser.Scene {
     this.input.setDefaultCursor("grabbing");
   }
 
-  updateElementPosition(elem: MapElement, x: number, y: number) {
+  updateElementPosition(elem: ISceneElement, x: number, y: number) {
     elem.sprite.setPosition(x, y);
     elem.background.setPosition(
       x + elem.sprite.displayWidth / 2,
@@ -359,7 +363,7 @@ export class MapEditorScene extends Phaser.Scene {
     }
   }
 
-  deleteElement(elem: MapElement) {
+  deleteElement(elem: ISceneElement) {
     const elementMeta = {
       id: elem.id,
       x: elem.x,
@@ -447,7 +451,7 @@ export class MapEditorScene extends Phaser.Scene {
     sprite.setDepth(1);
     background.setDepth(0);
 
-    const restoredElement: MapElement = {
+    const restoredElement: ISceneElement = {
       id,
       x,
       y,
@@ -489,8 +493,8 @@ export class MapEditorScene extends Phaser.Scene {
     });
   };
 
-  private addToHistoryStack = (value: Action) => {
+  protected addToHistoryStack(value: Action) {
     this.historyStack.push(value);
     if (this.historyStack.length > 7) this.historyStack.shift();
-  };
+  }
 }

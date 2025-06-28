@@ -18,13 +18,6 @@ import { toast } from "sonner";
 import Loader from "@/components/custom/loader";
 import CreateSpaceMenu from "@/components/sections/CreateSpaceButton";
 
-const dummySpaces = [
-  { id: 1, name: "Workspace Alpha", thumbnail: "/space1.jpg" },
-  { id: 2, name: "Team Galaxy", thumbnail: "/space2.jpg" },
-  { id: 3, name: "Chill Lounge", thumbnail: "/space3.jpg" },
-  { id: 4, name: "Focus Room", thumbnail: "/space4.jpg" },
-];
-
 export default function SpacesPage() {
   const [mySpaces, setMySpaces] = useState<IAllSpaceResponse[]>([]);
   const [loading, setLoading] = useState<boolean>(false);

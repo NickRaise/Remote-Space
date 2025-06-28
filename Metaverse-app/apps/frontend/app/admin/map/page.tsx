@@ -74,7 +74,7 @@ export default function MapEditorGame() {
     const width = Math.max(10, mapWidth);
     const height = Math.max(10, mapHeight);
 
-    const scene = new MapEditorScene(width, height);
+    const scene = new MapEditorScene("MapEditor", { width, height });
 
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.AUTO,
@@ -100,6 +100,7 @@ export default function MapEditorGame() {
     const Phaser = await import("phaser");
 
     const { MapEditorScene } = await import("@/phaser-engine/MapEditorScene");
+    const scene = new MapEditorScene("MapEditor");
 
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.AUTO,
@@ -107,7 +108,7 @@ export default function MapEditorGame() {
       height: 1000,
       parent: containerRef.current,
       backgroundColor: "#1a1a1a",
-      scene: MapEditorScene,
+      scene: scene,
     };
 
     const game = new Phaser.Game(config);

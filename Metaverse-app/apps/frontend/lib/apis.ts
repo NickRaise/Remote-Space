@@ -15,7 +15,10 @@ import {
   CreateSpaceSchema,
 } from "@repo/common/api-types";
 import { z } from "zod";
-import { IAllSpaceResponse, ICreateSpaceResponse } from "./types";
+import {
+  IAllSpaceResponse,
+  IGetSpaceByIdResponse,
+} from "./types";
 
 const BACKEND_URL = "http://localhost:3000/api/v1";
 
@@ -143,6 +146,16 @@ export const CreateSpaceAPI = async (
       },
     }
   );
+
+  return response;
+};
+
+export const GetSpaceByIdAPI = async (token: string, spaceId: string) => {
+  const response = await api.get<IGetSpaceByIdResponse>(`/space/${spaceId}`, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  });
 
   return response;
 };

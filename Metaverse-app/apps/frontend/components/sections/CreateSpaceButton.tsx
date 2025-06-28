@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import clsx from "clsx";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { useUserStore } from "@/store/userStore";
-import CreateBlankSpacePopUp from "./create-blank-space-popup";
+import CreateBlankSpacePopUp from "./CreateBlankSpacePopUp";
 
 const CreateSpaceMenu = () => {
   const [maps, setMaps] = useState<Map[]>([]);
@@ -37,6 +37,12 @@ const CreateSpaceMenu = () => {
 
   const createSpace = () => {
     if (!selectedMapId || !userToken) return;
+
+    try {
+
+    }catch(err) {
+      console.log(err)
+    }
   };
 
   return (
@@ -102,17 +108,18 @@ const CreateSpaceMenu = () => {
               Cancel
             </Button>
           </DialogClose>
-
-          <Button
-            disabled={!selectedMapId}
-            onClick={createSpace}
-            className={clsx(
-              "bg-custom-primary hover:bg-custom-accent text-white font-medium py-2 rounded-lg transition-all cursor-pointer disabled:bg-custom-bg-dark-2",
-              !selectedMapId && "opacity-50 cursor-not-allowed"
-            )}
-          >
-            Select
-          </Button>
+          <DialogClose asChild>
+            <Button
+              disabled={!selectedMapId}
+              onClick={createSpace}
+              className={clsx(
+                "bg-custom-primary hover:bg-custom-accent text-white font-medium py-2 rounded-lg transition-all cursor-pointer disabled:bg-custom-bg-dark-2",
+                !selectedMapId && "opacity-50 cursor-not-allowed"
+              )}
+            >
+              Select
+            </Button>
+          </DialogClose>
         </div>
       </DialogContent>
     </Dialog>

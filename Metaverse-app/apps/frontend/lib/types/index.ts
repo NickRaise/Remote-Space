@@ -15,7 +15,7 @@ export interface IAllSpaceResponse {
   dimensions: string;
 }
 
-export interface ICreateSpaceResponse {
+export interface IGetSpaceByIdResponse {
   dimensions: string;
   spaceElements: {
     id: string;
