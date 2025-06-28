@@ -193,6 +193,7 @@ export const GetSpacesController = async (spaceId: string, res: Response) => {
     }
 
     res.status(200).json({
+      thumbnail: space.thumbnail,
       dimensions: `${space.width}x${space.height}`,
       spaceElements: space.spaceElements.map((e) => ({
         id: e.id,

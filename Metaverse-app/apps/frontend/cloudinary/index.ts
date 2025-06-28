@@ -34,3 +34,51 @@ export const UploadToCloudinary = async (
     return null;
   }
 };
+
+export const DeleteSpaceThumbnailFromCloudinary = async (imageUrl: string) => {
+  const imageId = imageUrl.split("/").pop()?.split(".")[0];
+
+  if (!imageId) {
+    console.error("Invalid image URL.");
+    throw new Error("Image can't be found");
+  }
+
+  const response = await axios.post(
+    `${CLOUDINARY_API}/${CLOUDINARY_CLOUD_NAME}/image/destroy`,
+    {
+      public_id: imageId,
+      upload_preset: CLOUDINARY_SPACE_FOLDER,
+      invalidate: true,
+    }
+  );
+};
+
+export const DuplicateMapThumbnailFromCloudinaryIntoSpace = async (
+  imageUrl: string
+) => {
+  const publicId = imageUrl.split("/").pop()?.split(".")[0];
+
+  if (!publicId) {
+    console.error("Invalid image URL, could not extract public ID.");
+    throw new Error("Image can't be found");
+  }
+
+  try {
+    const response = await axios.post(
+      `${CLOUDINARY_API}/${CLOUDINARY_CLOUD_NAME}/image/copy`,
+      {
+        public_id: publicId,
+        from_folder: CLOUDINARY_MAP_FOLDER,
+        to_folder: CLOUDINARY_SPACE_FOLDER,
+      }
+    );
+
+    // AssumingF successful response, construct the new URL
+    const newUrl = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/${CLOUDINARY_SPACE_FOLDER}/${publicId}.jpg`;
+
+    return newUrl;
+  } catch (err) {
+    console.error("Error duplicating image:", err);
+    throw new Error("Image can't be copied ");
+  }
+};

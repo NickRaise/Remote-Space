@@ -1,5 +1,8 @@
 "use client";
-import { UploadToCloudinary } from "@/cloudinary";
+import {
+  DeleteSpaceThumbnailFromCloudinary,
+  UploadToCloudinary,
+} from "@/cloudinary";
 import AllElementsMenu from "@/components/custom/element-sidebar";
 import MapEditorHelpBox from "@/components/custom/map-editor-helpbox";
 import { SaveButton } from "@/components/sections/SaveButton";
@@ -12,7 +15,7 @@ import { CLOUDINARY_SPACE_FOLDER } from "@/lib/constant";
 import { IGetSpaceByIdResponse } from "@/lib/types";
 import { SpaceEditorScene } from "@/phaser-engine/SpaceEditorScene";
 import { useUserStore } from "@/store/userStore";
-import { Element } from "@repo/common/schema-types";
+import { Element, Space } from "@repo/common/schema-types";
 import { useParams, useRouter } from "next/navigation";
 import { Game } from "phaser";
 import React, { useEffect, useRef, useState } from "react";
@@ -25,6 +28,7 @@ const SpaceEditor = () => {
   const params = useParams();
   const router = useRouter();
   const userToken = useUserStore((state) => state.userToken);
+  const spaceRef = useRef<IGetSpaceByIdResponse>(null);
 
   const fetchSpaceData = async (): Promise<
     IGetSpaceByIdResponse | undefined
@@ -34,6 +38,7 @@ const SpaceEditor = () => {
     try {
       const response = await GetSpaceByIdAPI(userToken!, spaceId as string);
       const space = response.data;
+      spaceRef.current = space;
       return space;
     } catch (err) {
       console.log(err);
@@ -48,7 +53,6 @@ const SpaceEditor = () => {
     // fetch space data
     const space = (await fetchSpaceData()) as IGetSpaceByIdResponse;
     // populate elements in the map
-    console.log(space);
     const Phaser = await import("phaser");
     const { SpaceEditorScene } = await import(
       "@/phaser-engine/SpaceEditorScene"
@@ -138,6 +142,9 @@ const SpaceEditor = () => {
       const imageUrl = await UploadToCloudinary(image, CLOUDINARY_SPACE_FOLDER);
 
       // Todo: update space thumbnail
+      if (spaceRef.current) {
+        DeleteSpaceThumbnailFromCloudinary(spaceRef.current.thumbnail);
+      }
 
       await Promise.all(
         spaceObject.actionToBePerformed.map((action) => {

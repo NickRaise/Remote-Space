@@ -16,6 +16,7 @@ export interface IAllSpaceResponse {
 }
 
 export interface IGetSpaceByIdResponse {
+  thumbnail: string;
   dimensions: string;
   spaceElements: {
     id: string;

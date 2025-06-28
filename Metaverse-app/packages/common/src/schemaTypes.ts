@@ -35,3 +35,22 @@ export type Map = {
   id: string;
   thumbnail: string;
 };
+
+export type Space = {
+  id: string;
+  name: string;
+  width: number;
+  height: number;
+  thumbnail?: string;
+  creatorId: string;
+  spaceElements: SpaceElement[];
+};
+
+export type SpaceElement = {
+  id: string;
+  elementId: string;
+  element: Element;
+  spaceId: string;
+  x: number;
+  y: number;
+};

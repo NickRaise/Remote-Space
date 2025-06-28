@@ -28,6 +28,7 @@ export const CreateSpaceWithoutMapId = async (
       width: parseInt(spaceData.dimensions.split("x")[0] ?? "100"),
       height: parseInt(spaceData.dimensions.split("x")[1] ?? "100"),
       creatorId: userId,
+      thumbnail: spaceData.thumbnail,
     },
   });
 
