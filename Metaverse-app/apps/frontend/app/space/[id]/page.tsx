@@ -1,8 +1,5 @@
 "use client";
-import {
-  DeleteSpaceThumbnailFromCloudinary,
-  UploadToCloudinary,
-} from "@/cloudinary";
+import { UploadToCloudinary } from "@/cloudinary";
 import AllElementsMenu from "@/components/custom/element-sidebar";
 import MapEditorHelpBox from "@/components/custom/map-editor-helpbox";
 import { SaveButton } from "@/components/sections/SaveButton";
@@ -16,7 +13,7 @@ import { CLOUDINARY_SPACE_FOLDER } from "@/lib/constant";
 import { IGetSpaceByIdResponse } from "@/lib/types";
 import { SpaceEditorScene } from "@/phaser-engine/SpaceEditorScene";
 import { useUserStore } from "@/store/userStore";
-import { Element, Space } from "@repo/common/schema-types";
+import { Element } from "@repo/common/schema-types";
 import { useParams, useRouter } from "next/navigation";
 import { Game } from "phaser";
 import React, { useEffect, useRef, useState } from "react";
@@ -144,10 +141,6 @@ const SpaceEditor = () => {
 
       if (!imageUrl) {
         throw new Error("Thumbnail image cannot be generated.");
-      }
-
-      if (spaceRef.current) {
-        DeleteSpaceThumbnailFromCloudinary(spaceRef.current.thumbnail);
       }
 
       const updateThumbnailData = {

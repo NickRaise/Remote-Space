@@ -17,7 +17,6 @@ import { useUserStore } from "@/store/userStore";
 import CreateBlankSpacePopUp from "./CreateBlankSpacePopUp";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { DuplicateMapThumbnailFromCloudinaryIntoSpace } from "@/cloudinary";
 
 const CreateSpaceMenu = () => {
   const [maps, setMaps] = useState<Map[]>([]);
@@ -45,15 +44,11 @@ const CreateSpaceMenu = () => {
     try {
       setLoading(true);
 
-      const imageUrl = await DuplicateMapThumbnailFromCloudinaryIntoSpace(
-        selectedMap.thumbnail
-      );
-
       const data = {
         name: selectedMap.name,
         dimensions: `${selectedMap.width}x${selectedMap.height}`,
         mapId: selectedMap.id,
-        thumbnail: imageUrl,
+        thumbnail: selectedMap.thumbnail,
       };
 
       const response = await CreateSpaceAPI(userToken, data);
