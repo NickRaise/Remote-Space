@@ -1,7 +1,18 @@
-import { CLOUDINARY_API, CLOUDINARY_AVATAR_FOLDER, CLOUDINARY_CLOUD_NAME, CLOUDINARY_ELEMENT_FOLDER, CLOUDINARY_MAP_FOLDER } from "@/lib/constant";
+import {
+  CLOUDINARY_API,
+  CLOUDINARY_AVATAR_FOLDER,
+  CLOUDINARY_CLOUD_NAME,
+  CLOUDINARY_ELEMENT_FOLDER,
+  CLOUDINARY_MAP_FOLDER,
+  CLOUDINARY_SPACE_FOLDER,
+} from "@/lib/constant";
 import axios from "axios";
 
-type CloudinaryFolderType = typeof CLOUDINARY_MAP_FOLDER | typeof CLOUDINARY_AVATAR_FOLDER | typeof CLOUDINARY_ELEMENT_FOLDER
+type CloudinaryFolderType =
+  | typeof CLOUDINARY_MAP_FOLDER
+  | typeof CLOUDINARY_AVATAR_FOLDER
+  | typeof CLOUDINARY_ELEMENT_FOLDER
+  | typeof CLOUDINARY_SPACE_FOLDER;
 
 export const UploadToCloudinary = async (
   file: string | File,

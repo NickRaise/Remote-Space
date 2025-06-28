@@ -1,8 +1,14 @@
 "use client";
+import { UploadToCloudinary } from "@/cloudinary";
 import AllElementsMenu from "@/components/custom/element-sidebar";
 import MapEditorHelpBox from "@/components/custom/map-editor-helpbox";
 import { SaveButton } from "@/components/sections/SaveButton";
-import { GetSpaceByIdAPI } from "@/lib/apis";
+import {
+  AddElementToSpaceIdAPI,
+  DeleteElementInSpaceIdAPI,
+  GetSpaceByIdAPI,
+} from "@/lib/apis";
+import { CLOUDINARY_SPACE_FOLDER } from "@/lib/constant";
 import { IGetSpaceByIdResponse } from "@/lib/types";
 import { SpaceEditorScene } from "@/phaser-engine/SpaceEditorScene";
 import { useUserStore } from "@/store/userStore";
@@ -54,8 +60,6 @@ const SpaceEditor = () => {
       width: Number(dimensionValues[0]),
       height: Number(dimensionValues[1]),
     };
-
-    const spaceId = params.id;
 
     const scene = new SpaceEditorScene(
       "SpaceEditor",
@@ -110,7 +114,7 @@ const SpaceEditor = () => {
     container.addEventListener("drop", handleDrop);
 
     return () => {
-      if (gameRef.current) {
+      if (gameRef.current?.isRunning) {
         gameRef.current.destroy(true);
         gameRef.current = null;
       }
@@ -121,7 +125,45 @@ const SpaceEditor = () => {
     };
   }, [userToken]);
 
-  const generateThumbnail = () => {};
+  const updateSpace = async () => {
+    if (!userToken) return;
+    const spaceObject = gameRef.current?.scene.keys[
+      "SpaceEditor"
+    ] as SpaceEditorScene;
+    console.log(spaceObject.actionToBePerformed);
+    try {
+      setLoading(true);
+
+      const image = await spaceObject.generateThumbnail();
+      const imageUrl = await UploadToCloudinary(image, CLOUDINARY_SPACE_FOLDER);
+
+      await Promise.all(
+        spaceObject.actionToBePerformed.map((action) => {
+          if (action.type === "add") {
+            const data = {
+              elementId: action.id,
+              spaceId: params.id as string,
+              x: action.x,
+              y: action.y,
+            };
+            return AddElementToSpaceIdAPI(userToken, data);
+          } else {
+            return DeleteElementInSpaceIdAPI(userToken, {
+              id: action.elementId,
+            });
+          }
+        })
+      );
+
+      toast("Updated successfully. Redirecting...");
+      router.push("/space");
+    } catch (err) {
+      console.log(err);
+      toast("Space saving failed. Try again...");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="w-screen h-screen flex overflow-hidden scrollbar-hide relative">
@@ -132,7 +174,7 @@ const SpaceEditor = () => {
         <SaveButton
           label="Confirm"
           loading={loading}
-          onClick={generateThumbnail}
+          onClick={updateSpace}
           className="w-30"
         />
       </div>

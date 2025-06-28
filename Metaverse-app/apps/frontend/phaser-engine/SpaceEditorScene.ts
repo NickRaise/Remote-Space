@@ -146,19 +146,33 @@ export class SpaceEditorScene extends MapEditorScene {
 
     super.updateElementPosition(elem, x, y);
 
-    if (elem.elementId) {
-      // Delete from old position
+    const gridX = x / TILE_SIZE;
+    const gridY = y / TILE_SIZE;
+
+    if (!elem.elementId) {
+      const index = this.actionToBePerformed.findIndex(
+        (e) =>
+          e.type === "add" && e.id === elem.id && e.x === oldX && e.y === oldY
+      );
+
+      const action = this.actionToBePerformed[index];
+      if (action && action.type === "add") {
+        action.x = gridX;
+        action.y = gridY;
+      }
+    } else if (elem.elementId) {
+      // remove old element
       this.actionToBePerformed.push({
         type: "delete",
         elementId: elem.elementId,
       });
 
-      // Add to new position
+      //add element at new position
       this.actionToBePerformed.push({
         type: "add",
         id: elem.id,
-        x: x / TILE_SIZE,
-        y: y / TILE_SIZE,
+        x: gridX,
+        y: gridY,
       });
     }
   }

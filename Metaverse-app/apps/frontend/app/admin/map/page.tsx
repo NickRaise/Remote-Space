@@ -146,7 +146,7 @@ export default function MapEditorGame() {
     container.addEventListener("drop", handleDrop);
 
     return () => {
-      if (gameRef.current) {
+      if (gameRef.current?.isRunning) {
         gameRef.current.destroy(true);
         gameRef.current = null;
       }
@@ -175,4 +175,3 @@ export default function MapEditorGame() {
     </div>
   );
 }
-

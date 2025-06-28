@@ -14,12 +14,10 @@ import {
   CreateElementSchema,
   CreateMapSchema,
   CreateSpaceSchema,
+  DeleteSpaceElementSchema,
 } from "@repo/common/api-types";
 import { z } from "zod";
-import {
-  IAllSpaceResponse,
-  IGetSpaceByIdResponse,
-} from "./types";
+import { IAllSpaceResponse, IGetSpaceByIdResponse } from "./types";
 
 const BACKEND_URL = "http://localhost:3000/api/v1";
 
@@ -161,6 +159,30 @@ export const GetSpaceByIdAPI = async (token: string, spaceId: string) => {
   return response;
 };
 
-export const AddElementToSpaceIdAPI = async (token: string, data: z.infer<typeof AddSpaceElementSchema>) => {
-  const response = await api.post<{id: string}>("")
-}
+export const AddElementToSpaceIdAPI = async (
+  token: string,
+  data: z.infer<typeof AddSpaceElementSchema>
+) => {
+  const response = await api.post<{ id: string }>("/space/element", data, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response;
+};
+
+export const DeleteElementInSpaceIdAPI = async (
+  token: string,
+  data: z.infer<typeof DeleteSpaceElementSchema>
+) => {
+  const response = await api.request({
+    method: "DELETE",
+    url: "/space/element",
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+    data,
+  });
+  return response;
+};
