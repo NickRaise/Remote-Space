@@ -1,5 +1,7 @@
 "use client";
 import AllElementsMenu from "@/components/custom/element-sidebar";
+import MapEditorHelpBox from "@/components/custom/map-editor-helpbox";
+import { SaveButton } from "@/components/sections/SaveButton";
 import { GetSpaceByIdAPI } from "@/lib/apis";
 import { IGetSpaceByIdResponse } from "@/lib/types";
 import { SpaceEditorScene } from "@/phaser-engine/SpaceEditorScene";
@@ -7,10 +9,11 @@ import { useUserStore } from "@/store/userStore";
 import { Element } from "@repo/common/schema-types";
 import { useParams, useRouter } from "next/navigation";
 import { Game } from "phaser";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 const SpaceEditor = () => {
+  const [loading, setLoading] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const gameRef = useRef<Game>(null);
   const params = useParams();
@@ -118,10 +121,21 @@ const SpaceEditor = () => {
     };
   }, [userToken]);
 
+  const generateThumbnail = () => {};
+
   return (
     <div className="w-screen h-screen flex overflow-hidden scrollbar-hide relative">
       <AllElementsMenu />
       <div ref={containerRef} className="flex-1 overflow-hidden" />
+      <MapEditorHelpBox />
+      <div className="absolute right-8 top-4 pointer-events-auto flex gap-2">
+        <SaveButton
+          label="Confirm"
+          loading={loading}
+          onClick={generateThumbnail}
+          className="w-30"
+        />
+      </div>
     </div>
   );
 };

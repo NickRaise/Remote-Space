@@ -1,7 +1,6 @@
 "use client";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { MoreHorizontal, Plus } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,32 +9,37 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
 import HorizontalCarousel from "@/components/sections/HorizontalCarousel";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IAllSpaceResponse } from "@/lib/types";
 import { GetMySpacesAPI } from "@/lib/apis";
 import { useUserStore } from "@/store/userStore";
 import { toast } from "sonner";
 import Loader from "@/components/custom/loader";
 import CreateSpaceMenu from "@/components/sections/CreateSpaceButton";
+import BlankSpace from "@/public/blank-space.png";
 
 export default function SpacesPage() {
   const [mySpaces, setMySpaces] = useState<IAllSpaceResponse[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const token = useUserStore().userToken;
+  const userToken = useUserStore((state) => state.userToken);
 
   const fetchMySpaces = async () => {
-    if (!token) return;
+    if (!userToken) return;
     try {
       setLoading(true);
-      const response = await GetMySpacesAPI(token);
+      const response = await GetMySpacesAPI(userToken);
       setMySpaces(response.data.spaces);
     } catch (err) {
       console.log(err);
       toast("Failed to fetch spaces.");
     } finally {
-      setLoading(true);
+      setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchMySpaces();
+  }, [userToken]);
 
   return (
     <div className="w-full min-h-screen bg-gradient-to-br from-custom-bg-dark-1 to-custom-bg-dark-2 text-white px-6 py-4 space-y-6">
@@ -65,11 +69,11 @@ export default function SpacesPage() {
         {mySpaces.map((space) => (
           <Card
             key={space.id}
-            className="bg-[#2a2a2a] border border-[#3a3a3a] rounded-2xl overflow-hidden relative group hover:shadow-lg hover:border-white transition-all"
+            className="bg-[#2a2a2a] border border-[#3a3a3a] rounded-2xl overflow-hidden relative group hover:shadow-lg hover:border-white transition-all cursor-pointer"
           >
             <div className="w-full h-[160px] relative">
               <Image
-                src={space.thumbnail}
+                src={space.thumbnail || BlankSpace}
                 alt={space.name}
                 fill
                 className="object-cover"

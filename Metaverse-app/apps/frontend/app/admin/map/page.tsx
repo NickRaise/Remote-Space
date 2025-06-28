@@ -6,16 +6,15 @@ import { Element } from "@repo/common/schema-types";
 import { Game } from "phaser";
 import { MapEditorScene } from "@/phaser-engine/MapEditorScene";
 import { UploadToCloudinary } from "@/cloudinary";
-import { CLOUDINARY_MAP_FOLDER, TILE_SIZE } from "@/lib/constant";
+import { CLOUDINARY_MAP_FOLDER } from "@/lib/constant";
 import { useUserStore } from "@/store/userStore";
 import { CreateMapAPI } from "@/lib/apis";
 import { z } from "zod";
 import { CreateMapSchema } from "@repo/common/api-types";
 import EditMapMetaData from "@/components/custom/EditMapMetaData";
 import MapDimensionSetting from "@/components/custom/map-dimension-setting";
-import { Button } from "@/components/ui/button";
-import { CloudUpload, LucideLoader2 } from "lucide-react";
 import { toast } from "sonner";
+import { SaveButton } from "@/components/sections/SaveButton";
 
 export default function MapEditorGame() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -164,7 +163,7 @@ export default function MapEditorGame() {
       <div ref={containerRef} className="flex-1 overflow-hidden" />
       <EditMapMetaData mapName={mapName} setMapName={setMapName} />
       <div className="absolute right-8 top-4 pointer-events-auto flex gap-2">
-        <SaveButton onClick={createMap} loading={loading} />
+        <SaveButton label="Save" onClick={createMap} loading={loading} />
         <MapDimensionSetting
           height={mapHeight}
           setHeight={setMapHeight}
@@ -177,49 +176,3 @@ export default function MapEditorGame() {
   );
 }
 
-const SaveButton = ({
-  onClick,
-  loading,
-}: {
-  onClick: () => void;
-  loading: boolean;
-}) => {
-  const triggerButtonRef = useRef<HTMLButtonElement>(null);
-  useEffect(() => {
-    const handleClickOutsideInput = (e: MouseEvent) => {
-      if (
-        triggerButtonRef.current &&
-        !triggerButtonRef.current.contains(e.target as Node)
-      ) {
-        triggerButtonRef.current.blur();
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutsideInput);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutsideInput);
-    };
-  }, []);
-
-  return (
-    <div>
-      <Button
-        disabled={loading}
-        onClick={onClick}
-        ref={triggerButtonRef}
-        type="button"
-        className="w-24 cursor-pointer bg-custom-primary hover:bg-custom-accent flex items-center justify-center gap-2"
-      >
-        {loading ? (
-          <>
-            <LucideLoader2 className="h-4 w-4 animate-spin" />
-          </>
-        ) : (
-          <>
-            <span>Save</span>
-            <CloudUpload className="h-4 w-4" />
-          </>
-        )}
-      </Button>
-    </div>
-  );
-};
