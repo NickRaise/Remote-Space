@@ -137,7 +137,7 @@ export const CreateSpaceAPI = async (
   token: string,
   data: z.infer<typeof CreateSpaceSchema>
 ) => {
-  const response = await api.post<{ id: string; message: string }>(
+  const response = await api.post<{ spaceId: string; message: string }>(
     "/space",
     data,
     {

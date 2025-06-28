@@ -54,22 +54,21 @@ export default function SpacesPage() {
         <CreateSpaceMenu />
       </div>
 
-      {loading && (
+      {loading ? (
         <div className="w-full flex items-center justify-center h-60">
           <Loader />
         </div>
-      )}
+      ) : mySpaces.length === 0 ? (
+        <div className="w-full italic pl-10">
+          No spaces found. Please create one...
+        </div>
+      ) : null}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {mySpaces.length === 0 && (
-          <div className="w-full italic pl-10">
-            No spaces found. Please create one...
-          </div>
-        )}
         {mySpaces.map((space) => (
           <Card
             key={space.id}
-            className="bg-[#2a2a2a] border border-[#3a3a3a] rounded-2xl overflow-hidden relative group hover:shadow-lg hover:border-white transition-all cursor-pointer"
+            className="bg-[#2a2a2a] border-none border-[#3a3a3a] rounded-2xl overflow-hidden relative group hover:shadow-md ring-2 ring-transparent hover:scale-105 hover:ring-custom-border-highlight transition-all duration-300 cursor-pointer"
           >
             <div className="w-full h-[160px] relative">
               <Image
@@ -81,7 +80,7 @@ export default function SpacesPage() {
             </div>
             <CardContent className="p-4">
               <div className="flex justify-between items-center">
-                <p className="text-lg font-medium truncate max-w-[80%]">
+                <p className="text-lg font-medium truncate max-w-[80%] text-custom-text-primary">
                   {space.name}
                 </p>
                 <DropdownMenu>
@@ -89,13 +88,16 @@ export default function SpacesPage() {
                     <MoreHorizontal className="w-5 h-5 text-white cursor-pointer" />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="bg-[#2a2a2a] border border-[#444] text-white">
-                    <DropdownMenuItem onClick={() => alert("Edit")}>
+                    <DropdownMenuItem
+                      onClick={() => alert("Edit")}
+                      className="cursor-pointer"
+                    >
                       Edit
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => alert("Duplicate")}>
-                      Duplicate
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => alert("Delete")}>
+                    <DropdownMenuItem
+                      onClick={() => alert("Delete")}
+                      className="cursor-pointer"
+                    >
                       Delete
                     </DropdownMenuItem>
                   </DropdownMenuContent>

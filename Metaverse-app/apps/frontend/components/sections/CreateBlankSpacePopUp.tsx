@@ -20,7 +20,7 @@ import { toast } from "sonner";
 const CreateBlankSpacePopUp = () => {
   const triggerButtonRef = useRef<HTMLButtonElement>(null);
   const [name, setName] = useState<string>("Custom Space");
-  const [width, setWidth] = useState<number>(80);
+  const [width, setWidth] = useState<number>(40);
   const [height, setHeight] = useState<number>(25);
   const userToken = useUserStore().userToken;
   const router = useRouter();
@@ -34,8 +34,9 @@ const CreateBlankSpacePopUp = () => {
         dimensions: `${width}x${height}`,
       };
       const response = await CreateSpaceAPI(userToken, spaceCreationData);
+      console.log(response.data);
       toast("Space creation success. Redirecting to editor...");
-      router.push(response.data.id);
+      router.push(`/space/${response.data.spaceId}`);
     } catch (err) {
       console.log(err);
       toast("Space creation failed. Try again...");
