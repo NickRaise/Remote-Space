@@ -11,17 +11,19 @@ import Image from "next/image";
 import HorizontalCarousel from "@/components/sections/HorizontalCarousel";
 import { useEffect, useState } from "react";
 import { IAllSpaceResponse } from "@/lib/types";
-import { GetMySpacesAPI } from "@/lib/apis";
+import { DeleteSpaceByIdAPI, GetMySpacesAPI } from "@/lib/apis";
 import { useUserStore } from "@/store/userStore";
 import { toast } from "sonner";
 import Loader from "@/components/custom/loader";
 import CreateSpaceMenu from "@/components/sections/CreateSpaceButton";
 import BlankSpace from "@/public/blank-space.png";
+import { useRouter } from "next/navigation";
 
 export default function SpacesPage() {
   const [mySpaces, setMySpaces] = useState<IAllSpaceResponse[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const userToken = useUserStore((state) => state.userToken);
+  const router = useRouter();
 
   const fetchMySpaces = async () => {
     if (!userToken) return;
@@ -40,6 +42,20 @@ export default function SpacesPage() {
   useEffect(() => {
     fetchMySpaces();
   }, [userToken]);
+
+  const deleteSpace = (spaceId: string) => {
+    if (!userToken) return;
+    try {
+      const response = DeleteSpaceByIdAPI(userToken, spaceId);
+      setMySpaces((prevSpaces) =>
+        prevSpaces.filter((space) => space.id !== spaceId)
+      );
+      toast("Deleted space successfully...");
+    } catch (err) {
+      console.log(err);
+      toast("Space deletion failed. Try again...");
+    }
+  };
 
   return (
     <div className="w-full min-h-screen bg-gradient-to-br from-custom-bg-dark-1 to-custom-bg-dark-2 text-white px-6 py-4 space-y-6">
@@ -69,6 +85,7 @@ export default function SpacesPage() {
           <Card
             key={space.id}
             className="bg-[#2a2a2a] border-none border-[#3a3a3a] rounded-2xl overflow-hidden relative group hover:shadow-md ring-2 ring-transparent hover:scale-105 hover:ring-custom-border-highlight transition-all duration-300 cursor-pointer"
+            onClick={() => router.push("/join")}
           >
             <div className="w-full h-[160px] relative">
               <Image
@@ -89,13 +106,19 @@ export default function SpacesPage() {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="bg-[#2a2a2a] border border-[#444] text-white">
                     <DropdownMenuItem
-                      onClick={() => alert("Edit")}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(`/space/${space.id}`);
+                      }}
                       className="cursor-pointer"
                     >
                       Edit
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                      onClick={() => alert("Delete")}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deleteSpace(space.id);
+                      }}
                       className="cursor-pointer"
                     >
                       Delete

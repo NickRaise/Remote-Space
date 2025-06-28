@@ -160,6 +160,16 @@ export const GetSpaceByIdAPI = async (token: string, spaceId: string) => {
   return response;
 };
 
+export const DeleteSpaceByIdAPI = async (token: string, spaceId: string) => {
+  const response = await api.delete(`/space/${spaceId}`, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response;
+};
+
 export const AddElementToSpaceIdAPI = async (
   token: string,
   data: z.infer<typeof AddSpaceElementSchema>
