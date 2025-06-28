@@ -15,6 +15,7 @@ import {
   CreateMapSchema,
   CreateSpaceSchema,
   DeleteSpaceElementSchema,
+  UpdateThumbnailToSpaceSchema,
 } from "@repo/common/api-types";
 import { z } from "zod";
 import { IAllSpaceResponse, IGetSpaceByIdResponse } from "./types";
@@ -184,5 +185,18 @@ export const DeleteElementInSpaceIdAPI = async (
     },
     data,
   });
+  return response;
+};
+
+export const UpdateSpaceThumbnailById = async (
+  token: string,
+  data: z.infer<typeof UpdateThumbnailToSpaceSchema>
+) => {
+  const response = await api.post("/space/thumbnail", data, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  });
+
   return response;
 };

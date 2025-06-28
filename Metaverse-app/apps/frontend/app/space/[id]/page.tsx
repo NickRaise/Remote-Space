@@ -10,6 +10,7 @@ import {
   AddElementToSpaceIdAPI,
   DeleteElementInSpaceIdAPI,
   GetSpaceByIdAPI,
+  UpdateSpaceThumbnailById,
 } from "@/lib/apis";
 import { CLOUDINARY_SPACE_FOLDER } from "@/lib/constant";
 import { IGetSpaceByIdResponse } from "@/lib/types";
@@ -141,10 +142,20 @@ const SpaceEditor = () => {
       const image = await spaceObject.generateThumbnail();
       const imageUrl = await UploadToCloudinary(image, CLOUDINARY_SPACE_FOLDER);
 
-      // Todo: update space thumbnail
+      if (!imageUrl) {
+        throw new Error("Thumbnail image cannot be generated.");
+      }
+
       if (spaceRef.current) {
         DeleteSpaceThumbnailFromCloudinary(spaceRef.current.thumbnail);
       }
+
+      const updateThumbnailData = {
+        spaceId: params.id as string,
+        imageUrl,
+      };
+
+      UpdateSpaceThumbnailById(userToken, updateThumbnailData);
 
       await Promise.all(
         spaceObject.actionToBePerformed.map((action) => {
