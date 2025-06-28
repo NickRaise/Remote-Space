@@ -137,3 +137,22 @@ export const GetSpaceDataById = async (
 
   return space;
 };
+
+export const UpdateThumbnail = async ({
+  spaceId,
+  imageUrl,
+}: {
+  spaceId: string;
+  imageUrl: string;
+}) => {
+  const space = await Prisma.space.update({
+    where: {
+      id: spaceId,
+    },
+    data: {
+      thumbnail: imageUrl,
+    },
+  });
+
+  return space;
+};

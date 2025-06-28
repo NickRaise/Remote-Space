@@ -3,6 +3,7 @@ import {
   AddSpaceElementSchema,
   CreateSpaceSchema,
   DeleteSpaceElementSchema,
+  UpdateThumbnailToSpaceSchema,
 } from "@repo/common/api-types";
 import z from "zod";
 import {
@@ -14,6 +15,7 @@ import {
   FindSpaceByIdAndCreator,
   GetAllSpacesById,
   GetSpaceDataById,
+  UpdateThumbnail,
 } from "../service/spaceService";
 import { Prisma } from "../../../../packages/db/prisma/generated/prisma";
 import {
@@ -217,4 +219,24 @@ export const GetSpacesController = async (spaceId: string, res: Response) => {
       .status(500)
       .json({ message: "Internal server error while creating space." });
   }
+};
+
+export const UpdateThumbnailController = async (
+  data: z.infer<typeof UpdateThumbnailToSpaceSchema>,
+  userId: string,
+  res: Response
+) => {
+  const space = await FindSpaceByIdAndCreator(data.spaceId, userId);
+
+  if (!space) {
+    res.status(400).json({ message: "Space not found" });
+    return;
+  }
+
+  if (space.creatorId !== userId) {
+    res.status(403).json({ message: "Unauthorized" });
+    return;
+  }
+
+  await UpdateThumbnail(data);
 };

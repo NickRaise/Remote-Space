@@ -19,7 +19,7 @@ export const CreateSpaceSchema = z.object({
   name: z.string(),
   dimensions: z.string().regex(/^[0-9]{1,4}x[0-9]{1,4}$/),
   mapId: z.string().optional(),
-  thumbnail: z.string().optional()
+  thumbnail: z.string().optional(),
 });
 
 export const AddSpaceElementSchema = z.object({
@@ -38,6 +38,11 @@ export const CreateElementSchema = z.object({
 
 export const DeleteSpaceElementSchema = z.object({
   id: z.string(),
+});
+
+export const UpdateThumbnailToSpaceSchema = z.object({
+  spaceId: z.string(),
+  imageUrl: z.string(),
 });
 
 export const UpdateElementSchema = z.object({
