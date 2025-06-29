@@ -2,13 +2,17 @@ import { Request, Response, Router } from "express";
 import { userMiddleware } from "../../middleware/authMiddleware";
 import { ValidateZodSchema } from "../../middleware/common";
 import { AddSpaceElementSchema, CreateSpaceSchema, DeleteSpaceElementSchema, UpdateThumbnailToSpaceSchema } from "@repo/common/api-types";
-import { AddSpaceElementController, CreateSpaceController, DeleteSpaceController, DeleteSpaceElementController, GetAllSpacesController, GetSpacesController, UpdateThumbnailController } from "../../controllers/spaceController";
+import { AddSpaceElementController, CreateSpaceController, DeleteSpaceController, DeleteSpaceElementController, GetAllAvailableSpaces, GetAllSpacesController, GetSpacesController, UpdateThumbnailController } from "../../controllers/spaceController";
 
 const router = Router()
 
 router.post("/", userMiddleware, ValidateZodSchema(CreateSpaceSchema), async (req: Request, res: Response) => {
     const userId = req.userId!
     await CreateSpaceController(req.body, userId, res)
+})
+
+router.get("/available", async (req: Request, res: Response) => {
+    await GetAllAvailableSpaces(res)
 })
 
 

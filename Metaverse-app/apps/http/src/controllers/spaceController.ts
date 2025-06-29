@@ -13,6 +13,7 @@ import {
   FindMapById,
   FindSpaceById,
   FindSpaceByIdAndCreator,
+  GetAllSpaces,
   GetAllSpacesById,
   GetSpaceDataById,
   UpdateThumbnail,
@@ -93,6 +94,22 @@ export const DeleteSpaceController = async (
     return res
       .status(500)
       .json({ message: "Internal server error while creating space." });
+  }
+};
+
+export const GetAllAvailableSpaces = async (res: Response) => {
+  try {
+    const spaces = await GetAllSpaces();
+
+    return res.status(200).json({ spaces });
+  } catch (err) {
+    console.log("Error fetching all available spaces:", err);
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      return res.status(400).json({ message: "Prisma error: " + err.message });
+    }
+    return res
+      .status(500)
+      .json({ message: "Internal server error while fetching space." });
   }
 };
 

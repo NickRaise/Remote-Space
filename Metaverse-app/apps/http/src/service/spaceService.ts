@@ -105,6 +105,11 @@ export const GetAllSpacesById = async (userId: string): Promise<Space[]> => {
   return spaces;
 };
 
+export const GetAllSpaces = async () => {
+  const spaces = Prisma.space.findMany()
+  return spaces;
+}
+
 export const FindSpaceByIdAndCreator = async (
   spaceId: string,
   userId: string
