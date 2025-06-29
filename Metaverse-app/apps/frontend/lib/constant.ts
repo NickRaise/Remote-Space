@@ -7,3 +7,11 @@ export const CLOUDINARY_ELEMENT_FOLDER = "Metaverse Elements";
 export const CLOUDINARY_SPACE_FOLDER = "Metaverse Space";
 export const TILE_IMAGE_URL =
   "https://res.cloudinary.com/dryhyy4ob/image/upload/v1750611005/h6hni95zftcw7pzj7imd.png";
+export const WS_SERVER_URL = "http://localhost:3001";
+
+export const JOIN = "join";
+export const MOVEMENT = "movement";
+export const SPACE_JOINED = "space-joined";
+export const MOVEMENT_REJECTED = "movement-rejected";
+export const USER_LEFT = "user-left";
+export const USER_JOINED = "user-joined";

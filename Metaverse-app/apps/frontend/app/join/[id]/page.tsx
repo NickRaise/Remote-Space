@@ -40,14 +40,9 @@ const JoinArena = () => {
 
     const { ArenaScene } = await import("@/phaser-engine/ArenaScene");
 
-    const dimensionValues = space.dimensions.split("x");
+    const id = params.id as string;
 
-    const dimensions = {
-      width: Number(dimensionValues[0]),
-      height: Number(dimensionValues[1]),
-    };
-
-    const scene = new ArenaScene(dimensions, space.spaceElements);
+    const scene = new ArenaScene({ ...space, id });
 
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.AUTO,
@@ -74,7 +69,7 @@ const JoinArena = () => {
   }, [userToken]);
 
   return (
-    <div className="w-screen h-screen">
+    <div className="w-screen h-screen flex overflow-hidden scrollbar-hide relative cursor-none">
       <div ref={containerRef} />
     </div>
   );
