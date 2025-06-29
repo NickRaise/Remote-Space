@@ -46,7 +46,6 @@ const SpaceEditor = () => {
   };
 
   const initGame = async () => {
-    console.log("Getting space", userToken);
     if (!userToken) return;
     // fetch space data
     const space = (await fetchSpaceData()) as IGetSpaceByIdResponse;

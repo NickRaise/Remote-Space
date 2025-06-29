@@ -39,8 +39,7 @@ export type Map = {
 export type Space = {
   id: string;
   name: string;
-  width: number;
-  height: number;
+  dimensions: string;
   thumbnail?: string;
   creatorId: string;
   spaceElements: SpaceElement[];

@@ -20,8 +20,8 @@ export default function MapEditorGame() {
   const containerRef = useRef<HTMLDivElement>(null);
   const gameRef = useRef<Game>(null);
   const [mapName, setMapName] = useState<string>("New Map");
-  const [mapWidth, setMapWidth] = useState<number>(80);
-  const [mapHeight, setMapHeight] = useState<number>(50);
+  const [mapWidth, setMapWidth] = useState<number>(40);
+  const [mapHeight, setMapHeight] = useState<number>(25);
   const [loading, setLoading] = useState<boolean>(false);
   const token = useUserStore().userToken;
 

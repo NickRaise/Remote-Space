@@ -6,7 +6,7 @@ export interface IReceivedElement extends Element {
   elementId: string;
 }
 
-interface IRawSpaceElements {
+export interface IRawSpaceElements {
   id: string;
   element: {
     id: string;
