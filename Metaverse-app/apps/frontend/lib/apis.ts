@@ -6,7 +6,7 @@ import {
   ILoginResponse,
   IUpdateUserAvatarResponse,
 } from "./types/frontendApiTypes";
-import { Element, Map } from "@repo/common/schema-types";
+import { Element, Map, Space } from "@repo/common/schema-types";
 
 import {
   AddSpaceElementSchema,
@@ -116,6 +116,12 @@ export const CreateMapAPI = async (
 
 export const GetAllMapsAPI = async () => {
   const response = await api.get<{ maps: Map[] }>("/maps");
+  return response;
+};
+
+export const GetAllAvailableSpaces = async () => {
+  const response = await api.get<{ spaces: Space[] }>("/space/available");
+
   return response;
 };
 
