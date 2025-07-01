@@ -42,7 +42,7 @@ const JoinArena = () => {
 
     const id = params.id as string;
 
-    const scene = new ArenaScene({ ...space, id });
+    const scene = new ArenaScene({ ...space, id }, userToken);
 
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.AUTO,
@@ -69,7 +69,7 @@ const JoinArena = () => {
   }, [userToken]);
 
   return (
-    <div className="w-screen h-screen flex overflow-hidden scrollbar-hide relative cursor-none">
+    <div className="w-screen h-screen flex relative cursor-none">
       <div ref={containerRef} />
     </div>
   );

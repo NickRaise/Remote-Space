@@ -18,9 +18,13 @@ import {
   UpdateThumbnailToSpaceSchema,
 } from "@repo/common/api-types";
 import { z } from "zod";
-import { IAllSpaceResponse, IGetSpaceByIdResponse } from "./types";
+import {
+  IAllSpaceResponse,
+  IGetSpaceByIdResponse,
+  IGetUsersMetadata,
+} from "./types";
 
-const BACKEND_URL = "http://localhost:3000/api/v1";
+const BACKEND_URL = "http://localhost:3002/api/v1";
 
 const api = axios.create({
   baseURL: BACKEND_URL,
@@ -213,6 +217,15 @@ export const UpdateSpaceThumbnailById = async (
       authorization: `Bearer ${token}`,
     },
   });
+
+  return response;
+};
+
+export const GetUsersMetadataAPI = async (ids: string[]) => {
+  if (ids.length === 0) return;
+  const response = await api.get<IGetUsersMetadata>(
+    `/user/metadata/bulk?ids=[${ids.join()}]`
+  );
 
   return response;
 };

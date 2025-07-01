@@ -1,4 +1,5 @@
 import {
+  DEFAULT_AVATAR_IMAGES,
   JOIN,
   SPACE_JOINED,
   TILE_IMAGE_URL,
@@ -7,7 +8,8 @@ import {
 } from "@/lib/constant";
 import * as Phaser from "phaser";
 import { IRawSpaceElements, IReceivedElement } from "./SpaceEditorScene";
-import { IGetSpaceByIdResponse } from "@/lib/types";
+import { IAvatarImages, IGetSpaceByIdResponse } from "@/lib/types";
+import { GetUsersMetadataAPI } from "@/lib/apis";
 
 interface ISpaceData extends IGetSpaceByIdResponse {
   id: string;
@@ -18,6 +20,13 @@ interface IPosition {
   y: number;
 }
 
+interface ICurrentUserMetadata {
+  avatar: IAvatarImages | undefined;
+  position: IPosition | undefined;
+  token: string | undefined;
+  userId: string | undefined;
+}
+
 export class ArenaScene extends Phaser.Scene {
   private MAP_WIDTH = 40 * TILE_SIZE;
   private MAP_HEIGHT = 25 * TILE_SIZE;
@@ -25,10 +34,21 @@ export class ArenaScene extends Phaser.Scene {
   private arenaElements: IRawSpaceElements[] = [];
   private socket: WebSocket | undefined;
 
-  private playerPosition: IPosition | undefined;
-  private users: { id: string; avatar: any; position: IPosition }[] = [];
+  private currentUserMetaData: ICurrentUserMetadata = {
+    avatar: undefined,
+    position: undefined,
+    token: undefined,
+    userId: undefined,
+  };
+  private currentUserSprite: Phaser.GameObjects.Image | undefined;
 
-  constructor(space: ISpaceData) {
+  private users: {
+    id: string;
+    avatar: IAvatarImages;
+    position?: IPosition;
+  }[] = [];
+
+  constructor(space: ISpaceData, userToken: string) {
     super("Arena");
 
     const dimensionValues = space.dimensions.split("x");
@@ -41,6 +61,7 @@ export class ArenaScene extends Phaser.Scene {
     this.MAP_HEIGHT = dimensions.height * TILE_SIZE;
     this.spaceId = space.id;
     this.arenaElements = space.spaceElements;
+    this.currentUserMetaData.token = userToken;
     this.setUpWebSocketConnection();
   }
 
@@ -54,6 +75,7 @@ export class ArenaScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.cameras.main.setBounds(0, 0, this.MAP_WIDTH, this.MAP_HEIGHT);
     this.drawGrid();
     this.arenaElements.forEach((e) => {
       const element: IReceivedElement = {
@@ -101,7 +123,7 @@ export class ArenaScene extends Phaser.Scene {
     }
   }
 
-  setUpWebSocketConnection = () => {
+  setUpWebSocketConnection() {
     const socket = new WebSocket(WS_SERVER_URL);
     this.socket = socket;
 
@@ -111,29 +133,105 @@ export class ArenaScene extends Phaser.Scene {
 
     socket.onmessage = (event) => {
       const message = JSON.parse(event.data);
-
+      console.log("received event", message);
       switch (message.type) {
         case SPACE_JOINED:
-          this.playerPosition = {
+          this.currentUserMetaData.position = {
             x: message.payload.spawn.x,
             y: message.payload.spawn.y,
           };
 
-          this.users = message.payload.users;
+          this.currentUserMetaData.userId = message.payload.userId;
+          this.setUpCurrentUserAvatars();
+          this.getOtherUsersAvatar(
+            message.payload.users.map((e: { id: string }) => e.id)
+          );
           break;
       }
     };
-  };
+  }
 
-  sendJoinEvent = () => {
+  sendJoinEvent() {
     const message = {
       type: JOIN,
       payload: {
         spaceId: this.spaceId,
-        token: "token_received_during_login",
+        token: this.currentUserMetaData.token,
       },
     };
 
     this.socket?.send(JSON.stringify(message));
-  };
+  }
+
+  async getUsersMetaData(ids: string[]) {
+    try {
+      const response = await GetUsersMetadataAPI(ids);
+      return response;
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async setUpCurrentUserAvatars() {
+    try {
+      const response = await this.getUsersMetaData([
+        this.currentUserMetaData.userId as string,
+      ]);
+
+      this.currentUserMetaData.avatar =
+        response?.data.avatars[0].avatarId || DEFAULT_AVATAR_IMAGES;
+      this.renderCurrentUserAvatar();
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async getOtherUsersAvatar(users: string[]) {
+    try {
+      const response = await this.getUsersMetaData(users);
+      if (!response) return;
+
+      this.users = response.data.avatars.map((e) => ({
+        id: e.userId,
+        avatar: e.avatarId || DEFAULT_AVATAR_IMAGES,
+      }));
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  renderCurrentUserAvatar() {
+    const position = this.currentUserMetaData.position;
+    const avatar = this.currentUserMetaData.avatar;
+
+    if (!position || !avatar) {
+      console.warn("Position or Avatar not set for current user");
+      return;
+    }
+
+    const posX = position.x * TILE_SIZE;
+    const posY = position.y * TILE_SIZE;
+
+    const spriteKey = `avatar-${this.currentUserMetaData.userId}`;
+
+    const createSprite = () => {
+      const sprite = this.add
+        .image(posX, posY, spriteKey)
+        .setOrigin(0, 0)
+        .setDisplaySize(TILE_SIZE * 2, TILE_SIZE * 2);
+
+      this.currentUserSprite = sprite;
+
+      this.cameras.main.startFollow(sprite, true, 0.1, 0.1);
+      this.cameras.main.setLerp(0.2, 0.2); // Smooth follow
+    };
+
+    if (!this.textures.exists(spriteKey)) {
+      this.load.image(spriteKey, avatar.standingDown as string);
+      this.load.once("complete", createSprite);
+      this.load.start();
+    } else {
+      createSprite();
+    }
+  }
 }

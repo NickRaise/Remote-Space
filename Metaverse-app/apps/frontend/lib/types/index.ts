@@ -32,6 +32,31 @@ export interface IGetSpaceByIdResponse {
   }[];
 }
 
+export interface IGetUsersMetadata {
+  avatars: {
+    userId: string;
+    avatarId: IAvatarImages;
+  }[];
+}
+
+export interface IAvatarImages {
+  standingDown: String;
+  walkingDown1: String;
+  walkingDown2: String;
+
+  standingLeft: String;
+  walkingLeft1: String;
+  walkingLeft2: String;
+
+  standingRight: String;
+  walkingRight1: String;
+  walkingRight2: String;
+
+  standingUp: String;
+  walkingUp1: String;
+  walkingUp2: String;
+}
+
 export const IMAGE_FILE = z
   .instanceof(File, { message: "Please upload a valid image file." })
   .refine((file) => file.type.startsWith("image/"), {
