@@ -31,7 +31,7 @@ export const userJoinEvent = async (
     return;
   }
 
-  user.userId = userMetadata?.userId;
+  user.userId = userMetadata.userId;
 
   const spaceId = payload.spaceId;
 
@@ -54,6 +54,7 @@ export const userJoinEvent = async (
 
   user.spaceId = space.id;
 
+  // Add verification here so that user don't spawn on objects
   user.x = Math.floor(Math.random() * space.width);
   user.y = Math.floor(Math.random() * space.height);
 
@@ -72,7 +73,7 @@ export const userJoinEvent = async (
         RoomManager.getInstance()
           .rooms.get(spaceId)
           ?.filter((u) => u.id !== user.id)
-          .map((u) => ({ id: u.id })) ?? [],
+          .map((u) => ({ id: u.userId! })) ?? [],
     },
   };
 
