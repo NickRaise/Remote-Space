@@ -40,6 +40,7 @@ export interface IGetUsersMetadata {
 }
 
 export interface IAvatarImages {
+  id: string;
   standingDown: String;
   walkingDown1: String;
   walkingDown2: String;

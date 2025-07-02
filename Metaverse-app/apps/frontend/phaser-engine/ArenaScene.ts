@@ -25,7 +25,10 @@ interface ICurrentUserMetadata {
   position: IPosition | undefined;
   token: string | undefined;
   userId: string | undefined;
+  avatarSprite?: { [key in keyof IAvatarImages]?: Phaser.GameObjects.Image };
 }
+
+const AVATAR_SIZE = TILE_SIZE * 2;
 
 export class ArenaScene extends Phaser.Scene {
   private MAP_WIDTH = 40 * TILE_SIZE;
@@ -209,29 +212,47 @@ export class ArenaScene extends Phaser.Scene {
       return;
     }
 
-    const posX = position.x * TILE_SIZE;
-    const posY = position.y * TILE_SIZE;
+    const posX = position.x * TILE_SIZE + TILE_SIZE / 2;
+    const posY = position.y * TILE_SIZE + TILE_SIZE / 2;
 
-    const spriteKey = `avatar-${this.currentUserMetaData.userId}`;
+    const avatars = this.currentUserMetaData.avatar;
 
-    const createSprite = () => {
-      const sprite = this.add
-        .image(posX, posY, spriteKey)
-        .setOrigin(0, 0)
-        .setDisplaySize(TILE_SIZE * 2, TILE_SIZE * 2);
+    for (const frame in avatars) {
+      if (frame === "id") continue;
 
-      this.currentUserSprite = sprite;
+      const createSprite = () => {
+        const sprite = this.add
+          .sprite(posX, posY, key)
+          .setOrigin(0.5, 0.5)
+          .setDisplaySize(AVATAR_SIZE, AVATAR_SIZE)
+          .setVisible(false);
 
-      this.cameras.main.startFollow(sprite, true, 0.1, 0.1);
-      this.cameras.main.setLerp(0.2, 0.2); // Smooth follow
-    };
+        if (!this.currentUserMetaData.avatarSprite) {
+          this.currentUserMetaData.avatarSprite = {};
+        }
 
-    if (!this.textures.exists(spriteKey)) {
-      this.load.image(spriteKey, avatar.standingDown as string);
-      this.load.once("complete", createSprite);
-      this.load.start();
-    } else {
-      createSprite();
+        this.currentUserMetaData.avatarSprite[frame as keyof IAvatarImages] =
+          sprite;
+
+        return sprite;
+      };
+
+      const key = `avatar-${avatars.id}-${frame}`;
+      const url = avatars[frame as keyof IAvatarImages] as string;
+      if (!this.textures.exists(key)) {
+        this.load.image(key, url);
+
+        this.load.once("complete", () => {
+          const sprite = createSprite();
+          if (frame == "standingDown") {
+            sprite.setVisible(true);
+          }
+        });
+
+        this.load.start();
+      } else {
+        createSprite();
+      }
     }
   }
 }

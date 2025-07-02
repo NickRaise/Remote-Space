@@ -17,6 +17,7 @@ export const USER_LEFT = "user-left";
 export const USER_JOINED = "user-joined";
 
 export const DEFAULT_AVATAR_IMAGES = {
+  id: "cmc7dy2yc00017tt4lvzwdlo7",
   standingDown:
     "https://res.cloudinary.com/dryhyy4ob/image/upload/v1750579681/oiqspyym7sjmha6ua3gt.png",
   walkingDown1:
