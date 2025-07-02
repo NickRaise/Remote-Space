@@ -209,12 +209,17 @@ export class ArenaScene extends Phaser.Scene {
       const response = await this.getUsersMetaData(users);
       if (!response) return;
 
-      this.users = response.data.avatars.map((e) => ({
-        id: e.userId,
-        avatar: e.avatarId || DEFAULT_AVATAR_IMAGES,
-      }));
+      this.users.forEach((user) => {
+        const avatarData = response.data.avatars.find(
+          (avatar) => avatar.userId === user.id
+        );
+
+        if (avatarData) {
+          user.avatar = avatarData.avatarId || DEFAULT_AVATAR_IMAGES;
+        }
+      });
     } catch (err) {
-      console.log(err);
+      console.log("Error fetching avatar data:", err);
     }
   }
 
