@@ -73,7 +73,8 @@ export const userJoinEvent = async (
         RoomManager.getInstance()
           .rooms.get(spaceId)
           ?.filter((u) => u.id !== user.id)
-          .map((u) => ({ id: u.userId! })) ?? [],
+          .map((u) => ({ id: u.userId!, position: { x: u.x!, y: u.y! } })) ??
+        [],
     },
   };
 

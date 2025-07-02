@@ -21,7 +21,13 @@ export interface ISpaceJoinedResponse {
       x: number;
       y: number;
     };
-    users: { id: string }[];
+    users: {
+      id: string;
+      position: {
+        x: number;
+        y: number;
+      };
+    }[];
   };
 }
 

@@ -10,6 +10,7 @@ import * as Phaser from "phaser";
 import { IRawSpaceElements, IReceivedElement } from "./SpaceEditorScene";
 import { IAvatarImages, IGetSpaceByIdResponse } from "@/lib/types";
 import { GetUsersMetadataAPI } from "@/lib/apis";
+import { ISpaceJoinedResponse } from "@repo/common/ws-types";
 
 interface ISpaceData extends IGetSpaceByIdResponse {
   id: string;
@@ -126,6 +127,18 @@ export class ArenaScene extends Phaser.Scene {
     }
   }
 
+  sendJoinEvent() {
+    const message = {
+      type: JOIN,
+      payload: {
+        spaceId: this.spaceId,
+        token: this.currentUserMetaData.token,
+      },
+    };
+
+    this.socket?.send(JSON.stringify(message));
+  }
+
   setUpWebSocketConnection() {
     const socket = new WebSocket(WS_SERVER_URL);
     this.socket = socket;
@@ -139,31 +152,33 @@ export class ArenaScene extends Phaser.Scene {
       console.log("received event", message);
       switch (message.type) {
         case SPACE_JOINED:
-          this.currentUserMetaData.position = {
-            x: message.payload.spawn.x,
-            y: message.payload.spawn.y,
-          };
-
-          this.currentUserMetaData.userId = message.payload.userId;
-          this.setUpCurrentUserAvatars();
-          this.getOtherUsersAvatar(
-            message.payload.users.map((e: { id: string }) => e.id)
-          );
+          this.onSpaceJoinedEvent(message);
           break;
       }
     };
   }
 
-  sendJoinEvent() {
-    const message = {
-      type: JOIN,
-      payload: {
-        spaceId: this.spaceId,
-        token: this.currentUserMetaData.token,
-      },
+  onSpaceJoinedEvent(spaceJoinedMessage: ISpaceJoinedResponse) {
+    this.currentUserMetaData.position = {
+      x: spaceJoinedMessage.payload.spawn.x,
+      y: spaceJoinedMessage.payload.spawn.y,
     };
 
-    this.socket?.send(JSON.stringify(message));
+    this.currentUserMetaData.userId = spaceJoinedMessage.payload.userId;
+    this.setUpCurrentUserAvatars();
+
+    const userData = spaceJoinedMessage.payload.users;
+    userData.forEach((user) => {
+      this.users.push({
+        id: user.id,
+        avatar: DEFAULT_AVATAR_IMAGES,
+        position: user.position,
+      });
+    });
+    this.getOtherUsersAvatar(
+      spaceJoinedMessage.payload.users.map((e: { id: string }) => e.id)
+    );
+    // this.renderOtherUsersAvatars();
   }
 
   async getUsersMetaData(ids: string[]) {
