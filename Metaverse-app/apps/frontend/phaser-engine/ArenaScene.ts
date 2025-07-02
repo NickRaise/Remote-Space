@@ -21,12 +21,15 @@ interface IPosition {
   y: number;
 }
 
-interface ICurrentUserMetadata {
-  avatar: IAvatarImages | undefined;
-  position: IPosition | undefined;
-  token: string | undefined;
+interface IUsersMetaData {
   userId: string | undefined;
+  avatar?: IAvatarImages;
+  position?: IPosition;
   avatarSprite?: { [key in keyof IAvatarImages]?: Phaser.GameObjects.Image };
+}
+
+interface ICurrentUserMetadata extends IUsersMetaData {
+  token: string | undefined;
 }
 
 const AVATAR_SIZE = TILE_SIZE * 2;
@@ -44,13 +47,8 @@ export class ArenaScene extends Phaser.Scene {
     token: undefined,
     userId: undefined,
   };
-  private currentUserSprite: Phaser.GameObjects.Image | undefined;
 
-  private users: {
-    id: string;
-    avatar: IAvatarImages;
-    position?: IPosition;
-  }[] = [];
+  private users: IUsersMetaData[] = [];
 
   constructor(space: ISpaceData, userToken: string) {
     super("Arena");
@@ -92,6 +90,10 @@ export class ArenaScene extends Phaser.Scene {
       };
 
       this.placeExistingElementsOnGrid(element, e.x, e.y);
+    });
+
+    this.events.on("destroy", () => {
+      this.destroyAllAvatars();
     });
   }
 
@@ -158,7 +160,7 @@ export class ArenaScene extends Phaser.Scene {
     };
   }
 
-  onSpaceJoinedEvent(spaceJoinedMessage: ISpaceJoinedResponse) {
+  async onSpaceJoinedEvent(spaceJoinedMessage: ISpaceJoinedResponse) {
     this.currentUserMetaData.position = {
       x: spaceJoinedMessage.payload.spawn.x,
       y: spaceJoinedMessage.payload.spawn.y,
@@ -170,15 +172,18 @@ export class ArenaScene extends Phaser.Scene {
     const userData = spaceJoinedMessage.payload.users;
     userData.forEach((user) => {
       this.users.push({
-        id: user.id,
+        userId: user.id,
         avatar: DEFAULT_AVATAR_IMAGES,
         position: user.position,
       });
     });
-    this.getOtherUsersAvatar(
-      spaceJoinedMessage.payload.users.map((e: { id: string }) => e.id)
-    );
-    // this.renderOtherUsersAvatars();
+
+    await this.getOtherUsersAvatar(this.users.map((e) => e.userId!));
+
+    // Render other user's on the scene
+    this.users.forEach((user) => {
+      user.avatarSprite = this.renderUserAvatar(user.position!, user.avatar!);
+    });
   }
 
   async getUsersMetaData(ids: string[]) {
@@ -198,7 +203,11 @@ export class ArenaScene extends Phaser.Scene {
 
       this.currentUserMetaData.avatar =
         response?.data.avatars[0].avatarId || DEFAULT_AVATAR_IMAGES;
-      this.renderCurrentUserAvatar();
+
+      this.currentUserMetaData.avatarSprite = this.renderUserAvatar(
+        this.currentUserMetaData.position!,
+        this.currentUserMetaData.avatar
+      );
     } catch (err) {
       console.log(err);
     }
@@ -211,7 +220,7 @@ export class ArenaScene extends Phaser.Scene {
 
       this.users.forEach((user) => {
         const avatarData = response.data.avatars.find(
-          (avatar) => avatar.userId === user.id
+          (avatar) => avatar.userId === user.userId
         );
 
         if (avatarData) {
@@ -223,50 +232,44 @@ export class ArenaScene extends Phaser.Scene {
     }
   }
 
-  renderCurrentUserAvatar() {
-    const position = this.currentUserMetaData.position;
-    const avatar = this.currentUserMetaData.avatar;
-
-    if (!position || !avatar) {
-      console.warn("Position or Avatar not set for current user");
-      return;
+  renderUserAvatar(
+    position: IPosition,
+    avatars: IAvatarImages
+  ): { [key in keyof IAvatarImages]?: Phaser.GameObjects.Image } {
+    if (!position || !avatars) {
+      console.warn("Position or Avatar not set for user");
+      return {};
     }
 
     const posX = position.x * TILE_SIZE + TILE_SIZE / 2;
     const posY = position.y * TILE_SIZE + TILE_SIZE / 2;
 
-    const avatars = this.currentUserMetaData.avatar;
+    const avatarSprites: {
+      [key in keyof IAvatarImages]?: Phaser.GameObjects.Image;
+    } = {};
 
     for (const frame in avatars) {
       if (frame === "id") continue;
+
+      const key = `avatar-${avatars.id}-${frame}`;
+      const url = avatars[frame as keyof IAvatarImages] as string;
 
       const createSprite = () => {
         const sprite = this.add
           .sprite(posX, posY, key)
           .setOrigin(0.5, 0.5)
           .setDisplaySize(AVATAR_SIZE, AVATAR_SIZE)
-          .setVisible(false);
+          .setVisible(frame === "standingDown");
 
-        if (!this.currentUserMetaData.avatarSprite) {
-          this.currentUserMetaData.avatarSprite = {};
-        }
-
-        this.currentUserMetaData.avatarSprite[frame as keyof IAvatarImages] =
-          sprite;
-
+        avatarSprites[frame as keyof IAvatarImages] = sprite;
         return sprite;
       };
 
-      const key = `avatar-${avatars.id}-${frame}`;
-      const url = avatars[frame as keyof IAvatarImages] as string;
       if (!this.textures.exists(key)) {
         this.load.image(key, url);
 
-        this.load.once("complete", () => {
-          const sprite = createSprite();
-          if (frame == "standingDown") {
-            sprite.setVisible(true);
-          }
+        this.load.once(`filecomplete-image-${key}`, () => {
+          createSprite();
         });
 
         this.load.start();
@@ -274,5 +277,30 @@ export class ArenaScene extends Phaser.Scene {
         createSprite();
       }
     }
+
+    return avatarSprites;
+  }
+
+  // remove all sprites on shutdown
+  destroyAllAvatars() {
+    this.destroyAvatarSprites(this.currentUserMetaData.avatarSprite);
+    this.currentUserMetaData.avatarSprite = undefined;
+
+    this.users.forEach((user) => {
+      this.destroyAvatarSprites(user.avatarSprite);
+      user.avatarSprite = undefined;
+    });
+
+    this.users = [];
+  }
+
+  destroyAvatarSprites(avatarSprites?: {
+    [key in keyof IAvatarImages]?: Phaser.GameObjects.Image;
+  }) {
+    if (!avatarSprites) return;
+
+    Object.values(avatarSprites).forEach((sprite) => {
+      sprite?.destroy();
+    });
   }
 }
