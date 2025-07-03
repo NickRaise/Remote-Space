@@ -302,6 +302,9 @@ export class ArenaScene extends Phaser.Scene {
         this.currentUserMetaData.position!,
         this.currentUserMetaData.avatar
       );
+
+      this.lastDirection = "Down";
+      this.currentUserMetaData.avatarSprite.standingDown?.setVisible(true);
     } catch (err) {
       console.log(err);
     }
