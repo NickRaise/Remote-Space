@@ -39,6 +39,13 @@ export const userJoinEvent = async (
     where: {
       id: spaceId,
     },
+    include: {
+      spaceElements: {
+        include: {
+          element: true,
+        },
+      },
+    },
   });
 
   if (!space) {
@@ -54,9 +61,51 @@ export const userJoinEvent = async (
 
   user.spaceId = space.id;
 
-  // Add verification here so that user don't spawn on objects
-  user.x = Math.floor(Math.random() * space.width);
-  user.y = Math.floor(Math.random() * space.height);
+  // Verification so user don't spawn on objects
+  // Step 1: Store all blocked tiles
+  const blockedTiles = new Set<string>();
+  space.spaceElements.forEach((e) => {
+    if (e.element.static) {
+      const startX = e.x;
+      const endX = e.x + e.element.width;
+      const startY = e.y;
+      const endY = e.y + e.element.height;
+
+      for (let x = startX; x < endX; x++) {
+        for (let y = startY; y < endY; y++) {
+          blockedTiles.add(`${x},${y}`);
+        }
+      }
+    }
+  });
+
+  // Step 2: Find unblocked tiles
+  const validPositions: { x: number; y: number }[] = [];
+  for (let x = 0; x < space.width; x++) {
+    for (let y = 0; y < space.height; y++) {
+      if (!blockedTiles.has(`${x},${y}`)) {
+        validPositions.push({ x, y });
+      }
+    }
+  }
+
+  // CLose connection if no valid block
+  if (validPositions.length === 0) {
+    user.send({
+      type: "error",
+      payload: {
+        reason: "No available spawn positions",
+      },
+    });
+    user.ws.close();
+    return;
+  }
+
+  // Step 3: Pick a random spawn one
+  const spawn =
+    validPositions[Math.floor(Math.random() * validPositions.length)]!;
+  user.x = spawn.x;
+  user.y = spawn.y;
 
   roomManager.addUser(spaceId, user);
 
