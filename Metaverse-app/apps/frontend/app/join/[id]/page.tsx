@@ -69,7 +69,7 @@ const JoinArena = () => {
   }, [userToken]);
 
   return (
-    <div className="w-screen h-screen flex relative cursor-none">
+    <div className="w-screen h-screen flex relative">
       <div ref={containerRef} />
     </div>
   );

@@ -58,29 +58,35 @@ const JoinSpacePage = () => {
       ) : null}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {allSpaces.map((space) => (
-          <Card
-            key={space.id}
-            className="bg-[#2a2a2a] border-none border-[#3a3a3a] rounded-2xl overflow-hidden relative group hover:shadow-md ring-2 ring-transparent hover:scale-105 hover:ring-custom-border-highlight transition-all duration-300 cursor-pointer"
-            onClick={() => router.push(`/join/${space.id}`)}
-          >
-            <div className="w-full h-[160px] relative">
-              <Image
-                src={space.thumbnail || BlankSpace}
-                alt={space.name}
-                fill
-                className="object-cover"
-              />
-            </div>
-            <CardContent className="p-4">
-              <div className="flex justify-between items-center">
-                <p className="text-lg font-medium truncate max-w-[80%] text-custom-text-primary">
-                  {space.name}
-                </p>
+        {allSpaces.map((space) => {
+          const transformedImageUrl = space.thumbnail
+            ? space.thumbnail.replace("/image/upload/", "/image/upload/h_160/")
+            : BlankSpace;
+
+          return (
+            <Card
+              key={space.id}
+              className="bg-[#2a2a2a] border-none border-[#3a3a3a] rounded-2xl overflow-hidden relative group hover:shadow-md ring-2 ring-transparent hover:scale-105 hover:ring-custom-border-highlight transition-all duration-300 cursor-pointer"
+              onClick={() => router.push(`/join/${space.id}`)}
+            >
+              <div className="w-full h-[160px] relative">
+                <Image
+                  src={transformedImageUrl}
+                  alt={space.name}
+                  fill
+                  className="object-cover"
+                />
               </div>
-            </CardContent>
-          </Card>
-        ))}
+              <CardContent className="p-4">
+                <div className="flex justify-between items-center">
+                  <p className="text-lg font-medium truncate max-w-[80%] text-custom-text-primary">
+                    {space.name}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
     </div>
   );

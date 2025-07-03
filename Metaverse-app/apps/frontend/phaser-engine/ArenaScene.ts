@@ -50,6 +50,17 @@ export class ArenaScene extends Phaser.Scene {
 
   private users: IUsersMetaData[] = [];
 
+  // Avatar controller variables
+  private keys: {
+    W?: Phaser.Input.Keyboard.Key;
+    A?: Phaser.Input.Keyboard.Key;
+    S?: Phaser.Input.Keyboard.Key;
+    D?: Phaser.Input.Keyboard.Key;
+  } = {};
+  private lastDirection: "Up" | "Down" | "Left" | "Right" | null = null;
+  private animationTick: number = 0;
+  private animationSpeed: number = 10;
+
   constructor(space: ISpaceData, userToken: string) {
     super("Arena");
 
@@ -90,11 +101,93 @@ export class ArenaScene extends Phaser.Scene {
       };
 
       this.placeExistingElementsOnGrid(element, e.x, e.y);
+
+      // Key mapping
+      this.keys.W = this.input.keyboard?.addKey(
+        Phaser.Input.Keyboard.KeyCodes.W
+      );
+      this.keys.A = this.input.keyboard?.addKey(
+        Phaser.Input.Keyboard.KeyCodes.A
+      );
+      this.keys.S = this.input.keyboard?.addKey(
+        Phaser.Input.Keyboard.KeyCodes.S
+      );
+      this.keys.D = this.input.keyboard?.addKey(
+        Phaser.Input.Keyboard.KeyCodes.D
+      );
     });
 
     this.events.on("destroy", () => {
       this.destroyAllAvatars();
     });
+  }
+
+  update(): void {
+    if (
+      !this.currentUserMetaData.avatarSprite ||
+      !this.currentUserMetaData.position
+    )
+      return;
+
+    const spriteMap = this.currentUserMetaData.avatarSprite;
+    const speed = 5;
+
+    let direction: "Up" | "Down" | "Left" | "Right" | null = null;
+    let moved = false;
+
+    // Movement Logic
+    if (this.keys.W?.isDown) {
+      direction = "Up";
+      this.currentUserMetaData.position.y -= speed / TILE_SIZE;
+      moved = true;
+    } else if (this.keys.S?.isDown) {
+      direction = "Down";
+      this.currentUserMetaData.position.y += speed / TILE_SIZE;
+      moved = true;
+    } else if (this.keys.A?.isDown) {
+      direction = "Left";
+      this.currentUserMetaData.position.x -= speed / TILE_SIZE;
+      moved = true;
+    } else if (this.keys.D?.isDown) {
+      direction = "Right";
+      this.currentUserMetaData.position.x += speed / TILE_SIZE;
+      moved = true;
+    }
+
+    // TILE_SIZE / 2 is added to center the image
+    const posX =
+      this.currentUserMetaData.position.x * TILE_SIZE + TILE_SIZE / 2;
+    const posY =
+      this.currentUserMetaData.position.y * TILE_SIZE + TILE_SIZE / 2;
+
+    // Hide all frames
+    Object.values(spriteMap).forEach((sprite) => {
+      sprite?.setVisible(false);
+      sprite?.setPosition(posX, posY);
+    });
+
+    if (moved && direction) {
+      this.lastDirection = direction;
+
+      // Animate walking
+      const walkFrame =
+        this.animationTick < this.animationSpeed
+          ? `walking${direction}1`
+          : `walking${direction}2`;
+
+      const sprite = spriteMap[walkFrame as keyof IAvatarImages];
+      if (sprite) sprite.setVisible(true);
+
+      // Update tick
+      this.animationTick++;
+      if (this.animationTick > this.animationSpeed * 2) {
+        this.animationTick = 0;
+      }
+    } else if (this.lastDirection) {
+      // Show standing frame when idle
+      const standKey = `standing${this.lastDirection}` as keyof IAvatarImages;
+      spriteMap[standKey]?.setVisible(true);
+    }
   }
 
   placeExistingElementsOnGrid(
@@ -181,9 +274,9 @@ export class ArenaScene extends Phaser.Scene {
     await this.getOtherUsersAvatar(this.users.map((e) => e.userId!));
 
     // Render other user's on the scene
-    this.users.forEach((user) => {
-      user.avatarSprite = this.renderUserAvatar(user.position!, user.avatar!);
-    });
+    // this.users.forEach((user) => {
+    //   user.avatarSprite = this.renderUserAvatar(user.position!, user.avatar!);
+    // });
   }
 
   async getUsersMetaData(ids: string[]) {
@@ -204,6 +297,7 @@ export class ArenaScene extends Phaser.Scene {
       this.currentUserMetaData.avatar =
         response?.data.avatars[0].avatarId || DEFAULT_AVATAR_IMAGES;
 
+      // render current user avatar
       this.currentUserMetaData.avatarSprite = this.renderUserAvatar(
         this.currentUserMetaData.position!,
         this.currentUserMetaData.avatar
