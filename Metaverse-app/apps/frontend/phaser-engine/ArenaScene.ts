@@ -1,6 +1,8 @@
 import {
   DEFAULT_AVATAR_IMAGES,
   JOIN,
+  MOVEMENT,
+  MOVEMENT_REJECTED,
   SPACE_JOINED,
   TILE_IMAGE_URL,
   TILE_SIZE,
@@ -60,6 +62,8 @@ export class ArenaScene extends Phaser.Scene {
   private lastDirection: "Up" | "Down" | "Left" | "Right" | null = null;
   private animationTick: number = 0;
   private animationSpeed: number = 10;
+
+  private lastSendPosition: IPosition = { x: 0, y: 0 };
 
   constructor(space: ISpaceData, userToken: string) {
     super("Arena");
@@ -154,11 +158,25 @@ export class ArenaScene extends Phaser.Scene {
       moved = true;
     }
 
+    // Send movement only when tile changes
+    const currentTileX = Math.floor(this.currentUserMetaData.position.x);
+    const currentTileY = Math.floor(this.currentUserMetaData.position.y);
+
+    if (
+      (currentTileX !== this.lastSendPosition.x ||
+        currentTileY !== this.lastSendPosition.y) &&
+      Number.isInteger(this.currentUserMetaData.position.x) &&
+      Number.isInteger(this.currentUserMetaData.position.y)
+    ) {
+      this.lastSendPosition = { x: currentTileX, y: currentTileY };
+      this.sendUserMovementEvent(this.lastSendPosition);
+    }
+
+    const position = this.currentUserMetaData.position;
+
     // TILE_SIZE / 2 is added to center the image
-    const posX =
-      this.currentUserMetaData.position.x * TILE_SIZE + TILE_SIZE / 2;
-    const posY =
-      this.currentUserMetaData.position.y * TILE_SIZE + TILE_SIZE / 2;
+    const posX = position.x * TILE_SIZE + TILE_SIZE / 2;
+    const posY = position.y * TILE_SIZE + TILE_SIZE / 2;
 
     // Hide all frames
     Object.values(spriteMap).forEach((sprite) => {
@@ -168,6 +186,8 @@ export class ArenaScene extends Phaser.Scene {
 
     if (moved && direction) {
       this.lastDirection = direction;
+
+      // this.sendUserMovementEvent({ x: position.x, y: position.y });
 
       // Animate walking
       const walkFrame =
@@ -244,13 +264,24 @@ export class ArenaScene extends Phaser.Scene {
 
     socket.onmessage = (event) => {
       const message = JSON.parse(event.data);
-      console.log("received event", message);
       switch (message.type) {
         case SPACE_JOINED:
           this.onSpaceJoinedEvent(message);
           break;
+
+        case MOVEMENT_REJECTED:
+          const position: IPosition = message.payload;
+          this.currentUserMetaData.position = position;
       }
     };
+  }
+
+  sendUserMovementEvent(position: IPosition) {
+    const message = {
+      type: MOVEMENT,
+      payload: position,
+    };
+    this.socket?.send(JSON.stringify(message));
   }
 
   async onSpaceJoinedEvent(spaceJoinedMessage: ISpaceJoinedResponse) {
@@ -303,6 +334,7 @@ export class ArenaScene extends Phaser.Scene {
         this.currentUserMetaData.avatar
       );
 
+      // Made the initial avatar position visible
       this.lastDirection = "Down";
       this.currentUserMetaData.avatarSprite.standingDown?.setVisible(true);
     } catch (err) {
