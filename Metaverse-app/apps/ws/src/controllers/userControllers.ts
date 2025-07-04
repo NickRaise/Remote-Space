@@ -11,6 +11,7 @@ import {
 import type { User } from "../User";
 import Prisma from "@repo/db/client";
 import { verifyUser } from "../utils";
+import { Space } from "@repo/common/schema-types";
 
 const roomManager = RoomManager.getInstance();
 
@@ -60,6 +61,7 @@ export const userJoinEvent = async (
   }
 
   user.spaceId = space.id;
+  user.joinedSpace = space as unknown as Space;
 
   // Verification so user don't spawn on objects
   // Step 1: Store all blocked tiles
@@ -88,6 +90,10 @@ export const userJoinEvent = async (
       }
     }
   }
+
+  user.validPositionsSet = new Set(
+    validPositions.map((pos) => `${pos.x},${pos.y}`)
+  );
 
   // CLose connection if no valid block
   if (validPositions.length === 0) {
@@ -162,13 +168,15 @@ export const userMoveEvent = async (
   const xDisplacement = Math.abs(user.x! - moveX);
   const yDisplacement = Math.abs(user.y! - moveY);
 
+  const isValidMove = user.validPositionsSet?.has(`${moveX},${moveY}`);
+
   // Do not allow the user to move diagonally
   if (
-    (xDisplacement == 1 && yDisplacement == 0) ||
-    (yDisplacement == 1 && xDisplacement == 0)
+    ((xDisplacement == 1 && yDisplacement == 0) ||
+      (yDisplacement == 1 && xDisplacement == 0)) &&
+    isValidMove
   ) {
     (user.x = moveX), (user.y = moveY);
-
     const movementSuccessMessage: IUserMoveResponse = {
       type: "movement",
       payload: {

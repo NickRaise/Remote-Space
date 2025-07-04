@@ -5,6 +5,7 @@ import {
   userJoinEvent,
   userMoveEvent,
 } from "./controllers/userControllers";
+import { Space } from "@repo/common/schema-types";
 
 export class User {
   ws: WebSocket;
@@ -13,6 +14,8 @@ export class User {
   y?: number;
   spaceId?: string;
   userId?: string;
+  joinedSpace?: Space;
+  validPositionsSet?: Set<string>;
 
   constructor(ws: WebSocket) {
     this.ws = ws;
