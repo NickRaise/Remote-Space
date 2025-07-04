@@ -163,13 +163,12 @@ export class ArenaScene extends Phaser.Scene {
     const currentTileY = Math.floor(this.currentUserMetaData.position.y);
 
     if (
-      (currentTileX !== this.lastSendPosition.x ||
-        currentTileY !== this.lastSendPosition.y) &&
-      Number.isInteger(this.currentUserMetaData.position.x) &&
-      Number.isInteger(this.currentUserMetaData.position.y)
+      currentTileX !== this.lastSendPosition.x ||
+      currentTileY !== this.lastSendPosition.y
     ) {
       this.lastSendPosition = { x: currentTileX, y: currentTileY };
       this.sendUserMovementEvent(this.lastSendPosition);
+      console.log("Movement send:", this.lastSendPosition);
     }
 
     const position = this.currentUserMetaData.position;
@@ -186,8 +185,6 @@ export class ArenaScene extends Phaser.Scene {
 
     if (moved && direction) {
       this.lastDirection = direction;
-
-      // this.sendUserMovementEvent({ x: position.x, y: position.y });
 
       // Animate walking
       const walkFrame =
@@ -270,6 +267,7 @@ export class ArenaScene extends Phaser.Scene {
           break;
 
         case MOVEMENT_REJECTED:
+          console.log("Movement rejected", message);
           const position: IPosition = message.payload;
           this.currentUserMetaData.position = position;
       }
@@ -289,6 +287,8 @@ export class ArenaScene extends Phaser.Scene {
       x: spaceJoinedMessage.payload.spawn.x,
       y: spaceJoinedMessage.payload.spawn.y,
     };
+
+    this.lastSendPosition = this.currentUserMetaData.position;
 
     this.currentUserMetaData.userId = spaceJoinedMessage.payload.userId;
     this.setUpCurrentUserAvatars();
