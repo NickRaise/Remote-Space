@@ -160,6 +160,18 @@ export class ArenaScene extends Phaser.Scene {
       moved = true;
     }
 
+    // Clamp position to stay within map bounds
+    this.currentUserMetaData.position.x = Phaser.Math.Clamp(
+      this.currentUserMetaData.position.x,
+      0,
+      this.MAP_WIDTH / TILE_SIZE - 1
+    );
+    this.currentUserMetaData.position.y = Phaser.Math.Clamp(
+      this.currentUserMetaData.position.y,
+      0,
+      this.MAP_HEIGHT / TILE_SIZE - 1
+    );
+
     let currentTileX = Math.floor(this.currentUserMetaData.position.x);
     let currentTileY = Math.floor(this.currentUserMetaData.position.y);
 
