@@ -46,8 +46,8 @@ const JoinArena = () => {
 
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.AUTO,
-      width: 1600,
-      height: 1000,
+      width: window.innerWidth,
+      height: window.innerHeight,
       parent: containerRef.current,
       backgroundColor: "#1a1a1a",
       scene: scene,

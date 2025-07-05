@@ -4,12 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import HorizontalCarousel from "@/components/sections/HorizontalCarousel";
 import { useEffect, useState } from "react";
-import {
-  DeleteSpaceByIdAPI,
-  GetAllAvailableSpaces,
-  GetMySpacesAPI,
-} from "@/lib/apis";
-import { useUserStore } from "@/store/userStore";
+import { GetAllAvailableSpaces } from "@/lib/apis";
 import { toast } from "sonner";
 import Loader from "@/components/custom/loader";
 import BlankSpace from "@/public/blank-space.png";

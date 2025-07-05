@@ -65,6 +65,8 @@ export class ArenaScene extends Phaser.Scene {
 
   private lastSendPosition: IPosition = { x: 0, y: 0 };
 
+  private followSprite?: Phaser.GameObjects.Rectangle;
+
   constructor(space: ISpaceData, userToken: string) {
     super("Arena");
 
@@ -203,6 +205,7 @@ export class ArenaScene extends Phaser.Scene {
       sprite?.setPosition(posX, posY);
     });
 
+    this.followSprite?.setPosition(posX, posY);
     if (moved && direction) {
       this.lastDirection = direction;
 
@@ -353,6 +356,16 @@ export class ArenaScene extends Phaser.Scene {
         this.currentUserMetaData.position!,
         this.currentUserMetaData.avatar
       );
+
+      const pos = this.currentUserMetaData.position!;
+      const posX = pos.x * TILE_SIZE + TILE_SIZE / 2;
+      const posY = pos.y * TILE_SIZE + TILE_SIZE / 2;
+
+      this.followSprite = this.add
+        .rectangle(posX, posY, 1, 1, 0xffffff, 0) // invisible 1x1 object
+        .setOrigin(0.5);
+
+      this.cameras.main.startFollow(this.followSprite, true, 0.1, 0.1);
 
       // Made the initial avatar position visible
       this.lastDirection = "Down";
