@@ -3,13 +3,14 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev",
+    "dev": "concurrently -k -n HTTP,WS,FRONTEND -c blue,magenta,cyan \"npm run dev --prefix apps/http\" \"npm run dev --prefix apps/ws\" \"npm run dev --prefix apps/frontend\"",
     "start": "turbo run start",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types"
   },
   "devDependencies": {
+    "concurrently": "^9.2.0",
     "esbuild": "^0.25.4",
     "prettier": "^3.5.3",
     "turbo": "^2.5.0",
