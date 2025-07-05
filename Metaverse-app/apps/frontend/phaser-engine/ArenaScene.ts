@@ -158,15 +158,35 @@ export class ArenaScene extends Phaser.Scene {
       moved = true;
     }
 
-    // Send movement only when tile changes
-    const currentTileX = Math.floor(this.currentUserMetaData.position.x);
-    const currentTileY = Math.floor(this.currentUserMetaData.position.y);
+    let currentTileX = Math.floor(this.currentUserMetaData.position.x);
+    let currentTileY = Math.floor(this.currentUserMetaData.position.y);
 
+    let sendX = currentTileX;
+    let sendY = currentTileY;
+
+    switch (this.lastDirection) {
+      case "Up":
+        sendY = Math.floor(this.currentUserMetaData.position.y);
+        break;
+      case "Down":
+        // Set y coordinates to bottom of image
+        sendY = Math.floor(this.currentUserMetaData.position.y) + 1;
+        break;
+      case "Left":
+        sendX = Math.floor(this.currentUserMetaData.position.x);
+        break;
+      case "Right":
+        // Set x coordinates to bottom of image
+        sendX = Math.floor(this.currentUserMetaData.position.x) + 1;
+        break;
+    }
+
+    // Check if user moved
     if (
-      currentTileX !== this.lastSendPosition.x ||
-      currentTileY !== this.lastSendPosition.y
+      sendX !== this.lastSendPosition.x ||
+      sendY !== this.lastSendPosition.y
     ) {
-      this.lastSendPosition = { x: currentTileX, y: currentTileY };
+      this.lastSendPosition = { x: sendX, y: sendY };
       this.sendUserMovementEvent(this.lastSendPosition);
       console.log("Movement send:", this.lastSendPosition);
     }
