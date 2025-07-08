@@ -108,7 +108,7 @@ export default function SpacesPage() {
                     <DropdownMenuItem
                       onClick={(e) => {
                         e.stopPropagation();
-                        router.push(`/space/${space.id}`);
+                        window.location.href = `/space/${space.id}`;
                       }}
                       className="cursor-pointer"
                     >

@@ -18,7 +18,6 @@ const JoinArena = () => {
   const fetchSpaceData = async (): Promise<
     IGetSpaceByIdResponse | undefined
   > => {
-    console.log("Getting space");
     const spaceId = params.id;
     try {
       const response = await GetSpaceByIdAPI(userToken!, spaceId as string);
@@ -70,7 +69,7 @@ const JoinArena = () => {
 
   return (
     <div className="w-screen h-screen flex relative">
-      <div ref={containerRef} />
+      <div ref={containerRef} className="w-full h-full" />
     </div>
   );
 };
