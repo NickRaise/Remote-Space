@@ -85,7 +85,7 @@ export default function SpacesPage() {
           <Card
             key={space.id}
             className="bg-[#2a2a2a] border-none border-[#3a3a3a] rounded-2xl overflow-hidden relative group hover:shadow-md ring-2 ring-transparent hover:scale-105 hover:ring-custom-border-highlight transition-all duration-300 cursor-pointer"
-            onClick={() => router.push("/join")}
+            onClick={() => router.push(`/join/${space.id}`)}
           >
             <div className="w-full h-[160px] relative">
               <Image

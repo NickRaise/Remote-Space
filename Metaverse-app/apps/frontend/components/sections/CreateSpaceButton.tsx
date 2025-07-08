@@ -43,6 +43,7 @@ const CreateSpaceMenu = () => {
 
     try {
       setLoading(true);
+      toast("Creating space. Please wait...");
 
       const data = {
         name: selectedMap.name,

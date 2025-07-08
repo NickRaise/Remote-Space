@@ -69,7 +69,7 @@ const JoinArena = () => {
 
   return (
     <div className="w-screen h-screen flex relative">
-      <div ref={containerRef} className="w-full h-full" />
+      <div ref={containerRef} />
     </div>
   );
 };
