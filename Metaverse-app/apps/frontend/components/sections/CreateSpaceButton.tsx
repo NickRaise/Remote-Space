@@ -54,7 +54,7 @@ const CreateSpaceMenu = () => {
 
       const response = await CreateSpaceAPI(userToken, data);
       toast("Space created successfully. Redirecting...");
-      router.push(`/space/${response.data.spaceId}`);
+      window.location.href = `/space/${response.data.spaceId}`;
     } catch (err) {
       console.log(err);
       toast("Space creation failed. Try again...");
