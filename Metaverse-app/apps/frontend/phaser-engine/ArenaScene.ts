@@ -172,7 +172,7 @@ export class ArenaScene extends Phaser.Scene {
       moved = true;
     }
 
-    // Clamp position to stay within map bounds
+    // Clamp to map boundaries
     this.currentUserMetaData.position.x = Phaser.Math.Clamp(
       this.currentUserMetaData.position.x,
       0,
@@ -184,52 +184,32 @@ export class ArenaScene extends Phaser.Scene {
       this.MAP_HEIGHT / TILE_SIZE - 1
     );
 
-    let currentTileX = Math.floor(this.currentUserMetaData.position.x);
-    let currentTileY = Math.floor(this.currentUserMetaData.position.y);
+    const currentTileX = Math.floor(this.currentUserMetaData.position.x);
+    const currentTileY = Math.floor(this.currentUserMetaData.position.y);
 
-    let sendX = currentTileX;
-    let sendY = currentTileY;
-
-    switch (this.lastDirection) {
-      case "Up":
-        sendY = Math.floor(this.currentUserMetaData.position.y);
-        break;
-      case "Down":
-        // Set y coordinates to bottom of image
-        sendY = Math.floor(this.currentUserMetaData.position.y) + 1;
-        break;
-      case "Left":
-        sendX = Math.floor(this.currentUserMetaData.position.x);
-        break;
-      case "Right":
-        // Set x coordinates to bottom of image
-        sendX = Math.floor(this.currentUserMetaData.position.x) + 1;
-        break;
-    }
-
-    // Check if user moved
+    // Send new position if changed
     if (
-      sendX !== this.lastSendPosition.x ||
-      sendY !== this.lastSendPosition.y
+      currentTileX !== this.lastSendPosition.x ||
+      currentTileY !== this.lastSendPosition.y
     ) {
-      this.lastSendPosition = { x: sendX, y: sendY };
+      this.lastSendPosition = { x: currentTileX, y: currentTileY };
       this.sendUserMovementEvent(this.lastSendPosition);
       console.log("Movement send:", this.lastSendPosition);
     }
 
-    const position = this.currentUserMetaData.position;
+    const posX =
+      this.currentUserMetaData.position.x * TILE_SIZE + TILE_SIZE / 2;
+    const posY =
+      this.currentUserMetaData.position.y * TILE_SIZE + TILE_SIZE / 2;
 
-    // TILE_SIZE / 2 is added to center the image
-    const posX = position.x * TILE_SIZE + TILE_SIZE / 2;
-    const posY = position.y * TILE_SIZE + TILE_SIZE / 2;
-
-    // Hide all frames
+    // Hide all avatar frames
     Object.values(spriteMap).forEach((sprite) => {
       sprite?.setVisible(false);
       sprite?.setPosition(posX, posY);
     });
 
     this.followSprite?.setPosition(posX, posY);
+
     if (moved && direction) {
       this.lastDirection = direction;
 
@@ -242,13 +222,11 @@ export class ArenaScene extends Phaser.Scene {
       const sprite = spriteMap[walkFrame as keyof IAvatarImages];
       if (sprite) sprite.setVisible(true);
 
-      // Update tick
       this.animationTick++;
       if (this.animationTick > this.animationSpeed * 2) {
         this.animationTick = 0;
       }
     } else if (this.lastDirection) {
-      // Show standing frame when idle
       const standKey = `standing${this.lastDirection}` as keyof IAvatarImages;
       spriteMap[standKey]?.setVisible(true);
     }
@@ -418,10 +396,20 @@ export class ArenaScene extends Phaser.Scene {
           }
           break;
 
-        case USER_LEFT:
-          this.users = this.users.filter(
-            (user) => user.userId !== message.payload.userId
+        case USER_LEFT: {
+          const userId = message.payload.userId;
+          const userIndex = this.users.findIndex(
+            (user) => user.userId === userId
           );
+
+          if (userIndex !== -1) {
+            const user = this.users[userIndex];
+            this.destroyAvatarSprites(user.avatarSprite);
+            this.users.splice(userIndex, 1);
+          }
+
+          break;
+        }
       }
     };
   }
