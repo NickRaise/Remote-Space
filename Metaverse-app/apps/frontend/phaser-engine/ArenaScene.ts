@@ -6,6 +6,8 @@ import {
   SPACE_JOINED,
   TILE_IMAGE_URL,
   TILE_SIZE,
+  USER_JOINED,
+  USER_LEFT,
   WS_SERVER_URL,
 } from "@/lib/constant";
 import * as Phaser from "phaser";
@@ -305,6 +307,43 @@ export class ArenaScene extends Phaser.Scene {
           console.log("Movement rejected", message);
           const position: IPosition = message.payload;
           this.currentUserMetaData.position = position;
+          break;
+
+        case USER_JOINED:
+          console.log("User joined.");
+          const userPosition: IPosition = {
+            x: message.payload.x,
+            y: message.payload.y,
+          };
+          const joinedUserId = message.payload.userId;
+          this.users.push({
+            userId: joinedUserId,
+            position: userPosition,
+          });
+          this.getOtherUsersAvatar([joinedUserId]);
+          const newUser = this.users.find(
+            (user) => user.userId === joinedUserId
+          );
+          this.renderUserAvatar(userPosition, newUser?.avatar!);
+          break;
+
+        case MOVEMENT:
+          const updatedPosition: IPosition = {
+            x: message.payload.x,
+            y: message.payload.y,
+          };
+          const user = this.users.find(
+            (user) => user.userId === message.payload.userId
+          );
+          if (user) {
+            user.position = updatedPosition;
+          }
+          break;
+
+        case USER_LEFT:
+          this.users = this.users.filter(
+            (user) => user.userId !== message.payload.userId
+          );
       }
     };
   }
@@ -338,11 +377,11 @@ export class ArenaScene extends Phaser.Scene {
     });
 
     await this.getOtherUsersAvatar(this.users.map((e) => e.userId!));
-
+    console.log("Users: ", this.users);
     // Render other user's on the scene
-    // this.users.forEach((user) => {
-    //   user.avatarSprite = this.renderUserAvatar(user.position!, user.avatar!);
-    // });
+    this.users.forEach((user) => {
+      user.avatarSprite = this.renderUserAvatar(user.position!, user.avatar!);
+    });
   }
 
   async getUsersMetaData(ids: string[]) {
