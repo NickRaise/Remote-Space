@@ -182,7 +182,7 @@ export const userMoveEvent = async (
       payload: {
         x: user.x,
         y: user.y,
-        userId: user.id,
+        userId: user.userId,
       },
     };
 

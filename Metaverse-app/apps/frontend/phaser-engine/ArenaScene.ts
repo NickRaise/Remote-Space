@@ -30,6 +30,7 @@ interface IUsersMetaData {
   avatar?: IAvatarImages;
   position?: IPosition;
   avatarSprite?: { [key in keyof IAvatarImages]?: Phaser.GameObjects.Image };
+  lastDirection?: "Up" | "Down" | "Left" | "Right";
 }
 
 interface ICurrentUserMetadata extends IUsersMetaData {
@@ -242,6 +243,30 @@ export class ArenaScene extends Phaser.Scene {
       const standKey = `standing${this.lastDirection}` as keyof IAvatarImages;
       spriteMap[standKey]?.setVisible(true);
     }
+
+    this.users.forEach((user) => {
+      if (!user.avatarSprite || !user.position || !user.lastDirection) return;
+
+      const spriteMap = user.avatarSprite;
+      const position = user.position;
+
+      const posX = position.x * TILE_SIZE + TILE_SIZE / 2;
+      const posY = position.y * TILE_SIZE + TILE_SIZE / 2;
+
+      // Hide all sprites first
+      Object.values(spriteMap).forEach((sprite) => {
+        sprite?.setVisible(false);
+        sprite?.setPosition(posX, posY);
+      });
+
+      // Show walking sprite if recent movement
+      const sprite =
+        spriteMap[`standing${user.lastDirection}` as keyof IAvatarImages];
+
+      if (sprite) {
+        sprite.setVisible(true);
+      }
+    });
   }
 
   placeExistingElementsOnGrid(
@@ -288,7 +313,7 @@ export class ArenaScene extends Phaser.Scene {
     this.socket?.send(JSON.stringify(message));
   }
 
-  setUpWebSocketConnection() {
+  async setUpWebSocketConnection() {
     const socket = new WebSocket(WS_SERVER_URL);
     this.socket = socket;
 
@@ -296,7 +321,7 @@ export class ArenaScene extends Phaser.Scene {
       this.sendJoinEvent();
     };
 
-    socket.onmessage = (event) => {
+    socket.onmessage = async (event) => {
       const message = JSON.parse(event.data);
       switch (message.type) {
         case SPACE_JOINED:
@@ -304,27 +329,35 @@ export class ArenaScene extends Phaser.Scene {
           break;
 
         case MOVEMENT_REJECTED:
-          console.log("Movement rejected", message);
           const position: IPosition = message.payload;
           this.currentUserMetaData.position = position;
           break;
 
         case USER_JOINED:
-          console.log("User joined.");
+          console.log("User joined: ", message);
           const userPosition: IPosition = {
             x: message.payload.x,
             y: message.payload.y,
           };
           const joinedUserId = message.payload.userId;
+
           this.users.push({
             userId: joinedUserId,
             position: userPosition,
           });
-          this.getOtherUsersAvatar([joinedUserId]);
+
+          await this.getOtherUsersAvatar([joinedUserId]);
+
           const newUser = this.users.find(
             (user) => user.userId === joinedUserId
           );
-          this.renderUserAvatar(userPosition, newUser?.avatar!);
+
+          if (newUser && newUser.avatar && newUser.position) {
+            newUser.avatarSprite = this.renderUserAvatar(
+              newUser.position,
+              newUser.avatar
+            );
+          }
           break;
 
         case MOVEMENT:
@@ -336,6 +369,15 @@ export class ArenaScene extends Phaser.Scene {
             (user) => user.userId === message.payload.userId
           );
           if (user) {
+            const oldPos = user.position!;
+            const dx = updatedPosition.x - oldPos.x;
+            const dy = updatedPosition.y - oldPos.y;
+
+            if (dx > 0) user.lastDirection = "Right";
+            else if (dx < 0) user.lastDirection = "Left";
+            else if (dy > 0) user.lastDirection = "Down";
+            else if (dy < 0) user.lastDirection = "Up";
+
             user.position = updatedPosition;
           }
           break;
