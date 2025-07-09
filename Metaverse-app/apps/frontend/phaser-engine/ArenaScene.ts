@@ -31,6 +31,10 @@ interface IUsersMetaData {
   position?: IPosition;
   avatarSprite?: { [key in keyof IAvatarImages]?: Phaser.GameObjects.Image };
   lastDirection?: "Up" | "Down" | "Left" | "Right";
+  animationTick?: number;
+  lastRenderPosition?: IPosition;
+  renderedPosition?: { x: number; y: number };
+  lastAnimTime?: number;
 }
 
 interface ICurrentUserMetadata extends IUsersMetaData {
@@ -248,24 +252,49 @@ export class ArenaScene extends Phaser.Scene {
       if (!user.avatarSprite || !user.position || !user.lastDirection) return;
 
       const spriteMap = user.avatarSprite;
-      const position = user.position;
 
-      const posX = position.x * TILE_SIZE + TILE_SIZE / 2;
-      const posY = position.y * TILE_SIZE + TILE_SIZE / 2;
+      const smoothing = 0.2;
+      user.renderedPosition = user.renderedPosition || { ...user.position };
 
-      // Hide all sprites first
+      user.renderedPosition.x +=
+        (user.position.x - user.renderedPosition.x) * smoothing;
+      user.renderedPosition.y +=
+        (user.position.y - user.renderedPosition.y) * smoothing;
+
+      const posX = user.renderedPosition.x * TILE_SIZE + TILE_SIZE / 2;
+      const posY = user.renderedPosition.y * TILE_SIZE + TILE_SIZE; // Align to bottom center
+
+      // Hide all sprites
       Object.values(spriteMap).forEach((sprite) => {
         sprite?.setVisible(false);
         sprite?.setPosition(posX, posY);
       });
 
-      // Show walking sprite if recent movement
-      const sprite =
-        spriteMap[`standing${user.lastDirection}` as keyof IAvatarImages];
+      const moving =
+        Math.abs(user.position.x - user.renderedPosition.x) > 0.01 ||
+        Math.abs(user.position.y - user.renderedPosition.y) > 0.01;
 
-      if (sprite) {
-        sprite.setVisible(true);
+      if (moving) {
+        const now = this.time.now;
+        const last = user.lastAnimTime ?? 0;
+
+        if (now - last > 150) {
+          user.animationTick = (user.animationTick ?? 0) + 1;
+          user.lastAnimTime = now;
+        }
+
+        const frame =
+          (user.animationTick ?? 0) % 2 === 0
+            ? `walking${user.lastDirection}1`
+            : `walking${user.lastDirection}2`;
+
+        spriteMap[frame as keyof IAvatarImages]?.setVisible(true);
+      } else {
+        const standKey = `standing${user.lastDirection}` as keyof IAvatarImages;
+        spriteMap[standKey]?.setVisible(true);
       }
+
+      user.lastRenderPosition = { ...user.position };
     });
   }
 
@@ -379,6 +408,7 @@ export class ArenaScene extends Phaser.Scene {
             else if (dy < 0) user.lastDirection = "Up";
 
             user.position = updatedPosition;
+            user.animationTick = 0;
           }
           break;
 
