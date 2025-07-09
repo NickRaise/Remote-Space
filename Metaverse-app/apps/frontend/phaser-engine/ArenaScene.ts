@@ -136,6 +136,11 @@ export class ArenaScene extends Phaser.Scene {
   }
 
   update(): void {
+    this.userMovementUpdateLogic();
+    this.otherUsersMovementUpdateLogic();
+  }
+
+  userMovementUpdateLogic() {
     if (
       !this.currentUserMetaData.avatarSprite ||
       !this.currentUserMetaData.position
@@ -247,7 +252,9 @@ export class ArenaScene extends Phaser.Scene {
       const standKey = `standing${this.lastDirection}` as keyof IAvatarImages;
       spriteMap[standKey]?.setVisible(true);
     }
+  }
 
+  otherUsersMovementUpdateLogic() {
     this.users.forEach((user) => {
       if (!user.avatarSprite || !user.position || !user.lastDirection) return;
 
@@ -262,9 +269,8 @@ export class ArenaScene extends Phaser.Scene {
         (user.position.y - user.renderedPosition.y) * smoothing;
 
       const posX = user.renderedPosition.x * TILE_SIZE + TILE_SIZE / 2;
-      const posY = user.renderedPosition.y * TILE_SIZE + TILE_SIZE; // Align to bottom center
+      const posY = user.renderedPosition.y * TILE_SIZE + TILE_SIZE;
 
-      // Hide all sprites
       Object.values(spriteMap).forEach((sprite) => {
         sprite?.setVisible(false);
         sprite?.setPosition(posX, posY);
