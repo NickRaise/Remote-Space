@@ -335,19 +335,20 @@ export class ArenaScene extends Phaser.Scene {
     };
 
     socket.onmessage = async (event) => {
+      if (!this.scene.isActive()) return;
+
       const message = JSON.parse(event.data);
+
       switch (message.type) {
         case SPACE_JOINED:
-          this.onSpaceJoinedEvent(message);
+          await this.onSpaceJoinedEvent(message);
           break;
 
         case MOVEMENT_REJECTED:
-          const position: IPosition = message.payload;
-          this.currentUserMetaData.position = position;
+          this.currentUserMetaData.position = message.payload;
           break;
 
-        case USER_JOINED:
-          console.log("User joined: ", message);
+        case USER_JOINED: {
           const userPosition: IPosition = {
             x: message.payload.x,
             y: message.payload.y,
@@ -365,15 +366,21 @@ export class ArenaScene extends Phaser.Scene {
             (user) => user.userId === joinedUserId
           );
 
-          if (newUser && newUser.avatar && newUser.position) {
-            newUser.avatarSprite = this.renderUserAvatar(
+          if (
+            newUser &&
+            newUser.avatar &&
+            newUser.position &&
+            this.scene.isActive()
+          ) {
+            newUser.avatarSprite = await this.renderUserAvatar(
               newUser.position,
               newUser.avatar
             );
           }
           break;
+        }
 
-        case MOVEMENT:
+        case MOVEMENT: {
           const updatedPosition: IPosition = {
             x: message.payload.x,
             y: message.payload.y,
@@ -381,6 +388,7 @@ export class ArenaScene extends Phaser.Scene {
           const user = this.users.find(
             (user) => user.userId === message.payload.userId
           );
+
           if (user) {
             const oldPos = user.position!;
             const dx = updatedPosition.x - oldPos.x;
@@ -395,21 +403,22 @@ export class ArenaScene extends Phaser.Scene {
             user.animationTick = 0;
           }
           break;
+        }
 
         case USER_LEFT: {
           const userId = message.payload.userId;
-          const userIndex = this.users.findIndex(
-            (user) => user.userId === userId
-          );
+          const userIndex = this.users.findIndex((u) => u.userId === userId);
 
           if (userIndex !== -1) {
             const user = this.users[userIndex];
             this.destroyAvatarSprites(user.avatarSprite);
             this.users.splice(userIndex, 1);
           }
-
           break;
         }
+
+        default:
+          console.warn("Unhandled message type:", message.type);
       }
     };
   }
