@@ -335,8 +335,6 @@ export class ArenaScene extends Phaser.Scene {
     };
 
     socket.onmessage = async (event) => {
-      if (!this.scene.isActive()) return;
-
       const message = JSON.parse(event.data);
 
       switch (message.type) {
@@ -366,13 +364,8 @@ export class ArenaScene extends Phaser.Scene {
             (user) => user.userId === joinedUserId
           );
 
-          if (
-            newUser &&
-            newUser.avatar &&
-            newUser.position &&
-            this.scene.isActive()
-          ) {
-            newUser.avatarSprite = await this.renderUserAvatar(
+          if (newUser && newUser.avatar && newUser.position) {
+            newUser.avatarSprite = this.renderUserAvatar(
               newUser.position,
               newUser.avatar
             );
