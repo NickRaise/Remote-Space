@@ -68,7 +68,7 @@ const JoinArena = () => {
   }, [userToken]);
 
   return (
-    <div className="w-screen h-screen flex relative">
+    <div className="w-screen h-screen flex relative scrollbar-hide">
       <div ref={containerRef} />
     </div>
   );

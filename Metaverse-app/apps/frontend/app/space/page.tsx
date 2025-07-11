@@ -18,6 +18,7 @@ import Loader from "@/components/custom/loader";
 import CreateSpaceMenu from "@/components/sections/CreateSpaceButton";
 import BlankSpace from "@/public/blank-space.png";
 import { useRouter } from "next/navigation";
+import Navbar from "@/components/custom/NavBar";
 
 export default function SpacesPage() {
   const [mySpaces, setMySpaces] = useState<IAllSpaceResponse[]>([]);
@@ -58,12 +59,13 @@ export default function SpacesPage() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-gradient-to-br from-custom-bg-dark-1 to-custom-bg-dark-2 text-white px-6 py-4 space-y-6">
+    <div className="w-full min-h-screen bg-gradient-to-br from-custom-bg-dark-1 to-custom-bg-dark-2 text-white px-6 py-1 space-y-3">
+      <Navbar />
       <div className="w-full">
         <HorizontalCarousel />
       </div>
 
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center md:mt-5">
         <h2 className="text-2xl font-bold text-custom-text-primary">
           Your Spaces
         </h2>

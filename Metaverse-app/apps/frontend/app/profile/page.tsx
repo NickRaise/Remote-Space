@@ -8,6 +8,7 @@ import { useUserStore } from "@/store/userStore";
 import { toast } from "sonner";
 import { IAvatarSelection } from "@/lib/types/frontendApiTypes";
 import Image from "next/image";
+import Navbar from "@/components/custom/NavBar";
 
 const Page = () => {
   const [avatars, setAvatars] = useState<IAvatarSelection[] | null>(null);
@@ -41,7 +42,8 @@ const Page = () => {
   }, []);
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-custom-bg-dark-1 to-custom-bg-dark-2 text-custom-text-primary flex flex-col items-center">
+    <div className="min-h-screen w-full bg-gradient-to-br from-custom-bg-dark-1 to-custom-bg-dark-2 text-custom-text-primary flex flex-col items-center py-1">
+      <Navbar />
       <div className="mt-12 mb-6 text-center">
         <h1 className="text-4xl md:text-6xl font-extrabold bg-gradient-to-r from-custom-primary to-custom-accent text-transparent bg-clip-text">
           Choose Your Avatar
