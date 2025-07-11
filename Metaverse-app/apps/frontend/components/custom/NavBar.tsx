@@ -10,7 +10,7 @@ const Navbar = () => {
 
   return (
     <div className="flex w-full justify-center px-2">
-      <nav className="bg-custom-bg-dark-1 backdrop-blur-xs text-white border border-[#393e46] rounded-xl z-50 w-full max-w-[95vw] md:w-[60vw]">
+      <nav className="bg-custom-bg-dark-1 backdrop-blur-xs text-white border border-[#393e46] rounded-xl z-50 w-full max-w-[95vw] md:w-[65vw]">
         <div className="px-4 py-3 flex items-center justify-between">
           <Link
             href="/"
@@ -89,7 +89,7 @@ const NavLinks = () => (
       Change Avatar
     </Link>
     <button
-      className="bg-custom-primary hover:bg-custom-accent text-white px-5 py-1 rounded-full transition duration-200"
+      className="bg-custom-primary hover:bg-custom-accent cursor-pointer text-white px-5 py-1 rounded-full transition duration-200"
       onClick={() => alert("Logging out...")}
     >
       Logout
