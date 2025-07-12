@@ -2,17 +2,19 @@
 
 import Link from "next/link";
 import { Rotate3DIcon, MenuIcon, XIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import clsx from "clsx";
 import { useUserStore } from "@/store/userStore";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const userToken = useUserStore((state) => state.userToken);
-  const role = useUserStore((state) => state.getUserRole()) as
-    | "admin"
-    | "user"
-    | null;
+  const getUserRole = useUserStore((state) => state.getUserRole);
+  const [role, setRole] = useState<"Admin" | "User" | null>(null);
+
+  useEffect(() => {
+    setRole(getUserRole() as "Admin" | "User" | null);
+  }, [userToken]);
 
   return (
     <div className="flex w-full justify-center px-2">
@@ -67,64 +69,67 @@ const NavLinks = ({
   role,
 }: {
   userToken: string | null;
-  role: "admin" | "user" | null;
-}) => (
-  <>
-    <Link
-      href="/"
-      className="hover:text-custom-primary transition duration-200"
-    >
-      Home
-    </Link>
-    <Link
-      href="/space"
-      className="hover:text-custom-primary transition duration-200"
-    >
-      My Space
-    </Link>
-    <Link
-      href="/join"
-      className="hover:text-custom-primary transition duration-200"
-    >
-      Join
-    </Link>
-
-    {role === "admin" && (
+  role: "Admin" | "User" | null;
+}) => {
+  console.log(role);
+  return (
+    <>
       <Link
-        href="/admin"
+        href="/"
         className="hover:text-custom-primary transition duration-200"
       >
-        Admin Options
+        Home
       </Link>
-    )}
-
-    {userToken ? (
-      <>
-        <Link
-          href="/profile"
-          className="px-5 py-1 rounded-full border border-custom-primary text-white hover:bg-custom-primary transition duration-200 text-center"
-        >
-          Change Avatar
-        </Link>
-        <button
-          className="bg-custom-primary hover:bg-custom-accent cursor-pointer text-white px-5 py-1 rounded-full transition duration-200"
-          onClick={() => {
-            useUserStore.getState().setUserToken("");
-            window.location.href = "/";
-          }}
-        >
-          Logout
-        </button>
-      </>
-    ) : (
       <Link
-        href="/login"
-        className="bg-custom-primary hover:bg-custom-accent cursor-pointer text-white px-5 py-1 rounded-full transition duration-200 text-center w-30"
+        href="/space"
+        className="hover:text-custom-primary transition duration-200"
       >
-        Login
+        My Space
       </Link>
-    )}
-  </>
-);
+      <Link
+        href="/join"
+        className="hover:text-custom-primary transition duration-200"
+      >
+        Join
+      </Link>
+
+      {role === "Admin" && (
+        <Link
+          href="/admin"
+          className="hover:text-custom-primary transition duration-200"
+        >
+          Admin Options
+        </Link>
+      )}
+
+      {userToken ? (
+        <>
+          <Link
+            href="/profile"
+            className="px-5 py-1 rounded-full border border-custom-primary text-white hover:bg-custom-primary transition duration-200 text-center"
+          >
+            Change Avatar
+          </Link>
+          <button
+            className="bg-custom-primary hover:bg-custom-accent cursor-pointer text-white px-5 py-1 rounded-full transition duration-200"
+            onClick={() => {
+              useUserStore.getState().setUserToken("");
+              window.location.href = "/";
+            }}
+          >
+            Logout
+          </button>
+        </>
+      ) : (
+        <Link
+          href="/login"
+          className="bg-custom-primary hover:bg-custom-accent cursor-pointer text-white px-5 py-1 rounded-full transition duration-200 text-center w-30"
+        >
+          Login
+        </Link>
+      )}
+    </>
+  );
+};
 
 export default Navbar;

@@ -1,9 +1,12 @@
+"use client"
 import AuthForm from "@/components/custom/auth-form";
 import Logo from "@/components/custom/logo";
+import { useAuthGuard } from "@/custom-hooks/useAuthGuard";
 import AuthImg from "@/public/auth-bg.jpeg";
 import Image from "next/image";
 
 const AuthenticationPage = () => {
+  useAuthGuard({ requireAuth: false });
   return (
     <div className="h-screen lg:grid lg:grid-cols-2 relative w-full">
       <LeftSide />

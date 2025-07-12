@@ -9,8 +9,10 @@ import { toast } from "sonner";
 import { IAvatarSelection } from "@/lib/types/frontendApiTypes";
 import Image from "next/image";
 import Navbar from "@/components/custom/NavBar";
+import { useAuthGuard } from "@/custom-hooks/useAuthGuard";
 
 const Page = () => {
+  useAuthGuard();
   const [avatars, setAvatars] = useState<IAvatarSelection[] | null>(null);
   const [selectedAvatarId, setSelectedAvatarId] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);

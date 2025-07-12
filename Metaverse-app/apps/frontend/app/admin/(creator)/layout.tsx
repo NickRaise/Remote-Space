@@ -1,5 +1,4 @@
 import HeaderWithBack from "@/components/custom/header-with-back";
-import Logo from "@/components/custom/logo";
 
 export default function AdminLayout({
   children,

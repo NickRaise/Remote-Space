@@ -22,14 +22,14 @@ const HomePage = () => {
         <div className="mt-10 flex flex-wrap justify-center gap-6">
           <button
             onClick={() => router.push("/join")}
-            className="px-6 py-3 text-lg rounded-full font-semibold bg-custom-primary hover:bg-custom-accent transition-all duration-300"
+            className="px-6 py-3 text-lg rounded-full font-semibold bg-custom-primary hover:bg-custom-accent transition-all duration-300 cursor-pointer"
           >
             🕹️ Join a Space
           </button>
 
           <button
-            onClick={() => router.push("/my-space")}
-            className="px-6 py-3 text-lg rounded-full font-semibold bg-transparent border border-custom-primary hover:bg-custom-primary transition-all duration-300"
+            onClick={() => router.push("/space")}
+            className="px-6 py-3 text-lg rounded-full font-semibold bg-transparent border border-custom-primary hover:bg-custom-primary transition-all duration-300 cursor-pointer"
           >
             🏗️ Create Your Own
           </button>
