@@ -20,6 +20,7 @@ import { toast } from "sonner";
 import Loader from "./loader";
 import Logo from "./logo";
 import { useUserStore } from "@/store/userStore";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   username: z
@@ -38,6 +39,7 @@ const AuthForm = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const updateUserToken = useUserStore((state) => state.setUserToken);
+  const router = useRouter();
 
   const toggleAuthType = () => {
     setIsLogin((type) => !type);
@@ -88,6 +90,7 @@ const AuthForm = () => {
         toast("Login successful.");
         updateUserToken(result.data.token);
         form.reset();
+        router.push("/");
       }
     } catch (err: any) {
       if (err.response?.status === 403) {
