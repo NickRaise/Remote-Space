@@ -27,7 +27,7 @@ const AllElementsMenu = () => {
     <div className="sticky top-0 left-0 z-50">
       <div className="text-center py-3 z-10  bg-gradient-to-b from-custom-bg-dark-1 to-custom-bg-dark-2 shadow-xl">
         <Link
-          href="/"
+          href="/admin"
           className="text-custom-highlight hover:underline cursor-pointer hover:text-custom-accent transition duration-150 font-semibold text-md"
         >
           ← Go Back
