@@ -1,5 +1,6 @@
 "use client";
 
+import LoadingScreen from "@/components/sections/LoadingScreen";
 import { useAuthGuard } from "@/custom-hooks/useAuthGuard";
 
 export default function AdminLayout({
@@ -7,7 +8,10 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  useAuthGuard({ adminOnly: true });
+  const loading = useAuthGuard({ adminOnly: true });
+  if (loading) {
+    return <LoadingScreen />;
+  }
 
   return <>{children}</>;
 }

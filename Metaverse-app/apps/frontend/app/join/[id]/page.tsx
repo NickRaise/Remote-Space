@@ -1,10 +1,11 @@
 "use client";
+import LoadingScreen from "@/components/sections/LoadingScreen";
 import { GetSpaceByIdAPI } from "@/lib/apis";
 import { IGetSpaceByIdResponse } from "@/lib/types";
 import { useUserStore } from "@/store/userStore";
 import { useParams, useRouter } from "next/navigation";
 import { Game } from "phaser";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 const JoinArena = () => {
@@ -14,6 +15,7 @@ const JoinArena = () => {
   const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
   const gameRef = useRef<Game>(null);
+  const [ready, setReady] = useState(false);
 
   const fetchSpaceData = async (): Promise<
     IGetSpaceByIdResponse | undefined
@@ -54,6 +56,7 @@ const JoinArena = () => {
 
     const game = new Phaser.Game(config);
     gameRef.current = game;
+    setReady(true);
   };
 
   useEffect(() => {
@@ -68,9 +71,12 @@ const JoinArena = () => {
   }, [userToken]);
 
   return (
-    <div className="w-screen h-screen flex relative scrollbar-hide">
-      <div ref={containerRef} />
-    </div>
+    <>
+      {!ready && <LoadingScreen />}
+      <div className="w-screen h-screen flex relative scrollbar-hide">
+        <div ref={containerRef} />
+      </div>
+    </>
   );
 };
 

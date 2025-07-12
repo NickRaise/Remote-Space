@@ -15,6 +15,7 @@ import EditMapMetaData from "@/components/custom/EditMapMetaData";
 import MapDimensionSetting from "@/components/custom/map-dimension-setting";
 import { toast } from "sonner";
 import { SaveButton } from "@/components/sections/SaveButton";
+import LoadingScreen from "@/components/sections/LoadingScreen";
 
 export default function MapEditorGame() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -24,6 +25,7 @@ export default function MapEditorGame() {
   const [mapHeight, setMapHeight] = useState<number>(25);
   const [loading, setLoading] = useState<boolean>(false);
   const token = useUserStore().userToken;
+  const [ready, setReady] = useState(false);
 
   const createMap = async () => {
     const mapObject = gameRef.current?.scene.keys[
@@ -112,6 +114,8 @@ export default function MapEditorGame() {
 
     const game = new Phaser.Game(config);
     gameRef.current = game;
+    setReady(true);
+    console.log(ready);
   };
 
   useEffect(() => {
@@ -158,20 +162,23 @@ export default function MapEditorGame() {
   }, []);
 
   return (
-    <div className="w-screen h-screen flex overflow-hidden scrollbar-hide relative">
-      <AllElementsMenu />
-      <div ref={containerRef} className="flex-1 overflow-hidden" />
-      <EditMapMetaData mapName={mapName} setMapName={setMapName} />
-      <div className="absolute right-8 top-4 pointer-events-auto flex gap-2">
-        <SaveButton label="Save" onClick={createMap} loading={loading} />
-        <MapDimensionSetting
-          height={mapHeight}
-          setHeight={setMapHeight}
-          width={mapWidth}
-          setWidth={setMapWidth}
-          reRenderMap={reRenderMap}
-        />
+    <>
+      {!ready && <LoadingScreen />}
+      <div className="w-screen h-screen flex overflow-hidden scrollbar-hide relative">
+        <AllElementsMenu />
+        <div ref={containerRef} className="flex-1 overflow-hidden" />
+        <EditMapMetaData mapName={mapName} setMapName={setMapName} />
+        <div className="absolute right-8 top-4 pointer-events-auto flex gap-2">
+          <SaveButton label="Save" onClick={createMap} loading={loading} />
+          <MapDimensionSetting
+            height={mapHeight}
+            setHeight={setMapHeight}
+            width={mapWidth}
+            setWidth={setMapWidth}
+            reRenderMap={reRenderMap}
+          />
+        </div>
       </div>
-    </div>
+    </>
   );
 }
