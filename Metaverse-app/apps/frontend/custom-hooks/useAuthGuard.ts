@@ -1,24 +1,50 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/userStore";
 
 export const useAuthGuard = ({
+  requireAuth = true,
   adminOnly = false,
+  redirectTo = "/login",
 }: {
+  requireAuth?: boolean;
   adminOnly?: boolean;
-}) => {
+  redirectTo?: string;
+} = {}) => {
   const router = useRouter();
-  const { hydrated, userToken, getUserRole } = useUserStore();
+  const [isChecking, setIsChecking] = useState(true);
+
+  const hasHydrated = useUserStore((state) => state.hydrated);
+  const token = useUserStore((state) => state.userToken);
+  const getUserRole = useUserStore((state) => state.getUserRole);
 
   useEffect(() => {
-    if (!hydrated) return;
+    if (!hasHydrated) return;
+    console.log("rehydrated:", token, getUserRole());
+    const role = getUserRole();
 
-    if (!userToken) {
-      router.replace("/login");
-    } else if (adminOnly && getUserRole() !== "admin") {
-      router.replace("/");
+    // Not logged in
+    if (requireAuth && !token) {
+      router.replace(redirectTo);
+      return;
     }
-  }, [hydrated, userToken, adminOnly]);
+
+    // Protect logged in user from visiting login page
+    if (!requireAuth && token) {
+      router.replace("/");
+      return;
+    }
+
+    // Admin-only page
+    if (adminOnly && role !== "Admin") {
+      router.replace("/");
+      return;
+    }
+
+    setIsChecking(false);
+  }, [hasHydrated, token, requireAuth, adminOnly, redirectTo, getUserRole]);
+
+  return isChecking;
 };

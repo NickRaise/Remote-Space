@@ -5,7 +5,7 @@ import { decode } from "jsonwebtoken";
 
 interface IDecodedToken {
   userId: string;
-  role: "admin" | "user";
+  role: "Admin" | "User";
 }
 
 interface IUserStore {
@@ -13,7 +13,7 @@ interface IUserStore {
   hydrated: boolean;
   setUserToken: (token: string) => void;
   getUserId: () => string | null;
-  getUserRole: () => "admin" | "user" | null;
+  getUserRole: () => "Admin" | "User" | null;
   setHydrated: (value: boolean) => void;
 }
 
@@ -40,9 +40,9 @@ const userStore: StateCreator<IUserStore> = (set, get): IUserStore => ({
 export const useUserStore = create<IUserStore>()(
   persist(userStore, {
     name: "user-storage",
-    onRehydrateStorage: () => () => {
-      // Set hydrated to true after rehydration
-      useUserStore.getState().setHydrated(true);
+    onRehydrateStorage: () => (state) => {
+      state?.setHydrated(true);
     },
+    version: 1,
   })
 );

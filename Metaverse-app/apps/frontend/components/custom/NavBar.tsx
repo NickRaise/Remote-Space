@@ -71,7 +71,6 @@ const NavLinks = ({
   userToken: string | null;
   role: "Admin" | "User" | null;
 }) => {
-  console.log(role);
   return (
     <>
       <Link
