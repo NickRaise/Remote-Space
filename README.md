@@ -120,9 +120,12 @@ Coming soon...
 
 ## 🧩 TODOs
 
-* [ ] Voice/Video chat integration
-* [ ] Chat messaging
-* [ ] Space permissions (private/public rooms)
+* [ ] Voice/Video chat integration  
+* [ ] Chat messaging  
+* [ ] Space permissions (private/public rooms)  
+* [ ] Containerizing the project using Docker  
+* [ ] Implement caching using Redis in WebSocket server  
+
 
 ---
 
