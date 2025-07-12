@@ -1,4 +1,5 @@
 "use client";
+
 import LoadingScreen from "@/components/sections/LoadingScreen";
 import { GetSpaceByIdAPI } from "@/lib/apis";
 import { IGetSpaceByIdResponse } from "@/lib/types";
@@ -10,11 +11,12 @@ import { toast } from "sonner";
 
 const JoinArena = () => {
   const spaceRef = useRef<IGetSpaceByIdResponse>(null);
+  const sceneRef = useRef<any>(null); // ⚠️ Temporarily use `any`, or import `ArenaScene`
   const params = useParams();
   const userToken = useUserStore((state) => state.userToken);
   const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
-  const gameRef = useRef<Game>(null);
+  const gameRef = useRef<Game | null>(null);
   const [ready, setReady] = useState(false);
 
   const fetchSpaceData = async (): Promise<
@@ -35,21 +37,22 @@ const JoinArena = () => {
 
   const initGame = async () => {
     if (!userToken) return;
-    const space = (await fetchSpaceData()) as IGetSpaceByIdResponse;
+    const space = await fetchSpaceData();
+    if (!space) return;
 
     const Phaser = await import("phaser");
-
     const { ArenaScene } = await import("@/phaser-engine/ArenaScene");
 
     const id = params.id as string;
 
     const scene = new ArenaScene({ ...space, id }, userToken);
+    sceneRef.current = scene;
 
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.AUTO,
       width: window.innerWidth,
       height: window.innerHeight,
-      parent: containerRef.current,
+      parent: containerRef.current!,
       backgroundColor: "#1a1a1a",
       scene: scene,
     };
@@ -62,10 +65,20 @@ const JoinArena = () => {
   useEffect(() => {
     initGame();
 
+    const handleBeforeUnload = () => {
+      sceneRef.current?.cleanupWebSocket?.();
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
     return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+
       if (gameRef.current?.isRunning) {
+        sceneRef.current?.destroyScene?.();
         gameRef.current.destroy(true);
         gameRef.current = null;
+        sceneRef.current = null;
       }
     };
   }, [userToken]);

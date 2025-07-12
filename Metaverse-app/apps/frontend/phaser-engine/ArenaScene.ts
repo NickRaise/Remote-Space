@@ -584,4 +584,17 @@ export class ArenaScene extends Phaser.Scene {
       sprite?.destroy();
     });
   }
+
+  public destroyScene() {
+    this.cleanupWebSocket();
+    this.scene.stop();
+    this.scene.remove();
+  }
+
+  public cleanupWebSocket() {
+    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+      this.socket.close(1000, "Scene destroyed");
+      console.log("WebSocket connection closed.");
+    }
+  }
 }
