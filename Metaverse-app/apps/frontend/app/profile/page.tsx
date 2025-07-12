@@ -12,7 +12,7 @@ import Navbar from "@/components/custom/NavBar";
 import { useAuthGuard } from "@/custom-hooks/useAuthGuard";
 
 const Page = () => {
-  useAuthGuard();
+  useAuthGuard({});
   const [avatars, setAvatars] = useState<IAvatarSelection[] | null>(null);
   const [selectedAvatarId, setSelectedAvatarId] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);

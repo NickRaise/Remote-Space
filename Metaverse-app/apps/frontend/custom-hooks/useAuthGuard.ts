@@ -5,32 +5,20 @@ import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/userStore";
 
 export const useAuthGuard = ({
-  requireAuth = true,
   adminOnly = false,
-  redirectTo = "/login",
 }: {
-  requireAuth?: boolean;
   adminOnly?: boolean;
-  redirectTo?: string;
-} = {}) => {
+}) => {
   const router = useRouter();
-  const token = useUserStore((s) => s.userToken);
-  const role = useUserStore((s) => s.getUserRole());
+  const { hydrated, userToken, getUserRole } = useUserStore();
 
   useEffect(() => {
-    // Not logged in
-    if (requireAuth && !token) {
-      router.replace(redirectTo);
-    }
+    if (!hydrated) return;
 
-    // Protect logged in user to visit login page
-    if (!requireAuth && token) {
+    if (!userToken) {
+      router.replace("/login");
+    } else if (adminOnly && getUserRole() !== "admin") {
       router.replace("/");
     }
-
-    // Protect admin page
-    if (adminOnly && role !== "admin") {
-      router.replace("/");
-    }
-  }, [token, role, router]);
+  }, [hydrated, userToken, adminOnly]);
 };

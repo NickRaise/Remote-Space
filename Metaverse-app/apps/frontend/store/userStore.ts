@@ -1,3 +1,4 @@
+// store/userStore.ts
 import { create, StateCreator } from "zustand";
 import { persist } from "zustand/middleware";
 import { decode } from "jsonwebtoken";
@@ -8,39 +9,40 @@ interface IDecodedToken {
 }
 
 interface IUserStore {
-  userToken: null | string;
+  userToken: string | null;
+  hydrated: boolean;
   setUserToken: (token: string) => void;
-  getUserId: () => null | string;
-  getUserRole: () => null | string;
+  getUserId: () => string | null;
+  getUserRole: () => "admin" | "user" | null;
+  setHydrated: (value: boolean) => void;
 }
 
 const userStore: StateCreator<IUserStore> = (set, get): IUserStore => ({
   userToken: null,
+  hydrated: false,
 
   setUserToken: (token) => set(() => ({ userToken: token })),
+  setHydrated: (value) => set(() => ({ hydrated: value })),
 
   getUserId: () => {
     const token = get().userToken;
-    if (!token) return null;
-
-    const decoded = decode(token) as IDecodedToken | null;
-
-    if (!decoded) return null;
-
-    return decoded.userId;
+    const decoded = decode(token || "") as IDecodedToken | null;
+    return decoded?.userId ?? null;
   },
 
   getUserRole: () => {
     const token = get().userToken;
-    if (!token) return null;
-
-    const decoded = decode(token) as IDecodedToken | null;
-    return decoded?.role || null;
+    const decoded = decode(token || "") as IDecodedToken | null;
+    return decoded?.role ?? null;
   },
 });
 
 export const useUserStore = create<IUserStore>()(
   persist(userStore, {
     name: "user-storage",
+    onRehydrateStorage: () => () => {
+      // Set hydrated to true after rehydration
+      useUserStore.getState().setHydrated(true);
+    },
   })
 );

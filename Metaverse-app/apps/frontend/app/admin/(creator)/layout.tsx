@@ -1,3 +1,4 @@
+"use client";
 import HeaderWithBack from "@/components/custom/header-with-back";
 
 export default function AdminLayout({

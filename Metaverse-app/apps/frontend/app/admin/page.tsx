@@ -3,9 +3,11 @@
 import React from "react";
 import { UserPlus, MapIcon, ShapesIcon, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useAuthGuard } from "@/custom-hooks/useAuthGuard";
 
 const AdminDashboard = () => {
   const router = useRouter();
+  useAuthGuard({ adminOnly: true });
 
   return (
     <div className="min-h-screen px-6 py-10 bg-custom-bg-dark-1 text-white">
