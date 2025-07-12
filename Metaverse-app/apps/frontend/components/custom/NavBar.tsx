@@ -4,9 +4,15 @@ import Link from "next/link";
 import { Rotate3DIcon, MenuIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 import clsx from "clsx";
+import { useUserStore } from "@/store/userStore";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const userToken = useUserStore((state) => state.userToken);
+  const role = useUserStore((state) => state.getUserRole()) as
+    | "admin"
+    | "user"
+    | null;
 
   return (
     <div className="flex w-full justify-center px-2">
@@ -25,7 +31,7 @@ const Navbar = () => {
           </Link>
 
           <div className="hidden md:flex items-center space-x-6">
-            <NavLinks />
+            <NavLinks userToken={userToken} role={role} />
           </div>
 
           <button
@@ -49,14 +55,20 @@ const Navbar = () => {
               : "max-h-0 opacity-0 scale-95 pointer-events-none"
           )}
         >
-          <NavLinks />
+          <NavLinks userToken={userToken} role={role} />
         </div>
       </nav>
     </div>
   );
 };
 
-const NavLinks = () => (
+const NavLinks = ({
+  userToken,
+  role,
+}: {
+  userToken: string | null;
+  role: "admin" | "user" | null;
+}) => (
   <>
     <Link
       href="/"
@@ -76,24 +88,42 @@ const NavLinks = () => (
     >
       Join
     </Link>
-    <Link
-      href="/admin"
-      className="hover:text-custom-primary transition duration-200"
-    >
-      Admin Options
-    </Link>
-    <Link
-      href="/profile"
-      className="px-5 py-1 rounded-full border border-custom-primary text-white hover:bg-custom-primary transition duration-200 text-center"
-    >
-      Change Avatar
-    </Link>
-    <button
-      className="bg-custom-primary hover:bg-custom-accent cursor-pointer text-white px-5 py-1 rounded-full transition duration-200"
-      onClick={() => alert("Logging out...")}
-    >
-      Logout
-    </button>
+
+    {role === "admin" && (
+      <Link
+        href="/admin"
+        className="hover:text-custom-primary transition duration-200"
+      >
+        Admin Options
+      </Link>
+    )}
+
+    {userToken ? (
+      <>
+        <Link
+          href="/profile"
+          className="px-5 py-1 rounded-full border border-custom-primary text-white hover:bg-custom-primary transition duration-200 text-center"
+        >
+          Change Avatar
+        </Link>
+        <button
+          className="bg-custom-primary hover:bg-custom-accent cursor-pointer text-white px-5 py-1 rounded-full transition duration-200"
+          onClick={() => {
+            useUserStore.getState().setUserToken("");
+            window.location.href = "/";
+          }}
+        >
+          Logout
+        </button>
+      </>
+    ) : (
+      <Link
+        href="/login"
+        className="bg-custom-primary hover:bg-custom-accent cursor-pointer text-white px-5 py-1 rounded-full transition duration-200 text-center w-30"
+      >
+        Login
+      </Link>
+    )}
   </>
 );
 

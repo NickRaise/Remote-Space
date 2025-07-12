@@ -11,6 +11,7 @@ interface IUserStore {
   userToken: null | string;
   setUserToken: (token: string) => void;
   getUserId: () => null | string;
+  getUserRole: () => null | string;
 }
 
 const userStore: StateCreator<IUserStore> = (set, get): IUserStore => ({
@@ -27,6 +28,14 @@ const userStore: StateCreator<IUserStore> = (set, get): IUserStore => ({
     if (!decoded) return null;
 
     return decoded.userId;
+  },
+
+  getUserRole: () => {
+    const token = get().userToken;
+    if (!token) return null;
+
+    const decoded = decode(token) as IDecodedToken | null;
+    return decoded?.role || null;
   },
 });
 
