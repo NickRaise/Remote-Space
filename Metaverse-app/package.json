@@ -2,7 +2,7 @@
   "name": "remote-space",
   "private": true,
   "scripts": {
-    "build": "turbo run build",
+    "build": "npx turbo run build",
     "dev": "concurrently -k -n HTTP,WS,FRONTEND -c blue,magenta,cyan \"npm run dev --prefix apps/http\" \"npm run dev --prefix apps/ws\" \"npm run dev --prefix apps/frontend\"",
     "start": "turbo run start",
     "lint": "turbo run lint",
