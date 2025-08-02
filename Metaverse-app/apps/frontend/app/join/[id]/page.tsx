@@ -3,6 +3,7 @@
 import LoadingScreen from "@/components/sections/LoadingScreen";
 import { GetSpaceByIdAPI } from "@/lib/apis";
 import { IGetSpaceByIdResponse } from "@/lib/types";
+import { ArenaScene } from "@/phaser-engine/ArenaScene";
 import { useUserStore } from "@/store/userStore";
 import { useParams, useRouter } from "next/navigation";
 import { Game } from "phaser";
@@ -11,7 +12,7 @@ import { toast } from "sonner";
 
 const JoinArena = () => {
   const spaceRef = useRef<IGetSpaceByIdResponse>(null);
-  const sceneRef = useRef<any>(null); // ⚠️ Temporarily use `any`, or import `ArenaScene`
+  const sceneRef = useRef<ArenaScene>(null);
   const params = useParams();
   const userToken = useUserStore((state) => state.userToken);
   const router = useRouter();
@@ -35,34 +36,34 @@ const JoinArena = () => {
     }
   };
 
-  const initGame = async () => {
-    if (!userToken) return;
-    const space = await fetchSpaceData();
-    if (!space) return;
-
-    const Phaser = await import("phaser");
-    const { ArenaScene } = await import("@/phaser-engine/ArenaScene");
-
-    const id = params.id as string;
-
-    const scene = new ArenaScene({ ...space, id }, userToken);
-    sceneRef.current = scene;
-
-    const config: Phaser.Types.Core.GameConfig = {
-      type: Phaser.AUTO,
-      width: window.innerWidth,
-      height: window.innerHeight,
-      parent: containerRef.current!,
-      backgroundColor: "#1a1a1a",
-      scene: scene,
-    };
-
-    const game = new Phaser.Game(config);
-    gameRef.current = game;
-    setReady(true);
-  };
-
   useEffect(() => {
+    async function initGame() {
+      if (!userToken) return;
+      const space = await fetchSpaceData();
+      if (!space) return;
+
+      const Phaser = await import("phaser");
+      const { ArenaScene } = await import("@/phaser-engine/ArenaScene");
+
+      const id = params.id as string;
+
+      const scene = new ArenaScene({ ...space, id }, userToken);
+      sceneRef.current = scene;
+
+      const config: Phaser.Types.Core.GameConfig = {
+        type: Phaser.AUTO,
+        width: window.innerWidth,
+        height: window.innerHeight,
+        parent: containerRef.current!,
+        backgroundColor: "#1a1a1a",
+        scene: scene,
+      };
+
+      const game = new Phaser.Game(config);
+      gameRef.current = game;
+      setReady(true);
+    }
+
     initGame();
 
     const handleBeforeUnload = () => {

@@ -19,11 +19,14 @@ const JoinSpacePage = () => {
 
   const fetchAllSpaces = async () => {
     try {
+      setLoading(true)
       const response = await GetAllAvailableSpaces();
       setAllSpaces(response.data.spaces);
     } catch (err) {
       console.log(err);
       toast("Cannot fetch spaces...");
+    } finally {
+      setLoading(false)
     }
   };
 

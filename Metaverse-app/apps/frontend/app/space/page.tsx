@@ -26,28 +26,28 @@ export default function SpacesPage() {
   const userToken = useUserStore((state) => state.userToken);
   const router = useRouter();
 
-  const fetchMySpaces = async () => {
-    if (!userToken) return;
-    try {
-      setLoading(true);
-      const response = await GetMySpacesAPI(userToken);
-      setMySpaces(response.data.spaces);
-    } catch (err) {
-      console.log(err);
-      toast("Failed to fetch spaces.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    async function fetchMySpaces() {
+      if (!userToken) return;
+      try {
+        setLoading(true);
+        const response = await GetMySpacesAPI(userToken);
+        setMySpaces(response.data.spaces);
+      } catch (err) {
+        console.log(err);
+        toast("Failed to fetch spaces.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
     fetchMySpaces();
   }, [userToken]);
 
-  const deleteSpace = (spaceId: string) => {
+  const deleteSpace = async (spaceId: string) => {
     if (!userToken) return;
     try {
-      const response = DeleteSpaceByIdAPI(userToken, spaceId);
+      await DeleteSpaceByIdAPI(userToken, spaceId);
       setMySpaces((prevSpaces) =>
         prevSpaces.filter((space) => space.id !== spaceId)
       );

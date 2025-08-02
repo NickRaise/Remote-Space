@@ -5,6 +5,7 @@ import Loader from "@/components/custom/loader";
 import { GetAllAvatars } from "@/lib/apis";
 import { IAvatarSelection } from "@/lib/types/frontendApiTypes";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const Page = () => {
   const [avatars, setAvatars] = useState<IAvatarSelection[] | null>(null);
@@ -29,7 +30,7 @@ const Page = () => {
     <>
       <div className="mt-12 mb-6 text-center">
         <h1 className="text-4xl md:text-6xl font-extrabold bg-gradient-to-r from-custom-primary to-custom-accent text-transparent bg-clip-text">
-          Update Avatar's
+          Update Avatar&apos;s
         </h1>
         <p className="text-custom-text-secondary mt-3 text-lg">
           Customize to suit your style.
@@ -43,7 +44,7 @@ const Page = () => {
               key={avatar.id}
               className="rounded-xl p-5 bg-custom-bg-dark-2 border-2 transition-all duration-300 cursor-pointer flex flex-col items-center shadow-md hover:shadow-custom-primary/60 hover:scale-105 border-transparent"
             >
-              <img
+              <Image
                 src={avatar.imageUrl.standingDown}
                 alt="avatar"
                 className="w-24 h-24 object-contain mb-3"

@@ -14,7 +14,7 @@ const Navbar = () => {
 
   useEffect(() => {
     setRole(getUserRole() as "Admin" | "User" | null);
-  }, [userToken]);
+  }, [userToken, getUserRole]);
 
   return (
     <div className="flex w-full justify-center px-2">

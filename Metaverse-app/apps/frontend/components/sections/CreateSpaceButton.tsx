@@ -16,13 +16,11 @@ import { DialogClose } from "@radix-ui/react-dialog";
 import { useUserStore } from "@/store/userStore";
 import CreateBlankSpacePopUp from "./CreateBlankSpacePopUp";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
 const CreateSpaceMenu = () => {
   const [maps, setMaps] = useState<Map[]>([]);
   const [selectedMap, setSelectedMap] = useState<Map | null>(null);
   const userToken = useUserStore().userToken;
-  const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
 
   const fetchAllMaps = async () => {

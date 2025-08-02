@@ -72,8 +72,10 @@ const AuthForm = () => {
         setIsLogin(true);
         form.reset();
       }
-    } catch (err: any) {
-      if (err.response?.status === 400) {
+    } catch (err) {
+      const error = err as { response?: { status?: number } };
+
+      if (error.response?.status === 400) {
         setErrorMessage("User already exists.");
       } else {
         setErrorMessage("Registration failed. Please try again.");
@@ -92,8 +94,10 @@ const AuthForm = () => {
         form.reset();
         router.push("/");
       }
-    } catch (err: any) {
-      if (err.response?.status === 403) {
+    } catch (err) {
+      const error = err as { response?: { status?: number } };
+
+      if (error.response?.status === 403) {
         setErrorMessage("Invalid username or password.");
       } else {
         setErrorMessage("Login failed. Please try again.");

@@ -28,7 +28,7 @@ const MapDimensionSetting = ({
 }) => {
   const triggerButtonRef = useRef<HTMLButtonElement>(null);
 
-  const populateValuesToMap = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const populateValuesToMap = () => {
     reRenderMap();
   };
 

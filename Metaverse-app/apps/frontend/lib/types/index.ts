@@ -41,21 +41,21 @@ export interface IGetUsersMetadata {
 
 export interface IAvatarImages {
   id: string;
-  standingDown: String;
-  walkingDown1: String;
-  walkingDown2: String;
+  standingDown: string;
+  walkingDown1: string;
+  walkingDown2: string;
 
-  standingLeft: String;
-  walkingLeft1: String;
-  walkingLeft2: String;
+  standingLeft: string;
+  walkingLeft1: string;
+  walkingLeft2: string;
 
-  standingRight: String;
-  walkingRight1: String;
-  walkingRight2: String;
+  standingRight: string;
+  walkingRight1: string;
+  walkingRight2: string;
 
-  standingUp: String;
-  walkingUp1: String;
-  walkingUp2: String;
+  standingUp: string;
+  walkingUp1: string;
+  walkingUp2: string;
 }
 
 export const IMAGE_FILE = z

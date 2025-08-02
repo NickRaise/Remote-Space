@@ -90,35 +90,35 @@ export default function MapEditorGame() {
     gameRef.current = game;
   };
 
-  const initGame = async () => {
-    if (
-      typeof window === "undefined" ||
-      !containerRef.current ||
-      gameRef.current
-    )
-      return;
-
-    const Phaser = await import("phaser");
-
-    const { MapEditorScene } = await import("@/phaser-engine/MapEditorScene");
-    const scene = new MapEditorScene("MapEditor");
-
-    const config: Phaser.Types.Core.GameConfig = {
-      type: Phaser.AUTO,
-      width: 1600,
-      height: 1000,
-      parent: containerRef.current,
-      backgroundColor: "#1a1a1a",
-      scene: scene,
-    };
-
-    const game = new Phaser.Game(config);
-    gameRef.current = game;
-    setReady(true);
-    console.log(ready);
-  };
-
   useEffect(() => {
+    async function initGame() {
+      if (
+        typeof window === "undefined" ||
+        !containerRef.current ||
+        gameRef.current
+      )
+        return;
+
+      const Phaser = await import("phaser");
+
+      const { MapEditorScene } = await import("@/phaser-engine/MapEditorScene");
+      const scene = new MapEditorScene("MapEditor");
+
+      const config: Phaser.Types.Core.GameConfig = {
+        type: Phaser.AUTO,
+        width: 1600,
+        height: 1000,
+        parent: containerRef.current,
+        backgroundColor: "#1a1a1a",
+        scene: scene,
+      };
+
+      const game = new Phaser.Game(config);
+      gameRef.current = game;
+      setReady(true);
+      console.log(ready);
+    }
+    
     initGame();
 
     const container = containerRef.current;

@@ -45,43 +45,43 @@ const SpaceEditor = () => {
     }
   };
 
-  const initGame = async () => {
-    if (!userToken) return;
-    // fetch space data
-    const space = (await fetchSpaceData()) as IGetSpaceByIdResponse;
-    // populate elements in the map
-    const Phaser = await import("phaser");
-    const { SpaceEditorScene } = await import(
-      "@/phaser-engine/SpaceEditorScene"
-    );
-
-    const dimensionValues = space.dimensions.split("x");
-
-    const dimensions = {
-      width: Number(dimensionValues[0]),
-      height: Number(dimensionValues[1]),
-    };
-
-    const scene = new SpaceEditorScene(
-      "SpaceEditor",
-      dimensions,
-      space.spaceElements
-    );
-
-    const config: Phaser.Types.Core.GameConfig = {
-      type: Phaser.AUTO,
-      width: 1600,
-      height: 1000,
-      parent: containerRef.current,
-      backgroundColor: "#1a1a1a",
-      scene: scene,
-    };
-
-    const game = new Phaser.Game(config);
-    gameRef.current = game;
-  };
-
   useEffect(() => {
+    async function initGame() {
+      if (!userToken) return;
+      // fetch space data
+      const space = (await fetchSpaceData()) as IGetSpaceByIdResponse;
+      // populate elements in the map
+      const Phaser = await import("phaser");
+      const { SpaceEditorScene } = await import(
+        "@/phaser-engine/SpaceEditorScene"
+      );
+
+      const dimensionValues = space.dimensions.split("x");
+
+      const dimensions = {
+        width: Number(dimensionValues[0]),
+        height: Number(dimensionValues[1]),
+      };
+
+      const scene = new SpaceEditorScene(
+        "SpaceEditor",
+        dimensions,
+        space.spaceElements
+      );
+
+      const config: Phaser.Types.Core.GameConfig = {
+        type: Phaser.AUTO,
+        width: 1600,
+        height: 1000,
+        parent: containerRef.current,
+        backgroundColor: "#1a1a1a",
+        scene: scene,
+      };
+
+      const game = new Phaser.Game(config);
+      gameRef.current = game;
+    }
+
     initGame();
 
     const container = containerRef.current;
