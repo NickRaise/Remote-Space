@@ -4,7 +4,7 @@
   "scripts": {
     "build": "npx turbo run build",
     "dev": "concurrently -k -n HTTP,WS,FRONTEND -c blue,magenta,cyan \"npm run dev --prefix apps/http\" \"npm run dev --prefix apps/ws\" \"npm run dev --prefix apps/frontend\"",
-    "start": "turbo run start",
+    "start": "concurrently -k -n HTTP,WS,FRONTEND -c blue,magenta,cyan \"npm run start --prefix apps/http\" \"npm run start --prefix apps/ws\" \"npm run start --prefix apps/frontend\"",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types"
